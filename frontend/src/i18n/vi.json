@@ -1,0 +1,133 @@
+{
+  "nav": {
+    "shop": "SẢN PHẨM",
+    "collections": "BỘ SƯU TẬP",
+    "about": "VỀ CHÚNG TÔI",
+    "contact": "LIÊN HỆ",
+    "login": "Đăng nhập",
+    "cart": "Giỏ hàng"
+  },
+  "home": {
+    "hero_tag": "Bộ Sưu Tập Mới 2026",
+    "hero_title": "BƯỚC VÀO TƯƠNG LAI.",
+    "hero_desc": "Tối ưu cho hiệu suất. Thiết kế cho đường phố.",
+    "shop_now": "Mua Sắm Ngay",
+    "explore": "Khám Phá Công Nghệ",
+    "trending": "Thịnh Hành Hiện Nay",
+    "trending_sub": "Những mẫu giày được săn đón nhất mùa này.",
+    "view_all": "Xem Tất Cả"
+  },
+  "shop": {
+    "title": "BỘ SƯU TẬP CỦA CHÚNG TÔI",
+    "desc": "Khám phá các sản phẩm giày thời trang cao cấp hiệu suất cao.",
+    "add_to_cart": "Thêm vào giỏ"
+  },
+  "cart": {
+    "title": "GIỎ HÀNG",
+    "empty": "Giỏ hàng trống",
+    "empty_desc": "Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ.",
+    "go_shopping": "Bắt Đầu Mua Sắm",
+    "qty": "Số lượng",
+    "summary": "Tóm Tắt Đơn Hàng",
+    "subtotal": "Tạm tính",
+    "shipping": "Vận chuyển",
+    "free": "Miễn phí",
+    "tax": "Thuế",
+    "tax_desc": "Sẽ tính lúc thanh toán",
+    "total": "Tổng cộng",
+    "checkout": "Tiến Hành Thanh Toán"
+  },
+  "about": {
+    "title": "CÂU CHUYỆN CỦA CHÚNG TÔI",
+    "desc": "Vanguard được thành lập với một sứ mệnh duy nhất: tái định nghĩa sự giao thoa giữa trang phục thể thao hiệu suất cao và thời trang đường phố cao cấp.",
+    "mission": "Chúng tôi tin tưởng vào các hoạt động bền vững, công nghệ tiên tiến và phong cách không khoan nhượng."
+  },
+  "contact": {
+    "title": "LIÊN HỆ CHÚNG TÔI",
+    "desc": "Bạn có thắc mắc? Chúng tôi rất vui được lắng nghe.",
+    "name": "Họ và tên",
+    "email": "Địa chỉ Email",
+    "message": "Nội dung tin nhắn",
+    "send": "Gửi Tin Nhắn",
+    "page_title": "LIÊN HỆ",
+    "page_subtitle": "Bạn có câu hỏi, đề xuất hay cần hỗ trợ? Đội ngũ Vanguard luôn sẵn sàng lắng nghe và đồng hành cùng bạn trên mọi bước chân.",
+    "info_title": "THÔNG TIN LIÊN HỆ",
+    "headquarters": "Trụ sở chính",
+    "phone": "Điện thoại",
+    "email_label": "Email",
+    "wholesale_note": "* Đối với nhu cầu mua số lượng lớn, vui lòng liên hệ Quản trị viên theo thông tin trên để được tư vấn và hỗ trợ tốt nhất."
+  },
+  "not_found": {
+    "title": "KHÔNG TÌM THẤY TRANG",
+    "desc": "Xin lỗi, trang bạn tìm kiếm không tồn tại.",
+    "back": "Trở về trang chủ"
+  },
+  "auth": {
+    "login": {
+      "title": "Đăng nhập",
+      "subtitle": "Mừng bạn quay trở lại với Vanguard.",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "forgot_password": "Quên mật khẩu?",
+      "submit": "Đăng nhập",
+      "success": "Đăng nhập thành công!",
+      "error": "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
+      "google_success": "Đăng nhập bằng Google thành công!",
+      "google_error": "Đăng nhập Google thất bại.",
+      "forgot_empty_email": "Vui lòng nhập email trước khi lấy lại mật khẩu",
+      "forgot_success": "Mã xác nhận đã được gửi đến email của bạn",
+      "forgot_error": "Không thể gửi mã xác nhận",
+      "or": "Hoặc",
+      "no_account": "Chưa có tài khoản?",
+      "register_now": "Đăng ký ngay",
+      "hero_desc": "Định hình phong cách của bạn với những bộ sưu tập giày thể thao cao cấp nhất."
+    },
+    "register": {
+      "title": "Tạo tài khoản",
+      "subtitle": "Tham gia cộng đồng Vanguard ngay hôm nay.",
+      "fullname": "Họ và tên",
+      "phone": "Số điện thoại",
+      "confirm_password": "Xác nhận mật khẩu",
+      "submit": "Đăng ký",
+      "has_account": "Đã có tài khoản?",
+      "login_now": "Đăng nhập",
+      "password_mismatch": "Mật khẩu xác nhận không khớp",
+      "success": "Đăng ký thành công! Đang chuyển hướng đến đăng nhập...",
+      "error": "Đăng ký thất bại. Vui lòng thử lại.",
+      "hero_desc": "Trở thành thành viên Vanguard để nhận đặc quyền độc quyền và ưu đãi riêng biệt."
+    },
+    "forgot": {
+      "title": "QUÊN MẬT KHẨU",
+      "step1_desc": "Nhập email của bạn để nhận mã khôi phục.",
+      "step2_desc": "Nhập mã 6 số được gửi đến email của bạn.",
+      "step3_desc": "Tạo mật khẩu mới cho tài khoản của bạn.",
+      "email": "Địa chỉ Email",
+      "continue": "Tiếp tục",
+      "verify_code": "Mã xác nhận",
+      "verify_submit": "Xác nhận mã",
+      "new_password": "Mật khẩu mới",
+      "reenter_password": "Nhập lại mật khẩu",
+      "reset_submit": "Đổi mật khẩu",
+      "code_length_error": "Vui lòng nhập mã xác nhận 6 số",
+      "code_valid": "Mã xác nhận hợp lệ",
+      "code_invalid": "Mã xác nhận không hợp lệ",
+      "password_length": "Mật khẩu phải có ít nhất 6 ký tự",
+      "password_mismatch": "Mật khẩu xác nhận không khớp",
+      "success": "Khôi phục mật khẩu thành công! Vui lòng đăng nhập lại.",
+      "error": "Có lỗi xảy ra"
+    }
+  },
+  "chatbot": {
+    "title": "Vanguard AI Assistant",
+    "status": "Online",
+    "clear_history": "Xóa lịch sử chat",
+    "close": "Đóng chat",
+    "welcome1": "Xin chào! Mình là trợ lý ảo của Vanguard.",
+    "welcome2": "Bạn cần tìm giày gì hôm nay?",
+    "check_inventory": "Dạ em đã kiểm tra trong kho hàng:",
+    "found_products": "Dạ em tìm được một số sản phẩm này, anh/chị tham khảo nhé:",
+    "searching": "Đang tìm kiếm sản phẩm...",
+    "error": "Có lỗi xảy ra: ",
+    "placeholder": "Nhập câu hỏi của bạn..."
+  }
+}

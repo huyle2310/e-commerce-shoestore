@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: shoesshop-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: shoesshop
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Mount file SQL init để tự động tạo schema khi db khởi chạy lần đầu
+      - ./database_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shoesshop-backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=shoesshop
+      - DB_USER=postgres
+      - DB_PASS=${DB_PASS:-password}
+      - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME:-vanguardshoe.store@gmail.com}
+      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shoesshop-frontend
+    environment:
+      - NODE_ENV=production
+      - SERVER_API_URL=http://backend:8080/api/v1
+      - GOOGLE_GENERATIVE_AI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

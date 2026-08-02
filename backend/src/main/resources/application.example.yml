@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shoesshop
+    username: postgres
+    password: your_database_password
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your_email@gmail.com
+    password: your_email_app_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  jwt:
+    secret: your_jwt_secret_key_here
+    expiration: 3600000 # 1 hour
+    refreshExpiration: 604800000 # 7 days
+
+google:
+  client:
+    id: your_google_client_id_here
+
+sepay:
+  integration-token: "your_sepay_integration_token"
+  webhook-secret: "your_sepay_webhook_secret"
+  bank-acc: "your_bank_account_number"
+  bank-name: "MB"

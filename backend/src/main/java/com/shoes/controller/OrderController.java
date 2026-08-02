@@ -1,0 +1,69 @@
+package com.shoes.controller;
+
+import com.shoes.dto.OrderRequest;
+import com.shoes.dto.OrderResponse;
+import com.shoes.security.CustomUserDetails;
+import com.shoes.service.OrderService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/orders")
+@RequiredArgsConstructor
+@CrossOrigin("*")
+public class OrderController {
+
+    private final OrderService orderService;
+
+    @PostMapping
+    public ResponseEntity<OrderResponse> placeOrder(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.ok(orderService.placeOrder(userDetails.getId(), request));
+    }
+
+    @PostMapping("/guest")
+    public ResponseEntity<OrderResponse> placeGuestOrder(@Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.ok(orderService.placeGuestOrder(request));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getUserOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderResponse> getOrderById(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(orderService.getOrderById(userDetails.getId(), id));
+    }
+
+    // --- USER APIs ---
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<OrderResponse> cancelOrder(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(orderService.cancelOrder(userDetails.getId(), id));
+    }
+
+    // --- ADMIN APIs ---
+    @GetMapping("/admin/all")
+    public ResponseEntity<List<OrderResponse>> getAllOrdersAdmin() {
+        // Tạm thời get all, trong thực tế cần phân trang và check role ADMIN
+        return ResponseEntity.ok(orderService.getUserOrders(null)); // OrderServiceImpl cần được sửa để hỗ trợ get all nếu userId = null
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @PathVariable UUID id,
+            @RequestParam String status) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(id, status));
+    }
+}

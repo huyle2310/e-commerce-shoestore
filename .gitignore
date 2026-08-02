@@ -1,0 +1,38 @@
+# ========================
+# THÔNG TIN BÍ MẬT - KHÔNG PUSH LÊN GITHUB
+# ========================
+
+# Backend - file config chứa password thật (tạo riêng local, không commit)
+backend/src/main/resources/application-dev.yml
+backend/src/main/resources/application-prod.yml
+backend/src/main/resources/application-local.yml
+
+# Frontend - file env chứa key thật
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.production.local
+
+# ========================
+# BUILD OUTPUT
+# ========================
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+backend/target/
+
+# ========================
+# UPLOADS (ảnh người dùng - không push)
+# ========================
+backend/uploads/
+
+# ========================
+# HỆ THỐNG
+# ========================
+.DS_Store
+Thumbs.db
+*.log
+
+# ========================
+# DOCKER DATA
+# ========================
+postgres_data/

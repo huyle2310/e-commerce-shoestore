@@ -1,0 +1,44 @@
+export const translations = {
+  vi: {
+    buyNow: "Mua Ngay",
+    seeAll: "Xem tất cả",
+    login: "Đăng nhập",
+    logout: "Đăng xuất",
+    cart: "Giỏ hàng",
+    search: "Tìm kiếm...",
+    contact: "Liên hệ",
+    about: "Giới thiệu",
+    home: "Trang chủ",
+    products: "Sản phẩm",
+    blogs: "Bài viết",
+    freeShipping: "Miễn phí vận chuyển",
+    genuine: "Hàng chính hãng 100%",
+    return30Days: "Đổi trả 30 ngày",
+    readMore: "Đọc thêm",
+    categorySubtitle: "Khám phá danh mục nổi bật",
+  },
+  en: {
+    buyNow: "Buy Now",
+    seeAll: "See All",
+    login: "Login",
+    logout: "Logout",
+    cart: "Cart",
+    search: "Search...",
+    contact: "Contact",
+    about: "About",
+    home: "Home",
+    products: "Products",
+    blogs: "Blogs",
+    freeShipping: "Free Shipping",
+    genuine: "100% Genuine",
+    return30Days: "30 Days Return",
+    readMore: "Read More",
+    categorySubtitle: "Explore our categories",
+  }
+};
+
+export type TranslationKey = keyof typeof translations.vi;
+
+export const useTranslation = (lang: 'vi' | 'en') => {
+  return (key: TranslationKey) => translations[lang][key] || key;
+};

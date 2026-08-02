@@ -1,0 +1,133 @@
+{
+  "nav": {
+    "shop": "SHOP ALL",
+    "collections": "COLLECTIONS",
+    "about": "ABOUT US",
+    "contact": "CONTACT",
+    "login": "Log In",
+    "cart": "Cart"
+  },
+  "home": {
+    "hero_tag": "New Collection 2024",
+    "hero_title": "STEP INTO THE FUTURE.",
+    "hero_desc": "Engineered for performance. Designed for the streets. Experience the new era of premium footwear.",
+    "shop_now": "Shop Collection",
+    "explore": "Explore Tech",
+    "trending": "Trending Now",
+    "trending_sub": "The most wanted styles this season.",
+    "view_all": "View All"
+  },
+  "shop": {
+    "title": "OUR COLLECTION",
+    "desc": "Explore our premium range of high-performance fashion footwear.",
+    "add_to_cart": "Add to Cart"
+  },
+  "cart": {
+    "title": "SHOPPING CART",
+    "empty": "Your cart is empty",
+    "empty_desc": "Looks like you haven't added anything to your cart yet.",
+    "go_shopping": "Start Shopping",
+    "qty": "Quantity",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "tax": "Tax",
+    "tax_desc": "Calculated at checkout",
+    "total": "Total",
+    "checkout": "Proceed to Checkout"
+  },
+  "about": {
+    "title": "OUR STORY",
+    "desc": "Vanguard was founded with a single mission: to redefine the intersection of high-performance athletic wear and premium street fashion.",
+    "mission": "We believe in sustainable practices, cutting-edge technology, and uncompromising style."
+  },
+  "contact": {
+    "title": "CONTACT US",
+    "desc": "Have questions? We'd love to hear from you.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "message": "Your Message",
+    "send": "Send Message",
+    "page_title": "CONTACT",
+    "page_subtitle": "Do you have any questions, suggestions or need support? Vanguard team is always ready to listen and accompany you on every step.",
+    "info_title": "CONTACT INFORMATION",
+    "headquarters": "Headquarters",
+    "phone": "Phone",
+    "email_label": "Email",
+    "wholesale_note": "* For bulk purchases, please contact the Administrator using the information above for the best advice and support."
+  },
+  "not_found": {
+    "title": "PAGE NOT FOUND",
+    "desc": "Sorry, the page you are looking for does not exist.",
+    "back": "Go back home"
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Welcome back to Vanguard.",
+      "email": "Email",
+      "password": "Password",
+      "forgot_password": "Forgot password?",
+      "submit": "Login",
+      "success": "Login successful!",
+      "error": "Login failed. Please check your information.",
+      "google_success": "Google login successful!",
+      "google_error": "Google login failed.",
+      "forgot_empty_email": "Please enter email before resetting password",
+      "forgot_success": "Verification code sent to your email",
+      "forgot_error": "Failed to send verification code",
+      "or": "Or",
+      "no_account": "Don't have an account?",
+      "register_now": "Register now",
+      "hero_desc": "Shape your style with the most premium sneaker collections."
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join the Vanguard community today.",
+      "fullname": "Full Name",
+      "phone": "Phone Number",
+      "confirm_password": "Confirm Password",
+      "submit": "Register",
+      "has_account": "Already have an account?",
+      "login_now": "Login",
+      "password_mismatch": "Passwords do not match",
+      "success": "Registration successful! Redirecting to login...",
+      "error": "Registration failed. Please try again.",
+      "hero_desc": "Become a Vanguard member to receive exclusive privileges and distinct offers."
+    },
+    "forgot": {
+      "title": "FORGOT PASSWORD",
+      "step1_desc": "Enter your email to receive a recovery code.",
+      "step2_desc": "Enter the 6-digit code sent to your email.",
+      "step3_desc": "Create a new password for your account.",
+      "email": "Email Address",
+      "continue": "Continue",
+      "verify_code": "Verification Code",
+      "verify_submit": "Verify Code",
+      "new_password": "New Password",
+      "reenter_password": "Re-enter Password",
+      "reset_submit": "Reset Password",
+      "code_length_error": "Please enter a 6-digit verification code",
+      "code_valid": "Verification code valid",
+      "code_invalid": "Invalid verification code",
+      "password_length": "Password must be at least 6 characters",
+      "password_mismatch": "Passwords do not match",
+      "success": "Password reset successfully! Please login again.",
+      "error": "An error occurred"
+    }
+  },
+  "chatbot": {
+    "title": "Vanguard AI Assistant",
+    "status": "Online",
+    "clear_history": "Clear chat history",
+    "close": "Close chat",
+    "welcome1": "Hello! I am Vanguard's virtual assistant.",
+    "welcome2": "What shoes are you looking for today?",
+    "check_inventory": "I have checked the inventory:",
+    "found_products": "I found these products for your reference:",
+    "searching": "Searching for products...",
+    "error": "An error occurred: ",
+    "placeholder": "Type your question..."
+  }
+}
