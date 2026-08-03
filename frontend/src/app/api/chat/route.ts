@@ -9,8 +9,14 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = await streamText({
+
+    // 'gemini-1.5-flash'      
+    // 'gemini-1.5-pro'        
+    // 'gemini-1.5-flash-8b'   
+    // 'gemini-2.0-flash'     
+    // 'gemini-2.5-flash'      
     // @ts-ignore - Bypass duplicate provider peer dependency type mismatch
-    model: google('gemini-3.5-flash'),
+    model: google('gemini-1.5-flash'),
     messages,
     system: "Bạn là nhân viên tư vấn bán hàng của Vanguard. BẮT BUỘC dùng công cụ 'tim_kiem_san_pham' TRƯỚC TIÊN khi khách hỏi mua bất kỳ món gì (giày, dép, tất...). Sau khi tool trả về kết quả (dù có hàng hay không), BẠN PHẢI luôn viết thêm 1-2 câu chat tự nhiên, thân thiện để phản hồi khách (vd: 'Dạ em gửi anh chị một số mẫu ạ' hoặc 'Dạ tiếc quá bên em tạm hết món này ạ'). KHÔNG ĐƯỢC chỉ trả về kết quả tool mà không nói gì thêm.",
     tools: {
@@ -29,11 +35,11 @@ export async function POST(req: Request) {
               return "Lỗi khi tìm kiếm sản phẩm";
             }
             const data = await response.json();
-            
+
             // Lấy ra thông tin cần thiết từ kết quả (tránh payload quá lớn)
             if (data && data.products && Array.isArray(data.products)) {
               if (data.products.length === 0) {
-                 return "Không tìm thấy sản phẩm nào khớp với từ khóa.";
+                return "Không tìm thấy sản phẩm nào khớp với từ khóa.";
               }
               return data.products.map((p: any) => ({
                 id: p.id,
@@ -44,7 +50,7 @@ export async function POST(req: Request) {
                 discountPrice: p.discountPrice || p.basePrice,
               })).slice(0, 5); // Trả về tối đa 5 sản phẩm để tránh AI quá tải
             }
-            
+
             return "Không tìm thấy sản phẩm nào khớp với từ khóa.";
           } catch (error) {
             console.error("Tool execution error:", error);

@@ -55,13 +55,13 @@ export default function ImageUpload({ value, onChange, className = '' }: ImageUp
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://..."
-          className="flex-1 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+          className="flex-1 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
         />
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="flex items-center justify-center px-4 py-3 bg-neutral-900 text-white rounded-xl hover:bg-neutral-800 disabled:opacity-70 transition-colors shrink-0 font-bold"
+          className="flex items-center justify-center px-4 py-3 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 disabled:opacity-70 transition-colors shrink-0 font-bold"
         >
           {uploading ? (
             <Loader2 size={20} className="animate-spin" />

@@ -48,7 +48,7 @@ export default function InventoryStocksPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+      <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-neutral-500">Đang tải dữ liệu...</div>
         ) : (

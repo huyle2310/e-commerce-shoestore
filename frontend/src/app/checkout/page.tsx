@@ -282,27 +282,27 @@ export default function CheckoutPage() {
           {/* Form */}
           <div className="lg:w-2/3">
             <form onSubmit={handlePlaceOrder} className="space-y-8">
-              {error && <div className="p-4 bg-red-100 text-red-600 rounded-xl font-medium">{error}</div>}
+              {error && <div className="p-4 bg-red-100 text-red-600 rounded-lg font-medium">{error}</div>}
 
               <div className="bg-white p-8 rounded-3xl border border-neutral-100">
                 <h2 className="text-xl font-bold mb-6 flex items-center"><User className="mr-2" /> Thông tin giao hàng</h2>
                 <div className="space-y-5">
                   <div>
                     <label className="block text-sm font-medium text-neutral-500 mb-2">Họ và tên người nhận</label>
-                    <input required type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+                    <input required type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-neutral-500 mb-2">Địa chỉ Email {(!isAuthenticated)}</label>
-                    <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+                    <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-neutral-500 mb-2">Số điện thoại liên hệ</label>
-                    <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+                    <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-neutral-500 mb-2">Tỉnh / Thành phố</label>
-                      <select required className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" onChange={handleProvinceChange} value={selectedProvince ? selectedProvince.code : ""}>
+                      <select required className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" onChange={handleProvinceChange} value={selectedProvince ? selectedProvince.code : ""}>
                         <option value="" disabled>Chọn Tỉnh/Thành phố</option>
                         {provinces.map(p => <option key={p.code} value={p.code}>{p.name}</option>)}
                       </select>
@@ -310,7 +310,7 @@ export default function CheckoutPage() {
                     {wards.length > 0 && (
                       <div>
                         <label className="block text-sm font-medium text-neutral-500 mb-2">Phường / Xã</label>
-                        <select required className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" onChange={handleWardChange} value={selectedWard ? selectedWard.code : ""} disabled={!selectedProvince}>
+                        <select required className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" onChange={handleWardChange} value={selectedWard ? selectedWard.code : ""} disabled={!selectedProvince}>
                           <option value="" disabled>Chọn Phường/Xã</option>
                           {wards.map(w => <option key={w.code} value={w.code}>{w.name}</option>)}
                         </select>
@@ -319,11 +319,11 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-neutral-500 mb-2">Số nhà, Tên đường (Quận / Huyện nếu có)</label>
-                    <input required type="text" name="streetAddress" value={formData.streetAddress} onChange={handleChange} placeholder="VD: 123 Nguyễn Văn Cừ, Quận 5" className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+                    <input required type="text" name="streetAddress" value={formData.streetAddress} onChange={handleChange} placeholder="VD: 123 Nguyễn Văn Cừ, Quận 5" className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-neutral-500 mb-2">Ghi chú đơn hàng (Tùy chọn)</label>
-                    <textarea name="orderNote" value={formData.orderNote} onChange={handleChange} rows={3} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+                    <textarea name="orderNote" value={formData.orderNote} onChange={handleChange} rows={3} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none" />
                   </div>
                 </div>
               </div>
@@ -331,7 +331,7 @@ export default function CheckoutPage() {
               <div className="bg-white p-8 rounded-3xl border border-neutral-100">
                 <h2 className="text-xl font-bold mb-6 flex items-center"><CreditCard className="mr-2" /> Phương thức thanh toán</h2>
                 <div className="space-y-4">
-                  <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${formData.paymentMethod === 'COD' ? 'border-orange-500 bg-orange-50' : 'border-neutral-200 hover:bg-neutral-50'}`}>
+                  <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${formData.paymentMethod === 'COD' ? 'border-orange-500 bg-orange-50' : 'border-neutral-200 hover:bg-neutral-50'}`}>
                     <input type="radio" name="paymentMethod" value="COD" checked={formData.paymentMethod === 'COD'} onChange={handleChange} className="hidden" />
                     <Banknote size={24} className={formData.paymentMethod === 'COD' ? 'text-orange-500' : 'text-neutral-400'} />
                     <div className="ml-4">
@@ -339,7 +339,7 @@ export default function CheckoutPage() {
                       <span className="text-sm text-neutral-500">Thanh toán bằng tiền mặt khi đơn hàng được giao đến</span>
                     </div>
                   </label>
-                  <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${formData.paymentMethod === 'SEPAY' ? 'border-orange-500 bg-orange-50' : 'border-neutral-200 hover:bg-neutral-50'}`}>
+                  <label className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${formData.paymentMethod === 'SEPAY' ? 'border-orange-500 bg-orange-50' : 'border-neutral-200 hover:bg-neutral-50'}`}>
                     <input type="radio" name="paymentMethod" value="SEPAY" checked={formData.paymentMethod === 'SEPAY'} onChange={handleChange} className="hidden" />
                     <CreditCard size={24} className={formData.paymentMethod === 'SEPAY' ? 'text-orange-500' : 'text-neutral-400'} />
                     <div className="ml-4">
@@ -383,7 +383,7 @@ export default function CheckoutPage() {
                     {eligibleVouchers.length > 0 && !appliedVoucher && (
                       <div className="mb-3">
                         <select
-                          className="w-full px-4 py-3 bg-orange-50 border border-orange-200 text-orange-800 rounded-xl outline-none focus:border-orange-500 font-medium"
+                          className="w-full px-4 py-3 bg-orange-50 border border-orange-200 text-orange-800 rounded-md outline-none focus:border-orange-500 font-medium"
                           onChange={(e) => {
                             setVoucherCode(e.target.value);
                           }}
@@ -405,13 +405,13 @@ export default function CheckoutPage() {
                         value={voucherCode}
                         onChange={e => setVoucherCode(e.target.value.toUpperCase())}
                         placeholder="Nhập mã..."
-                        className="flex-1 px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-xl outline-none focus:border-orange-500 uppercase"
+                        className="flex-1 px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg outline-none focus:border-orange-500 uppercase"
                       />
                       <button
                         type="button"
                         onClick={handleApplyVoucher}
                         disabled={!voucherCode || checkingVoucher}
-                        className="px-4 py-2 bg-black text-white rounded-xl font-bold disabled:opacity-50"
+                        className="px-4 py-2 bg-black text-white rounded-lg font-bold disabled:opacity-50"
                       >
                         Áp dụng
                       </button>
@@ -424,7 +424,7 @@ export default function CheckoutPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="mb-4 p-3 bg-orange-50 text-orange-600 border border-orange-100 rounded-xl text-sm font-medium text-center">
+                  <div className="mb-4 p-3 bg-orange-50 text-orange-600 border border-orange-100 rounded-lg text-sm font-medium text-center">
                     Vui lòng <a href="/login?redirect=/checkout" className="underline font-bold">đăng nhập</a> để nhận các ưu đãi
                   </div>
                 )}

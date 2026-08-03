@@ -23,7 +23,7 @@ export default function CheckoutSuccessPage() {
         </p>
 
         {orderId && (
-          <div className="bg-neutral-50 p-6 rounded-2xl border border-neutral-100 mb-8 inline-block w-full">
+          <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-100 mb-8 inline-block w-full">
             <p className="text-sm text-neutral-500 mb-2 uppercase font-bold tracking-wider">Mã đơn hàng</p>
             <p className="text-2xl font-mono font-bold">{orderId}</p>
           </div>

@@ -86,7 +86,7 @@ export default function SePayPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] pt-8 pb-16 flex justify-center items-center px-4 font-sans">
-      <div className="bg-white max-w-3xl w-full rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-neutral-200">
+      <div className="bg-white max-w-3xl w-full rounded-xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-neutral-200">
         
         {/* Left Side - Info */}
         <div className="md:w-1/2 p-8 bg-neutral-900 text-white flex flex-col justify-between">
@@ -140,7 +140,7 @@ export default function SePayPage() {
               </motion.div>
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
-                <div className="bg-white border border-neutral-200 p-2 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+                <div className="bg-white border border-neutral-200 p-2 rounded-lg flex items-center justify-center mb-6 shadow-sm">
                   {bankAcc ? (
                     <img src={qrUrl} alt="Mã QR Thanh toán" className="w-48 h-48 object-contain" />
                   ) : (

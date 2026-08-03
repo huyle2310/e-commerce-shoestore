@@ -26,6 +26,9 @@ public class SiteSettings {
     @Column(name = "home_banners_json", columnDefinition = "TEXT")
     private String homeBannersJson;
 
+    @Column(name = "banner_interval_ms")
+    private Integer bannerIntervalMs;
+
     @Column(name = "home_featured_images_json", columnDefinition = "TEXT")
     private String homeFeaturedImagesJson;
 
@@ -57,6 +60,19 @@ public class SiteSettings {
 
     @Column(name = "contact_address_vi")
     private String contactAddressVi;
+
+    // --- POLICIES ---
+    @Column(name = "shipping_policy_vi", columnDefinition = "TEXT")
+    private String shippingPolicyVi;
+
+    @Column(name = "shipping_policy_en", columnDefinition = "TEXT")
+    private String shippingPolicyEn;
+
+    @Column(name = "return_policy_vi", columnDefinition = "TEXT")
+    private String returnPolicyVi;
+
+    @Column(name = "return_policy_en", columnDefinition = "TEXT")
+    private String returnPolicyEn;
 
     @Column(name = "contact_address_en")
     private String contactAddressEn;

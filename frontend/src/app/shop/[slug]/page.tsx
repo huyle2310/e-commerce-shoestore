@@ -7,11 +7,15 @@ import { ShoppingCart, Heart, Star } from 'lucide-react';
 import api from '@/lib/axios';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
+import { useSiteSettingsStore } from '@/store/siteSettingsStore';
+import { useLanguageStore } from '@/store/languageStore';
 
 interface ProductDetailProps {
   id: string;
   nameVi: string;
+  nameEn: string;
   descriptionVi: string;
+  descriptionEn: string;
   basePrice: number;
   category?: { nameVi: string };
   brand?: { name: string };
@@ -23,11 +27,14 @@ interface ProductDetailProps {
 
 export default function ProductDetailPage() {
   const { slug } = useParams();
+  const { settings } = useSiteSettingsStore();
+  const { language } = useLanguageStore();
   const [product, setProduct] = useState<ProductDetailProps | null>(null);
   const [similarProducts, setSimilarProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [activeTab, setActiveTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
@@ -165,7 +172,8 @@ export default function ProductDetailPage() {
       unitPrice: (product?.basePrice || 0) + (variant.priceModifier || 0),
       quantity: quantity,
       stockQuantity: variant.stockQuantity,
-      totalPrice: ((product?.basePrice || 0) + (variant.priceModifier || 0)) * quantity
+      totalPrice: ((product?.basePrice || 0) + (variant.priceModifier || 0)) * quantity,
+      sku: variant.id // Adding sku to fix TS error
     };
     
     useCartStore.getState().setBuyNowItem(buyNowItem);
@@ -281,30 +289,32 @@ export default function ProductDetailPage() {
           <span className="text-black">{product.nameVi}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 lg:items-start">
           {/* Images Section */}
-          <div className="space-y-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-neutral-100 rounded-3xl aspect-square overflow-hidden relative flex items-center justify-center p-8"
-            >
-              <img src={selectedImage || 'https://via.placeholder.com/800'} alt={product.nameVi} className="w-full h-full object-contain mix-blend-multiply" />
-            </motion.div>
-
+          <div className="flex flex-col-reverse lg:flex-row gap-4 lg:items-start">
+            {/* Thumbnails (Left on desktop, Bottom on mobile) */}
             {product.images && product.images.length > 1 && (
-              <div className="flex space-x-4 overflow-x-auto pb-2">
+              <div className="flex lg:flex-col space-x-4 lg:space-x-0 lg:space-y-4 overflow-x-auto lg:overflow-y-auto lg:max-h-[600px] pb-2 lg:pb-0 lg:w-28 flex-shrink-0 hide-scrollbar">
                 {product.images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img.imageUrl)}
-                    className={`w-24 h-24 rounded-2xl bg-neutral-100 flex-shrink-0 border-2 overflow-hidden transition-all ${selectedImage === img.imageUrl ? 'border-orange-500' : 'border-transparent hover:border-neutral-300'}`}
+                    className={`w-20 h-20 lg:w-24 lg:h-24 rounded-xl bg-neutral-100 flex-shrink-0 border-2 overflow-hidden transition-all ${selectedImage === img.imageUrl ? 'border-orange-500' : 'border-transparent hover:border-neutral-300'}`}
                   >
                     <img src={img.imageUrl} alt="" className="w-full h-full object-contain mix-blend-multiply p-2" />
                   </button>
                 ))}
               </div>
             )}
+
+            {/* Main Image */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex-1 w-full bg-neutral-100 rounded-3xl aspect-square overflow-hidden relative flex items-center justify-center p-8"
+            >
+              <img src={selectedImage || 'https://via.placeholder.com/800'} alt={product.nameVi} className="w-full h-full object-contain mix-blend-multiply" />
+            </motion.div>
           </div>
 
           {/* Info Section */}
@@ -327,9 +337,10 @@ export default function ProductDetailPage() {
 
             <p className="text-3xl font-bold mb-8">{price}</p>
 
-            <p className="text-neutral-600 mb-8 leading-relaxed">
-              {product.descriptionVi}
-            </p>
+            <div 
+              className="text-neutral-600 mb-8 leading-relaxed line-clamp-4 prose prose-sm prose-neutral max-w-none"
+              dangerouslySetInnerHTML={{ __html: language === 'vi' ? (product.descriptionVi?.replace(/&nbsp;/g, ' ') || '') : ((product.descriptionEn || product.descriptionVi)?.replace(/&nbsp;/g, ' ') || '') }}
+            />
 
             {/* Colors */}
             {colors.length > 0 && (
@@ -350,7 +361,7 @@ export default function ProductDetailPage() {
                           }
                           setQuantity(1);
                         }}
-                        className={`px-6 py-2 rounded-xl font-bold transition-all border-2 ${
+                        className={`px-6 py-2 rounded-lg font-bold transition-all border-2 ${
                           !isAvailable 
                             ? 'opacity-40 cursor-not-allowed border-transparent bg-neutral-100 text-neutral-400'
                             : selectedColor === color 
@@ -390,7 +401,7 @@ export default function ProductDetailPage() {
                           }
                           setQuantity(1); // Reset quantity when changing size
                         }}
-                        className={`py-3 rounded-xl font-bold transition-all ${
+                        className={`py-3 rounded-lg font-bold transition-all ${
                           !isAvailable
                             ? 'opacity-40 cursor-not-allowed bg-neutral-100 text-neutral-400'
                             : selectedSize === size 
@@ -479,6 +490,56 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Product Details Tabs */}
+        <div className="mt-20 pt-8 border-t border-neutral-200">
+          <div className="flex flex-wrap justify-center gap-4 lg:gap-8 border-b border-neutral-100 mb-8">
+            <button 
+              onClick={() => setActiveTab('description')} 
+              className={`pb-4 font-bold transition-all ${activeTab === 'description' ? 'border-b-2 border-red-500 text-black' : 'text-neutral-400 hover:text-black'}`}
+            >
+              {language === 'vi' ? 'Mô tả sản phẩm' : 'Product Description'}
+            </button>
+            <button 
+              onClick={() => setActiveTab('shipping')} 
+              className={`pb-4 font-bold transition-all ${activeTab === 'shipping' ? 'border-b-2 border-red-500 text-black' : 'text-neutral-400 hover:text-black'}`}
+            >
+              {language === 'vi' ? 'Chính Sách Giao Hàng' : 'Shipping Policy'}
+            </button>
+            <button 
+              onClick={() => setActiveTab('return')} 
+              className={`pb-4 font-bold transition-all ${activeTab === 'return' ? 'border-b-2 border-red-500 text-black' : 'text-neutral-400 hover:text-black'}`}
+            >
+              {language === 'vi' ? 'Chính Sách Đổi Trả & Bảo Hành' : 'Return & Warranty Policy'}
+            </button>
+          </div>
+          
+          <div className="max-w-4xl mx-auto px-4">
+            {activeTab === 'description' && (
+              <div 
+                className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: language === 'vi' ? (product.descriptionVi?.replace(/&nbsp;/g, ' ') || '') : ((product.descriptionEn || product.descriptionVi)?.replace(/&nbsp;/g, ' ') || '') }}
+              />
+            )}
+            {activeTab === 'shipping' && (
+              <div 
+                className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: language === 'vi' 
+                  ? (settings?.shippingPolicyVi && settings.shippingPolicyVi !== '<p><br></p>' ? settings.shippingPolicyVi.replace(/&nbsp;/g, ' ') : 'Chưa cập nhật chính sách giao hàng.') 
+                  : (settings?.shippingPolicyEn && settings.shippingPolicyEn !== '<p><br></p>' ? settings.shippingPolicyEn.replace(/&nbsp;/g, ' ') : (settings?.shippingPolicyVi && settings.shippingPolicyVi !== '<p><br></p>' ? settings.shippingPolicyVi.replace(/&nbsp;/g, ' ') : 'Shipping policy not updated.')) }}
+              />
+            )}
+            {activeTab === 'return' && (
+              <div 
+                className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: language === 'vi' 
+                  ? (settings?.returnPolicyVi && settings.returnPolicyVi !== '<p><br></p>' ? settings.returnPolicyVi.replace(/&nbsp;/g, ' ') : 'Chưa cập nhật chính sách đổi trả và bảo hành.') 
+                  : (settings?.returnPolicyEn && settings.returnPolicyEn !== '<p><br></p>' ? settings.returnPolicyEn.replace(/&nbsp;/g, ' ') : (settings?.returnPolicyVi && settings.returnPolicyVi !== '<p><br></p>' ? settings.returnPolicyVi.replace(/&nbsp;/g, ' ') : 'Return & warranty policy not updated.')) }}
+              />
+            )}
+          </div>
+        </div>
+
         {/* Reviews Section */}
         <div className="mt-20 pt-16 border-t border-neutral-200">
           <h2 className="text-3xl font-black mb-10">Đánh giá khách hàng</h2>
@@ -516,21 +577,21 @@ export default function ProductDetailPage() {
                         required
                         rows={4}
                         placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này..."
-                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={reviewLoading}
-                      className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-70 flex justify-center items-center"
+                      className="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-70 flex justify-center items-center"
                     >
                       {reviewLoading ? <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div> : 'Gửi đánh giá'}
                     </button>
                   </form>
                 ) : (
-                  <div className="text-center py-6 bg-white rounded-xl border border-neutral-200">
+                  <div className="text-center py-6 bg-white rounded-lg border border-neutral-200">
                     <p className="text-neutral-500 mb-4">Vui lòng đăng nhập để gửi đánh giá</p>
-                    <button onClick={() => router.push(`/login?redirect=/shop/${slug}`)} className="px-6 py-2 bg-black text-white font-bold rounded-xl">Đăng nhập</button>
+                    <button onClick={() => router.push(`/login?redirect=/shop/${slug}`)} className="px-6 py-2 bg-black text-white font-bold rounded-lg">Đăng nhập</button>
                   </div>
                 )}
               </div>
@@ -544,7 +605,7 @@ export default function ProductDetailPage() {
                 </div>
               ) : (
                 reviews.map(review => (
-                  <div key={review.id} className="bg-white p-6 rounded-2xl border border-neutral-100 shadow-sm flex items-start space-x-4">
+                  <div key={review.id} className="bg-white p-6 rounded-xl border border-neutral-100 shadow-sm flex items-start space-x-4">
                     <div className="w-12 h-12 bg-neutral-200 rounded-full flex items-center justify-center font-bold text-xl text-neutral-500 shrink-0 uppercase">
                       {review.userFullName?.charAt(0) || 'U'}
                     </div>

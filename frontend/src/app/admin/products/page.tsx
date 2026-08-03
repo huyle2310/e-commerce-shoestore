@@ -254,10 +254,10 @@ export default function AdminProductsPage() {
             placeholder="Tìm kiếm sản phẩm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
           />
         </div>
-        <button className="p-3 border border-neutral-200 rounded-xl hover:bg-neutral-50 text-neutral-600 flex items-center">
+        <button className="p-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 text-neutral-600 flex items-center">
           <Filter size={20} className="mr-2" /> Lọc
         </button>
       </div>
@@ -342,29 +342,29 @@ export default function AdminProductsPage() {
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Tên sản phẩm (VI)</label>
-                  <input type="text" value={editingProduct.nameVi} onChange={e => setEditingProduct({ ...editingProduct, nameVi: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500" />
+                  <input type="text" value={editingProduct.nameVi} onChange={e => setEditingProduct({ ...editingProduct, nameVi: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500" />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Giá cơ bản</label>
-                  <input type="number" value={editingProduct.basePrice} onChange={e => setEditingProduct({ ...editingProduct, basePrice: parseFloat(e.target.value) })} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500" />
+                  <input type="number" value={editingProduct.basePrice} onChange={e => setEditingProduct({ ...editingProduct, basePrice: parseFloat(e.target.value) })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500" />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Thương hiệu (Hãng)</label>
-                  <select value={editingProduct.brandId || editingProduct.brand?.id || ''} onChange={e => setEditingProduct({ ...editingProduct, brandId: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500">
+                  <select value={editingProduct.brandId || editingProduct.brand?.id || ''} onChange={e => setEditingProduct({ ...editingProduct, brandId: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500">
                     <option value="">-- Chọn Hãng --</option>
                     {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                   </select>
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Danh mục</label>
-                  <select value={editingProduct.categoryId || editingProduct.category?.id || ''} onChange={e => setEditingProduct({ ...editingProduct, categoryId: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500">
+                  <select value={editingProduct.categoryId || editingProduct.category?.id || ''} onChange={e => setEditingProduct({ ...editingProduct, categoryId: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500">
                     <option value="">-- Chọn Danh mục --</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.nameVi}</option>)}
                   </select>
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Đối tượng</label>
-                  <select value={editingProduct.targetAudience || 'UNISEX'} onChange={e => setEditingProduct({ ...editingProduct, targetAudience: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500">
+                  <select value={editingProduct.targetAudience || 'UNISEX'} onChange={e => setEditingProduct({ ...editingProduct, targetAudience: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500">
                     <option value="UNISEX">Unisex</option>
                     <option value="NAM">Nam</option>
                     <option value="NU">Nữ</option>
@@ -373,10 +373,10 @@ export default function AdminProductsPage() {
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-bold mb-2">Mô tả (VI)</label>
-                  <textarea rows={3} value={editingProduct.descriptionVi} onChange={e => setEditingProduct({ ...editingProduct, descriptionVi: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500"></textarea>
+                  <textarea rows={3} value={editingProduct.descriptionVi} onChange={e => setEditingProduct({ ...editingProduct, descriptionVi: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500"></textarea>
                 </div>
                 <div className="col-span-2">
-                  <label className="flex items-center space-x-3 cursor-pointer p-3 border border-neutral-200 rounded-xl w-max hover:bg-neutral-50">
+                  <label className="flex items-center space-x-3 cursor-pointer p-3 border border-neutral-200 rounded-lg w-max hover:bg-neutral-50">
                     <input type="checkbox" checked={editingProduct.isActive} onChange={e => setEditingProduct({ ...editingProduct, isActive: e.target.checked })} className="w-5 h-5 text-orange-500 rounded" />
                     <span className="font-bold">Đang kích hoạt hiển thị</span>
                   </label>
@@ -387,14 +387,14 @@ export default function AdminProductsPage() {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h4 className="text-xl font-bold">Hình ảnh Sản phẩm</h4>
-                  <label className="flex items-center cursor-pointer text-orange-500 hover:text-orange-600 font-bold px-4 py-2 bg-orange-50 rounded-xl">
+                  <label className="flex items-center cursor-pointer text-orange-500 hover:text-orange-600 font-bold px-4 py-2 bg-orange-50 rounded-lg">
                     <Upload size={18} className="mr-2" /> Upload Ảnh
                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
                   </label>
                 </div>
                 <div className="flex gap-4 overflow-x-auto pb-4">
                   {editingProduct.images?.map((img: any, index: number) => (
-                    <div key={index} className={`relative w-32 h-32 flex-shrink-0 rounded-2xl border-2 overflow-hidden ${img.isPrimary ? 'border-orange-500' : 'border-neutral-200'}`}>
+                    <div key={index} className={`relative w-32 h-32 flex-shrink-0 rounded-xl border-2 overflow-hidden ${img.isPrimary ? 'border-orange-500' : 'border-neutral-200'}`}>
                       <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                         <button onClick={() => setPrimaryImage(index)} title="Đặt làm ảnh chính" className={`p-2 rounded-full ${img.isPrimary ? 'bg-orange-500 text-white' : 'bg-white text-neutral-900 hover:bg-orange-100'}`}>
@@ -408,7 +408,7 @@ export default function AdminProductsPage() {
                     </div>
                   ))}
                   {(!editingProduct.images || editingProduct.images.length === 0) && (
-                    <div className="w-full h-32 flex items-center justify-center border-2 border-dashed border-neutral-300 rounded-2xl text-neutral-400 font-medium">Chưa có hình ảnh nào</div>
+                    <div className="w-full h-32 flex items-center justify-center border-2 border-dashed border-neutral-300 rounded-xl text-neutral-400 font-medium">Chưa có hình ảnh nào</div>
                   )}
                 </div>
               </div>
@@ -417,13 +417,13 @@ export default function AdminProductsPage() {
               <div>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                   <h4 className="text-xl font-bold">Các Phiên bản (Variants)</h4>
-                  <button onClick={addVariant} className="flex items-center text-orange-500 hover:text-orange-600 font-bold px-4 py-2 bg-orange-50 rounded-xl whitespace-nowrap">
+                  <button onClick={addVariant} className="flex items-center text-orange-500 hover:text-orange-600 font-bold px-4 py-2 bg-orange-50 rounded-lg whitespace-nowrap">
                     <Plus size={18} className="mr-1" /> Thêm 1 dòng trống
                   </button>
                 </div>
 
                 {/* Quick Add Variants Panel */}
-                <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 mb-6">
+                <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 mb-6">
                   <h5 className="font-bold text-sm mb-3">Tạo nhanh nhiều Size cho 1 Màu</h5>
                   <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
                     <div className="w-full md:w-1/3">
@@ -457,7 +457,7 @@ export default function AdminProductsPage() {
 
                 <div className="space-y-4">
                   {editingProduct.variants?.map((variant: any, index: number) => (
-                    <div key={index} className="grid grid-cols-12 gap-4 p-4 border border-neutral-200 rounded-xl items-center bg-neutral-50 relative">
+                    <div key={index} className="grid grid-cols-12 gap-4 p-4 border border-neutral-200 rounded-lg items-center bg-neutral-50 relative">
                       <div className="col-span-3">
                         <label className="block text-xs font-bold text-neutral-500 mb-1">SKU</label>
                         <input type="text" value={variant.sku} onChange={e => handleVariantChange(index, 'sku', e.target.value)} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500" />

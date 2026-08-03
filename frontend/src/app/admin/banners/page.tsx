@@ -121,9 +121,9 @@ export default function AdminBannersPage() {
                 <tr key={banner.id} className="border-b border-neutral-100 hover:bg-neutral-50/50 transition-colors">
                   <td className="p-4">
                     {banner.imageUrl ? (
-                      <img src={banner.imageUrl} alt={banner.titleVi} className="w-24 h-12 object-cover rounded-xl" />
+                      <img src={banner.imageUrl} alt={banner.titleVi} className="w-24 h-12 object-cover rounded-lg" />
                     ) : (
-                      <div className="w-24 h-12 bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-400"><ImageIcon size={20} /></div>
+                      <div className="w-24 h-12 bg-neutral-100 rounded-lg flex items-center justify-center text-neutral-400"><ImageIcon size={20} /></div>
                     )}
                   </td>
                   <td className="p-4 font-bold text-neutral-900">{banner.titleVi}</td>
@@ -161,7 +161,7 @@ export default function AdminBannersPage() {
                   type="text" 
                   value={formData.titleVi}
                   onChange={(e) => setFormData({...formData, titleVi: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                   placeholder="Nhập tiêu đề banner"
                 />
               </div>
@@ -173,10 +173,10 @@ export default function AdminBannersPage() {
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                   placeholder="https://example.com/banner.jpg"
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                 />
                 {formData.imageUrl && (
-                  <div className="mt-3 relative rounded-xl overflow-hidden border border-neutral-200">
+                  <div className="mt-3 relative rounded-lg overflow-hidden border border-neutral-200">
                     <img src={formData.imageUrl} alt="Preview" className="w-full h-auto max-h-48 object-cover" onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x400?text=L%E1%BB%97i+t%E1%BA%A3i+%E1%BA%A3nh';
                     }}/>
@@ -191,7 +191,7 @@ export default function AdminBannersPage() {
                   value={formData.targetUrl}
                   onChange={(e) => setFormData({...formData, targetUrl: e.target.value})}
                   placeholder="/products/123"
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                 />
               </div>
 
@@ -200,7 +200,7 @@ export default function AdminBannersPage() {
                 <select 
                   value={formData.position}
                   onChange={(e) => setFormData({...formData, position: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                 >
                   <option value="HOME_HERO">Trang chủ (Hero Slider lớn)</option>
                   <option value="HOME_SIDE">Trang chủ (Banner nhỏ bên cạnh)</option>

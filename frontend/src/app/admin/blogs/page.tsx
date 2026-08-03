@@ -156,9 +156,9 @@ export default function AdminBlogsPage() {
                 <tr key={blog.id} className="border-b border-neutral-100 hover:bg-neutral-50/50 transition-colors">
                   <td className="p-4">
                     {blog.thumbnailUrl ? (
-                      <img src={blog.thumbnailUrl} alt={blog.titleVi} className="w-16 h-16 object-cover rounded-xl" />
+                      <img src={blog.thumbnailUrl} alt={blog.titleVi} className="w-16 h-16 object-cover rounded-lg" />
                     ) : (
-                      <div className="w-16 h-16 bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-400"><ImageIcon size={24} /></div>
+                      <div className="w-16 h-16 bg-neutral-100 rounded-lg flex items-center justify-center text-neutral-400"><ImageIcon size={24} /></div>
                     )}
                   </td>
                   <td className="p-4">
@@ -205,7 +205,7 @@ export default function AdminBlogsPage() {
                     type="text" 
                     value={formData.titleVi}
                     onChange={(e) => setFormData({...formData, titleVi: e.target.value, slug: generateSlug(e.target.value)})}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                   />
                 </div>
                 <div>
@@ -214,7 +214,7 @@ export default function AdminBlogsPage() {
                     type="text" 
                     value={formData.slug}
                     onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                   />
                 </div>
               </div>
@@ -223,7 +223,7 @@ export default function AdminBlogsPage() {
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Link Ảnh Thumbnail</label>
                   <ImageUpload value={formData.thumbnailUrl} onChange={(url) => setFormData({...formData, thumbnailUrl: url})} />
-                  {formData.thumbnailUrl && <img src={formData.thumbnailUrl} className="mt-3 h-20 rounded-xl object-cover" />}
+                  {formData.thumbnailUrl && <img src={formData.thumbnailUrl} className="mt-3 h-20 rounded-lg object-cover" />}
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Thể loại (Tags)</label>
@@ -232,7 +232,7 @@ export default function AdminBlogsPage() {
                     value={formData.tags}
                     onChange={(e) => setFormData({...formData, tags: e.target.value})}
                     placeholder="thời trang, giày, thể thao..."
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                   />
                   <p className="text-xs text-neutral-500 mt-2">Phân cách bởi dấu phẩy</p>
                 </div>
@@ -241,13 +241,13 @@ export default function AdminBlogsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Mô tả ngắn (VI)</label>
-                  <div className="bg-white rounded-xl overflow-hidden border border-neutral-200">
+                  <div className="bg-white rounded-lg overflow-hidden border border-neutral-200">
                     {mounted && <ReactQuill theme="snow" value={formData.shortDescriptionVi || ''} onChange={val => setFormData({...formData, shortDescriptionVi: val})} className="h-32 mb-10" />}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Mô tả ngắn (EN)</label>
-                  <div className="bg-white rounded-xl overflow-hidden border border-neutral-200">
+                  <div className="bg-white rounded-lg overflow-hidden border border-neutral-200">
                     {mounted && <ReactQuill theme="snow" value={formData.shortDescriptionEn || ''} onChange={val => setFormData({...formData, shortDescriptionEn: val})} className="h-32 mb-10" />}
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export default function AdminBlogsPage() {
 
               <div>
                 <label className="block text-sm font-bold text-neutral-900 mb-2">Nội dung bài viết *</label>
-                <div className="bg-white rounded-xl overflow-hidden border border-neutral-200">
+                <div className="bg-white rounded-lg overflow-hidden border border-neutral-200">
                   {mounted && <ReactQuill 
                     theme="snow" 
                     value={formData.contentVi || ''} 
@@ -298,7 +298,7 @@ export default function AdminBlogsPage() {
                       type="text" 
                       value={formData.seoTitleVi || ''}
                       onChange={(e) => setFormData({...formData, seoTitleVi: e.target.value})}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                     />
                   </div>
                   <div>
@@ -307,7 +307,7 @@ export default function AdminBlogsPage() {
                       type="text" 
                       value={formData.seoTitleEn || ''}
                       onChange={(e) => setFormData({...formData, seoTitleEn: e.target.value})}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                     />
                   </div>
                 </div>
@@ -317,7 +317,7 @@ export default function AdminBlogsPage() {
                     <textarea 
                       value={formData.seoDescriptionVi || ''}
                       onChange={(e) => setFormData({...formData, seoDescriptionVi: e.target.value})}
-                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none resize-none" 
+                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none" 
                     />
                   </div>
                   <div>
@@ -325,7 +325,7 @@ export default function AdminBlogsPage() {
                     <textarea 
                       value={formData.seoDescriptionEn || ''}
                       onChange={(e) => setFormData({...formData, seoDescriptionEn: e.target.value})}
-                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none resize-none" 
+                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none" 
                     />
                   </div>
                 </div>
@@ -335,7 +335,7 @@ export default function AdminBlogsPage() {
                     type="datetime-local" 
                     value={formData.publishedAt ? new Date(formData.publishedAt).toISOString().slice(0, 16) : ''}
                     onChange={(e) => setFormData({...formData, publishedAt: e.target.value ? new Date(e.target.value).toISOString() : null})}
-                    className="w-full md:w-1/2 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" 
+                    className="w-full md:w-1/2 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
                   />
                 </div>
               </div>

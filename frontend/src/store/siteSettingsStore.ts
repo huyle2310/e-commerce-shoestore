@@ -17,6 +17,10 @@ export interface SiteSettings {
   contactEmail?: string;
   contactAddressVi?: string;
   contactAddressEn?: string;
+  shippingPolicyVi?: string;
+  shippingPolicyEn?: string;
+  returnPolicyVi?: string;
+  returnPolicyEn?: string;
   socialLinksJson?: string;
 
   homeHeroTitleVi?: string;

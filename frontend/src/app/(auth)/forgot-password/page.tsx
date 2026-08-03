@@ -114,7 +114,7 @@ function ForgotPasswordContent() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="ví dụ: email@gmail.com"
-                  className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -122,7 +122,7 @@ function ForgotPasswordContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center bg-black text-white font-bold text-lg py-4 rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70 group"
+              className="w-full flex items-center justify-center bg-black text-white font-bold text-lg py-4 rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70 group"
             >
               {loading ? <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div> : (
                 <>{t.auth.forgot.continue} <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" /></>
@@ -142,7 +142,7 @@ function ForgotPasswordContent() {
                   onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
                   required
                   placeholder="000000"
-                  className="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -150,7 +150,7 @@ function ForgotPasswordContent() {
             <button
               type="submit"
               disabled={loading || code.length !== 6}
-              className="w-full flex items-center justify-center bg-black text-white font-bold text-lg py-4 rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70 group"
+              className="w-full flex items-center justify-center bg-black text-white font-bold text-lg py-4 rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70 group"
             >
               {loading ? <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div> : (
                 <>{t.auth.forgot.verify_submit} <ShieldCheck size={20} className="ml-2" /></>
@@ -173,7 +173,7 @@ function ForgotPasswordContent() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                   placeholder="Tối thiểu 6 ký tự"
-                  className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -190,7 +190,7 @@ function ForgotPasswordContent() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   placeholder="Xác nhận mật khẩu mới"
-                  className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -198,7 +198,7 @@ function ForgotPasswordContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center bg-black text-white font-bold text-lg py-4 rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70"
+              className="w-full flex items-center justify-center bg-black text-white font-bold text-lg py-4 rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70"
             >
               {loading ? <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div> : t.auth.forgot.reset_submit}
             </button>

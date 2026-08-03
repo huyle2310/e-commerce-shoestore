@@ -15,6 +15,7 @@ public class SiteSettingsResponse {
     private String homeShortDescVi;
     private String homeShortDescEn;
     private String homeBannersJson;
+    private Integer bannerIntervalMs;
     private String homeFeaturedImagesJson;
     
     private String aboutTitleVi;
@@ -28,6 +29,10 @@ public class SiteSettingsResponse {
     private String contactEmail;
     private String contactAddressVi;
     private String contactAddressEn;
+    private String shippingPolicyVi;
+    private String shippingPolicyEn;
+    private String returnPolicyVi;
+    private String returnPolicyEn;
     private String socialLinksJson;
 
     // --- DYNAMIC HOMEPAGE ---

@@ -125,7 +125,7 @@ export default function AdminBrandsPage() {
             placeholder="Tìm kiếm thương hiệu..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
           />
         </div>
       </div>
@@ -194,7 +194,7 @@ export default function AdminBrandsPage() {
                   type="text" 
                   value={editingBrand.name} 
                   onChange={e => setEditingBrand({...editingBrand, name: e.target.value})} 
-                  className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500" 
+                  className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500" 
                   placeholder="VD: Nike, Adidas..."
                 />
               </div>
@@ -209,14 +209,14 @@ export default function AdminBrandsPage() {
                 </div>
                 
                 {editingBrand.logoUrl ? (
-                  <div className="relative w-32 h-32 rounded-xl border-2 border-neutral-200 overflow-hidden bg-neutral-50 flex items-center justify-center p-2">
+                  <div className="relative w-32 h-32 rounded-lg border-2 border-neutral-200 overflow-hidden bg-neutral-50 flex items-center justify-center p-2">
                     <img src={editingBrand.logoUrl} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
                     <button onClick={removeImage} className="absolute top-1 right-1 p-1.5 bg-white text-red-500 hover:bg-red-50 rounded-lg shadow-sm border border-neutral-200">
                       <Trash size={14} />
                     </button>
                   </div>
                 ) : (
-                  <div className="w-full h-32 border-2 border-dashed border-neutral-300 rounded-xl flex items-center justify-center text-neutral-400 bg-neutral-50">
+                  <div className="w-full h-32 border-2 border-dashed border-neutral-300 rounded-lg flex items-center justify-center text-neutral-400 bg-neutral-50">
                     Chưa có logo
                   </div>
                 )}

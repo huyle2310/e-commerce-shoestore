@@ -11,10 +11,10 @@ export default function AdminVouchersPage() {
   const [vouchers, setVouchers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const [editingVoucher, setEditingVoucher] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   const [mounted, setMounted] = useState(false);
   const token = useAuthStore(state => state.token);
 
@@ -57,7 +57,7 @@ export default function AdminVouchersPage() {
   };
 
   const handleEditClick = (voucher: any) => {
-    setEditingVoucher({ 
+    setEditingVoucher({
       ...voucher,
       startDate: new Date(voucher.startDate).toISOString().slice(0, 16),
       endDate: new Date(voucher.endDate).toISOString().slice(0, 16)
@@ -80,7 +80,7 @@ export default function AdminVouchersPage() {
       toast.error("Vui lòng nhập mã Voucher");
       return;
     }
-    
+
     // Ensure numbers
     const payload = {
       ...editingVoucher,
@@ -126,12 +126,12 @@ export default function AdminVouchersPage() {
       <div className="flex items-center gap-4 mb-6">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={20} />
-          <input 
-            type="text" 
-            placeholder="Tìm mã giảm giá..." 
+          <input
+            type="text"
+            placeholder="Tìm mã giảm giá..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
           />
         </div>
       </div>
@@ -170,7 +170,7 @@ export default function AdminVouchersPage() {
                       )}
                     </td>
                     <td className="p-4 font-medium">
-                      {v.discountType === 'PERCENTAGE' ? `${v.discountValue}%` : `${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(v.discountValue)}`}
+                      {v.discountType === 'PERCENTAGE' ? `${v.discountValue}%` : `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v.discountValue)}`}
                     </td>
                     <td className="p-4 text-sm">
                       {new Date(v.startDate).toLocaleDateString('vi-VN')} - {new Date(v.endDate).toLocaleDateString('vi-VN')}
@@ -206,17 +206,17 @@ export default function AdminVouchersPage() {
               <h3 className="text-xl font-bold">{editingVoucher.id ? 'Sửa Mã giảm giá' : 'Thêm Mã giảm giá'}</h3>
               <button onClick={() => setEditingVoucher(null)} className="p-2 hover:bg-neutral-100 rounded-full"><X size={24} /></button>
             </div>
-            
+
             <div className="p-6 overflow-y-auto space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Mã code *</label>
-                  <input type="text" value={editingVoucher.code} onChange={e => setEditingVoucher({...editingVoucher, code: e.target.value.toUpperCase()})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none uppercase font-bold" placeholder="VD: SUMMER2026" />
+                  <input type="text" value={editingVoucher.code} onChange={e => setEditingVoucher({ ...editingVoucher, code: e.target.value.toUpperCase() })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none font-bold" placeholder="Mã voucher..." />
                 </div>
                 <div className="col-span-2 md:col-span-1 flex items-end mb-2">
                   <label className="flex items-center cursor-pointer">
                     <div className="relative">
-                      <input type="checkbox" className="sr-only" checked={editingVoucher.isActive} onChange={e => setEditingVoucher({...editingVoucher, isActive: e.target.checked})} />
+                      <input type="checkbox" className="sr-only" checked={editingVoucher.isActive} onChange={e => setEditingVoucher({ ...editingVoucher, isActive: e.target.checked })} />
                       <div className={`block w-14 h-8 rounded-full transition-colors ${editingVoucher.isActive ? 'bg-orange-500' : 'bg-neutral-300'}`}></div>
                       <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${editingVoucher.isActive ? 'transform translate-x-6' : ''}`}></div>
                     </div>
@@ -226,37 +226,37 @@ export default function AdminVouchersPage() {
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Loại giảm giá</label>
-                  <select value={editingVoucher.discountType} onChange={e => setEditingVoucher({...editingVoucher, discountType: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none">
+                  <select value={editingVoucher.discountType} onChange={e => setEditingVoucher({ ...editingVoucher, discountType: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none">
                     <option value="PERCENTAGE">Theo phần trăm (%)</option>
                     <option value="FIXED_AMOUNT">Tiền mặt (VNĐ)</option>
                   </select>
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Mức giảm *</label>
-                  <input type="number" value={editingVoucher.discountValue} onChange={e => setEditingVoucher({...editingVoucher, discountValue: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none" />
+                  <input type="number" value={editingVoucher.discountValue} onChange={e => setEditingVoucher({ ...editingVoucher, discountValue: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
                 </div>
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Đơn hàng tối thiểu (VNĐ)</label>
-                  <input type="number" value={editingVoucher.minOrderValue} onChange={e => setEditingVoucher({...editingVoucher, minOrderValue: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none" />
+                  <input type="number" value={editingVoucher.minOrderValue} onChange={e => setEditingVoucher({ ...editingVoucher, minOrderValue: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Giảm tối đa (VNĐ) <span className="font-normal text-neutral-400">- Tùy chọn</span></label>
-                  <input type="number" value={editingVoucher.maxDiscountAmount || ''} onChange={e => setEditingVoucher({...editingVoucher, maxDiscountAmount: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
+                  <input type="number" value={editingVoucher.maxDiscountAmount || ''} onChange={e => setEditingVoucher({ ...editingVoucher, maxDiscountAmount: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
                 </div>
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Ngày bắt đầu *</label>
-                  <input type="datetime-local" value={editingVoucher.startDate} onChange={e => setEditingVoucher({...editingVoucher, startDate: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none" />
+                  <input type="datetime-local" value={editingVoucher.startDate} onChange={e => setEditingVoucher({ ...editingVoucher, startDate: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Ngày kết thúc *</label>
-                  <input type="datetime-local" value={editingVoucher.endDate} onChange={e => setEditingVoucher({...editingVoucher, endDate: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none" />
+                  <input type="datetime-local" value={editingVoucher.endDate} onChange={e => setEditingVoucher({ ...editingVoucher, endDate: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
                 </div>
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Hạng thành viên yêu cầu <span className="font-normal text-neutral-400">- Tùy chọn</span></label>
-                  <select value={editingVoucher.requiredRank || ''} onChange={e => setEditingVoucher({...editingVoucher, requiredRank: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none">
+                  <select value={editingVoucher.requiredRank || ''} onChange={e => setEditingVoucher({ ...editingVoucher, requiredRank: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none">
                     <option value="">Không yêu cầu (Tất cả)</option>
                     <option value="VÀNG">Hạng Vàng trở lên</option>
                     <option value="KIM CƯƠNG">Hạng Kim Cương trở lên</option>
@@ -266,23 +266,23 @@ export default function AdminVouchersPage() {
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Giới hạn số lượt dùng <span className="font-normal text-neutral-400">- Tùy chọn</span></label>
-                  <input type="number" value={editingVoucher.usageLimit || ''} onChange={e => setEditingVoucher({...editingVoucher, usageLimit: e.target.value})} className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
+                  <input type="number" value={editingVoucher.usageLimit || ''} onChange={e => setEditingVoucher({ ...editingVoucher, usageLimit: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
                 </div>
 
                 <div className="col-span-2">
                   <label className="block text-sm font-bold mb-2">Ảnh voucher <span className="font-normal text-neutral-400">- Tùy chọn</span></label>
-                  <p className="text-xs text-neutral-500 mb-3">Ảnh sẽ hiển thị trên trang voucher của khách hàng</p>
+
                   <ImageUpload
                     value={editingVoucher.imageUrl || ''}
-                    onChange={(url) => setEditingVoucher({...editingVoucher, imageUrl: url})}
+                    onChange={(url) => setEditingVoucher({ ...editingVoucher, imageUrl: url })}
                   />
                   {editingVoucher.imageUrl && (
-                    <img src={editingVoucher.imageUrl} alt="Preview" className="mt-3 w-full max-h-40 object-cover rounded-xl border border-neutral-200" />
+                    <img src={editingVoucher.imageUrl} alt="Preview" className="mt-3 w-full max-h-40 object-cover rounded-lg border border-neutral-200" />
                   )}
                 </div>
               </div>
             </div>
-            
+
             <div className="p-6 border-t border-neutral-100 flex justify-end gap-4 bg-neutral-50">
               <button onClick={() => setEditingVoucher(null)} className="px-6 py-2.5 font-bold text-neutral-600 hover:bg-neutral-200 rounded-full transition-colors">Hủy</button>
               <button onClick={handleSaveVoucher} disabled={isSaving} className="px-8 py-2.5 bg-black text-white font-bold rounded-full hover:bg-neutral-800 transition-colors flex items-center disabled:opacity-70">

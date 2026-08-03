@@ -125,7 +125,7 @@ export default function LoginPage() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-5xl font-bold tracking-tight mb-4"
           >
-            Vanguard.
+            Vanguard
           </motion.h2>
           <motion.p
             initial={{ y: 30, opacity: 0 }}
@@ -155,7 +155,7 @@ export default function LoginPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+              className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
             >
               {error}
             </motion.div>
@@ -173,7 +173,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                   placeholder="name@example.com"
                 />
               </div>
@@ -195,7 +195,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                   placeholder="••••••••"
                 />
               </div>
@@ -204,7 +204,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full group relative flex items-center justify-center py-3.5 px-4 bg-neutral-900 text-white font-semibold rounded-xl hover:bg-black focus:ring-4 focus:ring-neutral-900/20 transition-all disabled:opacity-70 overflow-hidden"
+              className="w-full group relative flex items-center justify-center py-3.5 px-4 bg-neutral-900 text-white font-semibold rounded-lg hover:bg-black focus:ring-4 focus:ring-neutral-900/20 transition-all disabled:opacity-70 overflow-hidden"
             >
               <span className="relative z-10 flex items-center">
                 {loading ? (

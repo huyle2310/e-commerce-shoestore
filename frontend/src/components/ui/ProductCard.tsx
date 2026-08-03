@@ -29,7 +29,7 @@ export default function ProductCard({ product }: { product: ProductProps }) {
   const isOutOfStock = totalStock === 0;
 
   return (
-    <div className={`group relative bg-white rounded-3xl overflow-hidden border border-neutral-100 hover:border-orange-500/30 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 ${isOutOfStock ? 'opacity-60 grayscale-[50%]' : ''}`}>
+    <div className={`group relative bg-white  overflow-hidden border border-neutral-100 hover:border-orange-500/30 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 ${isOutOfStock ? 'opacity-60 grayscale-[50%]' : ''}`}>
       <Link href={`/shop/${product.slug}`} className="block relative aspect-square overflow-hidden bg-neutral-100 p-6">
         <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
           {product.brand && (
@@ -48,7 +48,7 @@ export default function ProductCard({ product }: { product: ProductProps }) {
         )}
 
         {/* Hover dark overlay - 40% opacity (giảm bớt để thấy ảnh thứ 2 rõ hơn) */}
-        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-400 z-10 rounded-t-3xl" />
+        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-400 z-10 " />
 
         {/* Subtle shadow for depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent z-0"></div>

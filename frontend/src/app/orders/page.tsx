@@ -122,7 +122,7 @@ export default function OrdersPage() {
                       {order.items.map((item: any) => (
                         <div key={item.id} className="flex justify-between items-center">
                           <div className="flex items-center">
-                            <Link href={`/shop/${item.slug || ''}`} className="w-16 h-16 bg-neutral-100 rounded-xl mr-4 flex-shrink-0 flex items-center justify-center overflow-hidden border border-neutral-200 block">
+                            <Link href={`/shop/${item.slug || ''}`} className="w-16 h-16 bg-neutral-100 rounded-lg mr-4 flex-shrink-0 flex items-center justify-center overflow-hidden border border-neutral-200 block">
                               {item.imageUrl ? (
                                 <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                               ) : (
@@ -144,7 +144,7 @@ export default function OrdersPage() {
                       <div className="mt-6 pt-6 border-t border-neutral-100 flex justify-end">
                         <button 
                           onClick={() => handleCancelOrder(order.id)}
-                          className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 hover:border-red-300 transition-colors"
+                          className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-bold rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors"
                         >
                           Hủy đơn hàng
                         </button>

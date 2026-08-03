@@ -115,7 +115,7 @@ export default function RegisterPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+              className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
             >
               {error}
             </motion.div>
@@ -125,7 +125,7 @@ export default function RegisterPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm"
+              className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm"
             >
               {success}
             </motion.div>
@@ -144,7 +144,7 @@ export default function RegisterPage() {
                   required
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                   placeholder="Nguyễn Văn A"
                 />
               </div>
@@ -163,7 +163,7 @@ export default function RegisterPage() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                    className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                     placeholder="name@example.com"
                   />
                 </div>
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                    className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                     placeholder="0912345678"
                   />
                 </div>
@@ -200,7 +200,7 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                   placeholder="••••••••"
                 />
               </div>
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-neutral-400 text-neutral-900"
                   placeholder="••••••••"
                 />
               </div>
@@ -227,7 +227,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full group relative flex items-center justify-center py-3.5 px-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 focus:ring-4 focus:ring-orange-500/20 transition-all disabled:opacity-70 overflow-hidden mt-6"
+              className="w-full group relative flex items-center justify-center py-3.5 px-4 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-500/20 transition-all disabled:opacity-70 overflow-hidden mt-6"
             >
               <span className="relative z-10 flex items-center">
                 {loading ? (

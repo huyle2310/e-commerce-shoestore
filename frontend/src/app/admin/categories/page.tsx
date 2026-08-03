@@ -124,7 +124,7 @@ export default function AdminCategoriesPage() {
             placeholder="Tìm kiếm danh mục..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
           />
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function AdminCategoriesPage() {
                   type="text"
                   value={editingCategory.nameVi}
                   onChange={e => handleNameChange(e.target.value)}
-                  className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500"
+                  className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500"
                   placeholder="VD: Giày thể thao..."
                 />
               </div>
@@ -202,7 +202,7 @@ export default function AdminCategoriesPage() {
                   type="text"
                   value={editingCategory.nameEn}
                   onChange={e => setEditingCategory({ ...editingCategory, nameEn: e.target.value })}
-                  className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500"
+                  className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500"
                   placeholder="VD: Sneakers..."
                 />
               </div>
@@ -213,7 +213,7 @@ export default function AdminCategoriesPage() {
                   type="text"
                   value={editingCategory.slug}
                   onChange={e => setEditingCategory({ ...editingCategory, slug: e.target.value })}
-                  className="w-full px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 outline-none focus:border-orange-500"
+                  className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none focus:border-orange-500"
                   placeholder="VD: giay-the-thao"
                 />
                 <p className="text-xs text-neutral-500 mt-2">Slug tự tạo dựa trên tên tiếng Việt, dùng cho đường dẫn URL (chỉ chữ thường và dấu gạch ngang).</p>

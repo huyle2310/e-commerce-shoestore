@@ -88,6 +88,7 @@ export default function HomePage() {
   }, [carouselBanners.length, isHoveringCarousel, intervalMs, goNext]);
 
   const currentBanner = carouselBanners[currentBannerIndex];
+  const showHero = !settings?.homeHeroTitleVi?.startsWith('[HIDDEN]');
 
   return (
     <div className="min-h-screen bg-white selection:bg-orange-500 selection:text-white">
@@ -95,170 +96,186 @@ export default function HomePage() {
       {/* ─── CAROUSEL HERO ─────────────────────────────────────────────── */}
       {carouselBanners.length > 0 ? (
         <section
-          className="relative w-full h-screen overflow-hidden bg-neutral-950"
+          className="relative w-full h-[85vh] max-h-[900px] min-h-[600px] overflow-hidden bg-neutral-950"
           onMouseEnter={() => setIsHoveringCarousel(true)}
           onMouseLeave={() => setIsHoveringCarousel(false)}
         >
           {/* Slides - hiệu ứng trượt ngang */}
-          <div className="absolute inset-0 overflow-hidden">
-            <AnimatePresence initial={false} custom={currentBannerIndex} mode="popLayout">
-              <motion.div
-                key={currentBannerIndex}
-                custom={currentBannerIndex}
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ duration: 0.65, ease: [0.32, 0.72, 0, 1] }}
-                className="absolute inset-0"
-              >
-                <img
-                  src={currentBanner?.url || currentBanner?.imageUrl}
-                  alt={`Banner ${currentBannerIndex + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
+            <div className="absolute inset-0 overflow-hidden">
+              <AnimatePresence initial={false} custom={currentBannerIndex} mode="popLayout">
+                <motion.div
+                  key={currentBannerIndex}
+                  custom={currentBannerIndex}
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '-100%' }}
+                  transition={{ duration: 0.65, ease: [0.32, 0.72, 0, 1] }}
+                  className="absolute inset-0"
+                >
+                  {currentBanner?.link ? (
+                    <Link href={currentBanner.link} className="w-full h-full block">
+                      <img
+                        src={currentBanner?.url || currentBanner?.imageUrl}
+                        alt={`Banner ${currentBannerIndex + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </Link>
+                  ) : (
+                    <img
+                      src={currentBanner?.url || currentBanner?.imageUrl}
+                      alt={`Banner ${currentBannerIndex + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-          {/* Gradient block - mở rộng thêm để che phủ text */}
-          <div
-            className="absolute inset-y-0 left-0 w-[90%] md:w-[80%] z-[5] pointer-events-none"
-            style={{ background: 'linear-gradient(to right, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 30%, rgba(0, 0, 0, 0.5) 70%, rgba(0, 0, 0, 0) 100%)' }}
-          />
-
-          {/* Hero text overlay */}
-          <div className="absolute inset-0 flex items-center z-10 pt-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="max-w-2xl text-white"
-              >
-                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-8 border border-white/10">
-                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                  <span className="text-sm font-medium tracking-wide uppercase">
-                    {language === 'vi' ? 'Bộ sưu tập mới' : 'New Collection'}
-                  </span>
-                </div>
-                <h1
-                  className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
-                  dangerouslySetInnerHTML={{
-                    __html: language === 'vi'
-                      ? (settings?.homeHeroTitleVi || 'ĐỊNH HÌNH \n <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PHONG CÁCH</span>\n CỦA BẠN.')
-                      : (settings?.homeHeroTitleEn || 'DEFINE \n YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">STYLE</span>.')
-                  }}
-                />
+            {showHero && (
+              <>
+                {/* Gradient block - mở rộng thêm để che phủ text */}
                 <div
-                  className="text-lg text-neutral-300 mb-10 leading-relaxed max-w-xl"
-                  dangerouslySetInnerHTML={{ __html: language === 'vi' ? (settings?.homeShortDescVi || 'Khám phá những mẫu giày thể thao cao cấp nhất.') : (settings?.homeShortDescEn || 'Discover our premium sneakers collection.') }}
+                  className="absolute inset-y-0 left-0 w-[90%] md:w-[80%] z-[5] pointer-events-none"
+                  style={{ background: 'linear-gradient(to right, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 30%, rgba(0, 0, 0, 0.5) 70%, rgba(0, 0, 0, 0) 100%)' }}
                 />
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/shop" className="group flex items-center justify-center bg-white text-black font-bold text-lg px-8 py-4 rounded-full hover:bg-neutral-200 transition-all">
-                    {t('buyNow')}
-                    <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <Link href="/about" className="flex items-center justify-center bg-transparent border border-white/20 text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-white/10 transition-all">
-                    {language === 'vi' ? 'Khám Phá Vanguard' : 'Explore Vanguard'}
-                  </Link>
+
+                {/* Hero text overlay */}
+                <div className="absolute inset-0 flex items-center z-10 pt-20">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      className="max-w-2xl text-white"
+                    >
+                      <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-8 border border-white/10">
+                        <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                        <span className="text-sm font-medium tracking-wide uppercase">
+                          {language === 'vi' ? 'Bộ sưu tập mới' : 'New Collection'}
+                        </span>
+                      </div>
+                      <h1
+                        className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
+                        dangerouslySetInnerHTML={{
+                          __html: language === 'vi'
+                            ? (settings?.homeHeroTitleVi?.replace('[HIDDEN]', '') || 'ĐỊNH HÌNH \n <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PHONG CÁCH</span>\n CỦA BẠN.')
+                            : (settings?.homeHeroTitleEn?.replace('[HIDDEN]', '') || 'DEFINE \n YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">STYLE</span>.')
+                        }}
+                      />
+                      <div
+                        className="text-lg text-neutral-300 mb-10 leading-relaxed max-w-xl"
+                        dangerouslySetInnerHTML={{ __html: language === 'vi' ? (settings?.homeShortDescVi || 'Khám phá những mẫu giày thể thao cao cấp nhất.') : (settings?.homeShortDescEn || 'Discover our premium sneakers collection.') }}
+                      />
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <Link href="/shop" className="group flex items-center justify-center bg-white text-black font-bold text-lg px-8 py-4 rounded-full hover:bg-neutral-200 transition-all">
+                          {t('buyNow')}
+                          <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                        <Link href="/about" className="flex items-center justify-center bg-transparent border border-white/20 text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-white/10 transition-all">
+                          {language === 'vi' ? 'Khám Phá Vanguard' : 'Explore Vanguard'}
+                        </Link>
+                      </div>
+                    </motion.div>
+                  </div>
                 </div>
-              </motion.div>
-            </div>
-          </div>
+              </>
+            )}
 
-          {/* Arrow Navigation */}
-          {carouselBanners.length > 1 && (
-            <>
-              <button
-                onClick={goPrev}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/25 transition-all"
-                aria-label="Previous banner"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <button
-                onClick={goNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/25 transition-all"
-                aria-label="Next banner"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </>
-          )}
-
-          {/* Dot Indicators */}
-          {carouselBanners.length > 1 && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-              {carouselBanners.map((_, idx) => (
+            {/* Arrow Navigation */}
+            {carouselBanners.length > 1 && (
+              <>
                 <button
-                  key={idx}
-                  onClick={() => setCurrentBannerIndex(idx)}
-                  className={`rounded-full transition-all duration-300 ${idx === currentBannerIndex ? 'bg-orange-500 w-8 h-2.5' : 'bg-white/40 w-2.5 h-2.5 hover:bg-white/70'}`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
-            </div>
-          )}
+                  onClick={goPrev}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/25 transition-all"
+                  aria-label="Previous banner"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={goNext}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/25 transition-all"
+                  aria-label="Next banner"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
+            )}
 
-          {/* Progress bar */}
-          {carouselBanners.length > 1 && !isHoveringCarousel && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10 z-20">
-              <motion.div
-                key={`progress-${currentBannerIndex}`}
-                className="h-full bg-orange-500"
-                initial={{ width: '0%' }}
-                animate={{ width: '100%' }}
-                transition={{ duration: intervalMs / 1000, ease: 'linear' }}
-              />
-            </div>
-          )}
-        </section>
-      ) : (
-        /* Fallback hero khi chưa có banner */
-        <section className="relative h-screen flex items-center pt-20 overflow-hidden bg-neutral-950 text-white">
+            {/* Dot Indicators */}
+            {carouselBanners.length > 1 && (
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+                {carouselBanners.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentBannerIndex(idx)}
+                    className={`rounded-full transition-all duration-300 ${idx === currentBannerIndex ? 'bg-orange-500 w-8 h-2.5' : 'bg-white/40 w-2.5 h-2.5 hover:bg-white/70'}`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Progress bar */}
+            {carouselBanners.length > 1 && !isHoveringCarousel && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10 z-20">
+                <motion.div
+                  key={`progress-${currentBannerIndex}`}
+                  className="h-full bg-orange-500"
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: intervalMs / 1000, ease: 'linear' }}
+                />
+              </div>
+            )}
+          </section>
+        ) : (
+          /* Fallback hero khi chưa có banner */
+        <section className="relative h-[85vh] max-h-[900px] min-h-[600px] flex items-center pt-20 overflow-hidden bg-neutral-950 text-white">
           <div className="absolute top-0 right-0 w-1/2 h-full opacity-30">
-            <div className="absolute inset-0 bg-gradient-to-l from-orange-500/20 to-transparent blur-3xl"></div>
-          </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-black tracking-tighter text-white/5 whitespace-nowrap z-0 pointer-events-none select-none">
-            VANGUARD
-          </div>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-2xl"
-            >
-              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-8 border border-white/10">
-                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                <span className="text-sm font-medium tracking-wide uppercase">
-                  {language === 'vi' ? 'Bộ sưu tập mới' : 'New Collection'}
-                </span>
+              <div className="absolute inset-0 bg-gradient-to-l from-orange-500/20 to-transparent blur-3xl"></div>
+            </div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-black tracking-tighter text-white/5 whitespace-nowrap z-0 pointer-events-none select-none">
+              VANGUARD
+            </div>
+            {showHero && (
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="max-w-2xl"
+                >
+                  <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-8 border border-white/10">
+                    <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                    <span className="text-sm font-medium tracking-wide uppercase">
+                      {language === 'vi' ? 'Bộ sưu tập mới' : 'New Collection'}
+                    </span>
+                  </div>
+                  <h1
+                    className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
+                    dangerouslySetInnerHTML={{
+                      __html: language === 'vi'
+                        ? (settings?.homeHeroTitleVi?.replace('[HIDDEN]', '') || 'ĐỊNH HÌNH \n <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PHONG CÁCH</span> CỦA BẠN.')
+                        : (settings?.homeHeroTitleEn?.replace('[HIDDEN]', '') || 'DEFINE \n YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">STYLE</span>.')
+                    }}
+                  />
+                  <div
+                    className="text-lg text-neutral-400 mb-10 leading-relaxed max-w-xl"
+                    dangerouslySetInnerHTML={{ __html: language === 'vi' ? (settings?.homeShortDescVi || 'Khám phá những mẫu giày thể thao cao cấp nhất.') : (settings?.homeShortDescEn || 'Discover our premium sneakers collection.') }}
+                  />
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Link href="/shop" className="group flex items-center justify-center bg-white text-black font-bold text-lg px-8 py-4 rounded-full hover:bg-neutral-200 transition-all">
+                      {t('buyNow')}
+                      <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                    <Link href="/about" className="flex items-center justify-center bg-transparent border border-white/20 text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-white/10 transition-all">
+                      {language === 'vi' ? 'Khám Phá Vanguard' : 'Explore Vanguard'}
+                    </Link>
+                  </div>
+                </motion.div>
               </div>
-              <h1
-                className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
-                dangerouslySetInnerHTML={{
-                  __html: language === 'vi'
-                    ? (settings?.homeHeroTitleVi || 'ĐỊNH HÌNH \n <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PHONG CÁCH</span> CỦA BẠN.')
-                    : (settings?.homeHeroTitleEn || 'DEFINE \n YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">STYLE</span>.')
-                }}
-              />
-              <div
-                className="text-lg text-neutral-400 mb-10 leading-relaxed max-w-xl"
-                dangerouslySetInnerHTML={{ __html: language === 'vi' ? (settings?.homeShortDescVi || 'Khám phá những mẫu giày thể thao cao cấp nhất.') : (settings?.homeShortDescEn || 'Discover our premium sneakers collection.') }}
-              />
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/shop" className="group flex items-center justify-center bg-white text-black font-bold text-lg px-8 py-4 rounded-full hover:bg-neutral-200 transition-all">
-                  {t('buyNow')}
-                  <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link href="/about" className="flex items-center justify-center bg-transparent border border-white/20 text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-white/10 transition-all">
-                  {language === 'vi' ? 'Khám Phá Vanguard' : 'Explore Vanguard'}
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </section>
+            )}
+          </section>
       )}
 
       {/* Marquee Features */}

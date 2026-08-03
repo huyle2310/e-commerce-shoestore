@@ -102,7 +102,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div key={item.key} className="space-y-1">
                   <button
                     onClick={() => toggleMenu(item.key!)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors ${isChildActive ? 'bg-neutral-900 text-white font-semibold' : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isChildActive ? 'bg-neutral-900 text-white font-semibold' : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
                       }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -138,7 +138,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.path}
                 href={item.path}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${pathname === item.path ? 'bg-orange-500 text-white font-semibold shadow-lg shadow-orange-500/20' : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${pathname === item.path ? 'bg-orange-500 text-white font-semibold shadow-lg shadow-orange-500/20' : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
                   }`}
               >
                 {item.icon}
@@ -155,7 +155,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               logout();
               router.push('/login');
             }}
-            className="flex items-center space-x-3 px-4 py-3 w-full rounded-xl text-neutral-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 w-full rounded-lg text-neutral-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
           >
             <LogOut size={20} />
             <span>Đăng xuất</span>

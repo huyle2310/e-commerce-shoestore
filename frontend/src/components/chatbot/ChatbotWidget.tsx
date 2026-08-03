@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { MessageCircle, X, Send, Bot, User, Loader2, Trash2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Loader2, Trash2, Phone } from 'lucide-react';
 import { useLanguageStore } from '@/store/languageStore';
 import vi from '@/i18n/vi.json';
 import en from '@/i18n/en.json';
@@ -50,7 +50,7 @@ export default function ChatbotWidget() {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Khung Chat */}
       {isOpen && (
-        <div className="bg-white w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] mb-4 rounded-2xl shadow-2xl border border-neutral-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-300">
+        <div className="bg-white w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] mb-4 rounded-xl shadow-2xl border border-neutral-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-300">
           {/* Header */}
           <div className="bg-neutral-900 text-white p-4 flex justify-between items-center">
             <div className="flex items-center space-x-2">
@@ -95,7 +95,7 @@ export default function ChatbotWidget() {
 
             {messages.map(m => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${m.role === 'user'
+                <div className={`max-w-[85%] rounded-xl px-4 py-2 text-sm ${m.role === 'user'
                   ? 'bg-orange-500 text-white rounded-tr-sm'
                   : 'bg-white border border-neutral-200 text-neutral-800 rounded-tl-sm shadow-sm'
                   }`}>
@@ -152,7 +152,7 @@ export default function ChatbotWidget() {
 
             {isLoading && messages[messages.length - 1]?.role === 'user' && (
               <div className="flex justify-start">
-                <div className="bg-white border border-neutral-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex space-x-1.5">
+                <div className="bg-white border border-neutral-200 rounded-xl rounded-tl-sm px-4 py-3 shadow-sm flex space-x-1.5">
                   <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce delay-150"></div>
                   <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce delay-300"></div>
@@ -186,24 +186,56 @@ export default function ChatbotWidget() {
 
       {/* Floating Buttons */}
       {!isOpen && (
-        <div className="flex flex-col items-center space-y-4">
-          <a
-            href="https://zalo.me/0987508715"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-white p-2.5 rounded-full shadow-xl hover:scale-105 transition-all duration-300 animate-in zoom-in"
-            title="Liên hệ tư vấn qua Zalo"
-          >
-            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo" className="w-9 h-9" />
-          </a>
+        <div className="flex flex-col items-end space-y-4">
+          {/* Nút Gọi điện */}
+          <div className="relative group flex items-center">
+            {/* Tooltip */}
+            <div className="absolute right-full mr-4 px-3 py-2 bg-neutral-800 text-white text-sm font-medium rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-md translate-x-2 group-hover:translate-x-0">
+              Gọi ngay cho chúng tôi
+              <div className="absolute top-1/2 -right-2 -translate-y-1/2 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-neutral-800"></div>
+            </div>
 
-          <button
-            onClick={() => setIsOpen(true)}
-            className="bg-neutral-900 text-white p-4 rounded-full shadow-xl hover:scale-105 hover:bg-orange-500 transition-all duration-300 animate-in zoom-in"
-            title="Trợ lí AI"
-          >
-            <MessageCircle size={24} />
-          </button>
+            <a
+              href="tel:0987508715"
+              className="flex items-center justify-center bg-green-500 text-white w-14 h-14 rounded-full shadow-xl hover:scale-105 transition-transform duration-300 animate-in zoom-in"
+            >
+              <Phone size={26} className="animate-wiggle" />
+            </a>
+          </div>
+
+          {/* Nút Zalo */}
+          <div className="relative group flex items-center">
+            {/* Tooltip */}
+            <div className="absolute right-full mr-4 px-3 py-2 bg-neutral-800 text-white text-sm font-medium rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-md translate-x-2 group-hover:translate-x-0">
+              Chat với chúng tôi qua Zalo
+              <div className="absolute top-1/2 -right-2 -translate-y-1/2 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-neutral-800"></div>
+            </div>
+
+            <a
+              href="https://zalo.me/0987508715"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center bg-white w-14 h-14 rounded-full shadow-xl hover:scale-105 transition-transform duration-300 animate-in zoom-in"
+            >
+              <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo" className="w-9 h-9 animate-wiggle" />
+            </a>
+          </div>
+
+          {/* Nút Chatbot */}
+          <div className="relative group flex items-center">
+            {/* Tooltip */}
+            <div className="absolute right-full mr-4 px-3 py-2 bg-neutral-800 text-white text-sm font-medium rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-md translate-x-2 group-hover:translate-x-0">
+              Chat với AI
+              <div className="absolute top-1/2 -right-2 -translate-y-1/2 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-neutral-800"></div>
+            </div>
+
+            <button
+              onClick={() => setIsOpen(true)}
+              className="flex items-center justify-center bg-neutral-900 text-white w-14 h-14 rounded-full shadow-xl hover:scale-105 hover:bg-orange-500 transition-all duration-300 animate-in zoom-in"
+            >
+              <MessageCircle size={28} className="animate-wiggle" />
+            </button>
+          </div>
         </div>
       )}
     </div>

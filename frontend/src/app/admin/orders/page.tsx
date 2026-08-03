@@ -11,6 +11,7 @@ export default function AdminOrdersPage() {
   const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>('ALL'); // ALL, PENDING, CONFIRMED, SHIPPING, DELIVERED, CANCELLED
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -66,25 +67,38 @@ export default function AdminOrdersPage() {
         <p className="text-neutral-500">Theo dõi và cập nhật trạng thái các đơn hàng</p>
       </div>
 
-      <div className="mb-6 flex space-x-2 overflow-x-auto pb-2">
-        {[
-          { id: 'ALL', label: 'Tất cả' },
-          { id: 'PENDING', label: 'Chờ xác nhận' },
-          { id: 'CONFIRMED', label: 'Chờ xuất kho' },
-          { id: 'SHIPPING', label: 'Đang giao' },
-          { id: 'DELIVERED', label: 'Đã giao' },
-          { id: 'CANCELLED', label: 'Đã hủy' }
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${
-              activeTab === tab.id ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div className="flex space-x-2 overflow-x-auto pb-2 xl:pb-0">
+          {[
+            { id: 'ALL', label: 'Tất cả' },
+            { id: 'PENDING', label: 'Chờ xác nhận' },
+            { id: 'CONFIRMED', label: 'Chờ xuất kho' },
+            { id: 'SHIPPING', label: 'Đang giao' },
+            { id: 'DELIVERED', label: 'Đã giao' },
+            { id: 'CANCELLED', label: 'Đã hủy' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${
+                activeTab === tab.id ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+          <input
+            type="text"
+            placeholder="Tìm theo mã ĐH, SĐT, Tên..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg outline-none focus:border-black focus:ring-1 focus:ring-black transition-all text-sm w-full xl:w-72"
+          />
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -109,7 +123,16 @@ export default function AdminOrdersPage() {
                 <td colSpan={6} className="p-8 text-center text-neutral-500">Không có đơn hàng nào</td>
               </tr>
             ) : (
-              orders.filter(o => activeTab === 'ALL' || o.orderStatus === activeTab).map(order => (
+              orders.filter(o => {
+                const matchTab = activeTab === 'ALL' || o.orderStatus === activeTab;
+                if (!matchTab) return false;
+                if (!searchQuery) return true;
+                const query = searchQuery.toLowerCase();
+                const matchPhone = o.phone && o.phone.includes(query);
+                const matchId = o.id && o.id.toLowerCase().includes(query);
+                const matchName = o.fullName && o.fullName.toLowerCase().includes(query);
+                return matchPhone || matchId || matchName;
+              }).map(order => (
                 <tr key={order.id} className="border-b border-neutral-100 hover:bg-neutral-50/50 transition-colors">
                   <td className="p-4 font-mono font-bold text-sm">#{order.id.split('-')[0].toUpperCase()}</td>
                   <td className="p-4">
@@ -168,7 +191,7 @@ export default function AdminOrdersPage() {
 
       {orderToCancel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 m-4 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 m-4 animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4 mx-auto">
               <XCircle className="w-6 h-6 text-red-600" />
             </div>
@@ -177,7 +200,7 @@ export default function AdminOrdersPage() {
             <div className="flex gap-3">
               <button 
                 onClick={() => setOrderToCancel(null)}
-                className="flex-1 px-4 py-2.5 rounded-xl font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition"
+                className="flex-1 px-4 py-2.5 rounded-lg font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition"
               >
                 Không, quay lại
               </button>
@@ -186,7 +209,7 @@ export default function AdminOrdersPage() {
                   executeStatusUpdate(orderToCancel, 'CANCELLED');
                   setOrderToCancel(null);
                 }}
-                className="flex-1 px-4 py-2.5 rounded-xl font-semibold bg-red-600 hover:bg-red-700 text-white transition"
+                className="flex-1 px-4 py-2.5 rounded-lg font-semibold bg-red-600 hover:bg-red-700 text-white transition"
               >
                 Xác nhận hủy
               </button>
@@ -210,7 +233,7 @@ export default function AdminOrdersPage() {
             
             <div className="p-6 overflow-y-auto flex-1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
+                <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-100">
                   <h4 className="font-bold mb-3 text-neutral-800 flex items-center"><User size={16} className="mr-2" /> Thông tin khách hàng</h4>
                   <div className="space-y-2 text-sm">
                     <p><span className="text-neutral-500">Họ tên:</span> <span className="font-medium">{selectedOrder.fullName}</span></p>
@@ -219,7 +242,7 @@ export default function AdminOrdersPage() {
                     {selectedOrder.orderNote && <p><span className="text-neutral-500">Ghi chú:</span> <span className="font-medium">{selectedOrder.orderNote}</span></p>}
                   </div>
                 </div>
-                <div className="bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
+                <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-100">
                   <h4 className="font-bold mb-3 text-neutral-800 flex items-center"><CreditCard size={16} className="mr-2" /> Thông tin thanh toán</h4>
                   <div className="space-y-2 text-sm">
                     <p><span className="text-neutral-500">Phương thức:</span> <span className="font-medium">{selectedOrder.paymentMethod}</span></p>
@@ -232,9 +255,9 @@ export default function AdminOrdersPage() {
               <h4 className="font-bold mb-4 text-lg">Danh sách sản phẩm</h4>
               <div className="space-y-4">
                 {selectedOrder.items && selectedOrder.items.map((item: any) => (
-                  <div key={item.id} className="flex items-center justify-between p-4 border border-neutral-100 rounded-2xl hover:bg-neutral-50 transition-colors">
+                  <div key={item.id} className="flex items-center justify-between p-4 border border-neutral-100 rounded-xl hover:bg-neutral-50 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-white border border-neutral-200 rounded-xl overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-16 bg-white border border-neutral-200 rounded-lg overflow-hidden flex-shrink-0">
                         {item.imageUrl ? (
                           <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                         ) : (
@@ -275,7 +298,7 @@ export default function AdminOrdersPage() {
             <div className="p-6 border-t border-neutral-100 bg-neutral-50 flex justify-end">
               <button 
                 onClick={() => setSelectedOrder(null)}
-                className="px-6 py-2.5 bg-black text-white font-bold rounded-xl hover:bg-neutral-800 transition-colors"
+                className="px-6 py-2.5 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-colors"
               >
                 Đóng
               </button>

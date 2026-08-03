@@ -53,9 +53,9 @@ export default function CartPage() {
                   className={`flex flex-col sm:flex-row bg-white p-6 rounded-3xl border border-neutral-100 gap-6 ${item.stockQuantity === 0 ? 'opacity-60' : ''}`}
                 >
                   <div className="relative shrink-0">
-                    <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.productName} className="w-24 h-24 object-cover rounded-2xl bg-neutral-100" />
+                    <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.productName} className="w-24 h-24 object-cover rounded-xl bg-neutral-100" />
                     {item.stockQuantity === 0 && (
-                      <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center rounded-2xl border border-red-500/20">
+                      <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center rounded-xl border border-red-500/20">
                         <span className="bg-neutral-400  text-white text-[12px] font-black tracking-wider px-2 py-1 ">ĐÃ HẾT</span>
                       </div>
                     )}

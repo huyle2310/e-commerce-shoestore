@@ -113,10 +113,10 @@ export default function VouchersPage() {
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm flex flex-col gap-2">
-              <Link href="/profile" className="font-bold flex items-center gap-2 text-neutral-500 hover:bg-neutral-50 p-3 rounded-xl transition-colors">
+              <Link href="/profile" className="font-bold flex items-center gap-2 text-neutral-500 hover:bg-neutral-50 p-3 rounded-lg transition-colors">
                 <User size={18} /> Thông tin cá nhân
               </Link>
-              <Link href="/profile/vouchers" className="font-bold flex items-center gap-2 text-black bg-neutral-100 p-3 rounded-xl">
+              <Link href="/profile/vouchers" className="font-bold flex items-center gap-2 text-black bg-neutral-100 p-3 rounded-lg">
                 <Tag size={18} /> Kho Voucher
               </Link>
             </div>
@@ -136,12 +136,12 @@ export default function VouchersPage() {
                   value={voucherCode} 
                   onChange={(e) => setVoucherCode(e.target.value)} 
                   placeholder="Nhập mã giảm giá..."
-                  className="flex-1 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none uppercase font-bold tracking-wide" 
+                  className="flex-1 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none uppercase font-bold tracking-wide" 
                 />
                 <button 
                   type="submit" 
                   disabled={claiming}
-                  className="px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70 flex-shrink-0"
+                  className="px-8 py-3 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70 flex-shrink-0"
                 >
                   {claiming ? 'Đang xử lý...' : 'Lưu mã'}
                 </button>
@@ -155,7 +155,7 @@ export default function VouchersPage() {
               </h3>
               
               {myVouchers.length === 0 ? (
-                <div className="text-center py-8 bg-neutral-50 rounded-2xl">
+                <div className="text-center py-8 bg-neutral-50 rounded-xl">
                   <Ticket size={32} className="mx-auto text-neutral-300 mb-3" />
                   <p className="text-neutral-500 font-medium">Bạn chưa có mã giảm giá nào</p>
                 </div>
@@ -166,7 +166,7 @@ export default function VouchersPage() {
                     return (
                       <div
                         key={v.id}
-                        className="relative overflow-hidden rounded-2xl border-2 border-solid border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-4"
+                        className="relative overflow-hidden rounded-xl border-2 border-solid border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-4"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
@@ -193,7 +193,7 @@ export default function VouchersPage() {
                               navigator.clipboard.writeText(v.code);
                               toast.success('Đã sao chép mã!');
                             }}
-                            className="flex-shrink-0 flex flex-col items-center gap-1 bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-xl transition-colors"
+                            className="flex-shrink-0 flex flex-col items-center gap-1 bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition-colors"
                             title="Sao chép mã"
                           >
                             <Copy size={16} />
@@ -214,7 +214,7 @@ export default function VouchersPage() {
               </h3>
               
               {availableVouchers.length === 0 ? (
-                <div className="text-center py-8 bg-neutral-50 rounded-2xl">
+                <div className="text-center py-8 bg-neutral-50 rounded-xl">
                   <Tag size={32} className="mx-auto text-neutral-300 mb-3" />
                   <p className="text-neutral-500 font-medium">Hiện không có mã giảm giá mới nào</p>
                 </div>
@@ -225,7 +225,7 @@ export default function VouchersPage() {
                     return (
                       <div
                         key={v.id}
-                        className={`relative overflow-hidden rounded-2xl border-2 border-dashed ${isClaimed ? 'border-neutral-200 bg-neutral-50 opacity-70' : 'border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50'} p-4`}
+                        className={`relative overflow-hidden rounded-xl border-2 border-dashed ${isClaimed ? 'border-neutral-200 bg-neutral-50 opacity-70' : 'border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50'} p-4`}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
@@ -247,14 +247,14 @@ export default function VouchersPage() {
                           {!isClaimed ? (
                             <button
                               onClick={() => handleClaimVoucherFromList(v.code)}
-                              className="flex-shrink-0 flex flex-col items-center gap-1 bg-black hover:bg-neutral-800 text-white px-3 py-2 rounded-xl transition-colors"
+                              className="flex-shrink-0 flex flex-col items-center gap-1 bg-black hover:bg-neutral-800 text-white px-3 py-2 rounded-lg transition-colors"
                               title="Lưu mã"
                             >
                               <Plus size={16} />
                               <span className="text-xs font-bold">Lưu</span>
                             </button>
                           ) : (
-                            <div className="flex-shrink-0 flex flex-col items-center gap-1 bg-neutral-200 text-neutral-500 px-3 py-2 rounded-xl">
+                            <div className="flex-shrink-0 flex flex-col items-center gap-1 bg-neutral-200 text-neutral-500 px-3 py-2 rounded-lg">
                               <CheckCircle2 size={16} />
                               <span className="text-xs font-bold">Đã lưu</span>
                             </div>

@@ -339,10 +339,10 @@ export default function ProfilePage() {
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm flex flex-col gap-2">
-              <Link href="/profile" className="font-bold flex items-center gap-2 text-black bg-neutral-100 p-3 rounded-xl">
+              <Link href="/profile" className="font-bold flex items-center gap-2 text-black bg-neutral-100 p-3 rounded-lg">
                 <User size={18} /> Thông tin cá nhân
               </Link>
-              <Link href="/profile/vouchers" className="font-bold flex items-center gap-2 text-neutral-500 hover:bg-neutral-50 p-3 rounded-xl transition-colors">
+              <Link href="/profile/vouchers" className="font-bold flex items-center gap-2 text-neutral-500 hover:bg-neutral-50 p-3 rounded-lg transition-colors">
                 <Tag size={18} /> Kho Voucher
               </Link>
             </div>
@@ -371,7 +371,7 @@ export default function ProfilePage() {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
 
@@ -384,12 +384,12 @@ export default function ProfilePage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4 border border-neutral-200 p-4 rounded-xl bg-neutral-50">
+                <div className="space-y-4 border border-neutral-200 p-4 rounded-lg bg-neutral-50">
                   <label className="block text-sm font-medium text-neutral-800 flex items-center">
                     <MapPin size={16} className="mr-2 text-orange-500" /> Cập nhật địa chỉ giao hàng
                   </label>
@@ -404,7 +404,7 @@ export default function ProfilePage() {
                     <div>
                       <label className="block text-xs font-medium text-neutral-500 mb-1">Tỉnh/Thành phố</label>
                       <select 
-                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm" 
+                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none text-sm" 
                         onChange={handleProvinceChange} 
                         value={selectedProvince ? selectedProvince.code : ""}
                       >
@@ -415,7 +415,7 @@ export default function ProfilePage() {
                     <div>
                       <label className="block text-xs font-medium text-neutral-500 mb-1">Xã/Phường, Quận/Huyện</label>
                       <select 
-                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm" 
+                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none text-sm" 
                         onChange={handleWardChange} 
                         value={selectedWard ? selectedWard.code : ""} 
                         disabled={!selectedProvince}
@@ -433,7 +433,7 @@ export default function ProfilePage() {
                       value={formData.streetAddress}
                       onChange={handleChange}
                       placeholder="Nhập số nhà, tên đường..."
-                      className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                      className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none text-sm"
                     />
                   </div>
                   <p className="text-xs text-neutral-400 italic">Để trống các trường này nếu bạn không muốn thay đổi địa chỉ giao hàng hiện tại.</p>
@@ -443,7 +443,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={savingInfo}
-                    className="flex items-center justify-center px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70"
+                    className="flex items-center justify-center px-8 py-3 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70"
                   >
                     {savingInfo ? <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div> : <><Save size={18} className="mr-2" /> Lưu thông tin</>}
                   </button>
@@ -468,14 +468,14 @@ export default function ProfilePage() {
                       value={emailData.newEmail}
                       onChange={handleEmailChange}
                       placeholder="Nhập email mới..."
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                   <div className="flex justify-end pt-2">
                     <button
                       type="submit"
                       disabled={isRequestingEmail}
-                      className="flex items-center justify-center px-6 py-3 bg-neutral-200 text-neutral-800 font-bold rounded-xl hover:bg-neutral-300 transition-all disabled:opacity-70"
+                      className="flex items-center justify-center px-6 py-3 bg-neutral-200 text-neutral-800 font-bold rounded-lg hover:bg-neutral-300 transition-all disabled:opacity-70"
                     >
                       {isRequestingEmail ? <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-neutral-800"></div> : 'Gửi mã xác nhận (OTP)'}
                     </button>
@@ -483,7 +483,7 @@ export default function ProfilePage() {
                 </form>
               ) : (
                 <form onSubmit={handleConfirmEmailChange} className="space-y-4">
-                  <div className="p-4 bg-green-50 border border-green-100 text-green-700 rounded-xl flex items-start mb-4">
+                  <div className="p-4 bg-green-50 border border-green-100 text-green-700 rounded-lg flex items-start mb-4">
                     <CheckCircle2 size={20} className="mr-3 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-sm">Mã OTP đã được gửi!</p>
@@ -500,7 +500,7 @@ export default function ProfilePage() {
                       onChange={handleEmailChange}
                       placeholder="------"
                       maxLength={6}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-center font-bold tracking-[0.5em] text-xl"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none text-center font-bold tracking-[0.5em] text-xl"
                     />
                   </div>
                   <div className="flex justify-between items-center pt-2">
@@ -510,7 +510,7 @@ export default function ProfilePage() {
                     <button
                       type="submit"
                       disabled={isConfirmingEmail}
-                      className="flex items-center justify-center px-6 py-3 bg-black text-white font-bold rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70"
+                      className="flex items-center justify-center px-6 py-3 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70"
                     >
                       {isConfirmingEmail ? <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div> : 'Xác nhận đổi'}
                     </button>
@@ -533,7 +533,7 @@ export default function ProfilePage() {
                     name="oldPassword"
                     value={passwordData.oldPassword}
                     onChange={handlePasswordChange}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none"
                   />
                 </div>
 
@@ -547,7 +547,7 @@ export default function ProfilePage() {
                       value={passwordData.newPassword}
                       onChange={handlePasswordChange}
                       minLength={6}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                   <div>
@@ -559,7 +559,7 @@ export default function ProfilePage() {
                       value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
                       minLength={6}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                 </div>
@@ -568,7 +568,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={savingPassword}
-                    className="flex items-center justify-center px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-neutral-800 transition-all disabled:opacity-70"
+                    className="flex items-center justify-center px-8 py-3 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-all disabled:opacity-70"
                   >
                     {savingPassword ? <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div> : 'Đổi mật khẩu'}
                   </button>

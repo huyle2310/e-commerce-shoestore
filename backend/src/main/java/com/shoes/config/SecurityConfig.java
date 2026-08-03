@@ -52,18 +52,18 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> 
                 auth.requestMatchers(
-                        "/api/v1/auth/**",
-                        "/api/v1/products/**",
-                        "/api/v1/categories/**",
-                        "/api/v1/brands/**",
-                        "/api/v1/banners/**",
-                        "/api/v1/blogs/**",
-                        "/api/v1/settings/**",
-                        "/api/v1/files/**",
+                        "/api/v1/auth", "/api/v1/auth/**",
+                        "/api/v1/products", "/api/v1/products/**",
+                        "/api/v1/categories", "/api/v1/categories/**",
+                        "/api/v1/brands", "/api/v1/brands/**",
+                        "/api/v1/banners", "/api/v1/banners/**",
+                        "/api/v1/blogs", "/api/v1/blogs/**",
+                        "/api/v1/settings", "/api/v1/settings/**",
+                        "/api/v1/files", "/api/v1/files/**",
                         "/api/v1/orders/guest",
                         "/api/v1/vouchers/check",
-                        "/api/v1/payment/**",
-                        "/uploads/**"
+                        "/api/v1/payment", "/api/v1/payment/**",
+                        "/uploads", "/uploads/**"
                     ).permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()

@@ -95,7 +95,7 @@ export default function NewAuditReceiptPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-neutral-200">
+          <div className="bg-white p-6 rounded-lg border border-neutral-200">
             <h3 className="font-bold text-lg mb-4">Danh sách kiểm đếm</h3>
             
             <div className="relative mb-6 z-10">
@@ -171,7 +171,7 @@ export default function NewAuditReceiptPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-neutral-200 sticky top-24">
+          <div className="bg-white p-6 rounded-lg border border-neutral-200 sticky top-24">
             <h3 className="font-bold text-lg mb-4">Thông tin Phiếu</h3>
             
             <div className="space-y-4">

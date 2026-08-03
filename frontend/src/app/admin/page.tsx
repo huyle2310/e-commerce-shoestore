@@ -95,7 +95,7 @@ export default function AdminDashboard() {
             className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className={`p-3 rounded-2xl text-white ${card.color}`}>
+              <div className={`p-3 rounded-xl text-white ${card.color}`}>
                 {card.icon}
               </div>
               <span className="flex items-center text-sm font-bold text-green-500 bg-green-50 px-2.5 py-1 rounded-full">
@@ -215,9 +215,9 @@ export default function AdminDashboard() {
                     <td className="p-4 font-bold text-neutral-400">{index + 1}</td>
                     <td className="p-4">
                       {product.images && product.images.length > 0 ? (
-                        <img src={product.images.find((img: any) => img.isPrimary)?.imageUrl || product.images[0].imageUrl} alt={product.nameVi} className="w-12 h-12 object-cover rounded-xl" />
+                        <img src={product.images.find((img: any) => img.isPrimary)?.imageUrl || product.images[0].imageUrl} alt={product.nameVi} className="w-12 h-12 object-cover rounded-lg" />
                       ) : (
-                        <div className="w-12 h-12 bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-400">
+                        <div className="w-12 h-12 bg-neutral-100 rounded-lg flex items-center justify-center text-neutral-400">
                           <Package size={20} />
                         </div>
                       )}

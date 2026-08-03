@@ -29,4 +29,5 @@ public class ProductResponse {
     private Double averageRating;
     private Integer totalReviews;
     private Integer soldQuantity;
+    private java.time.LocalDateTime createdAt;
 }

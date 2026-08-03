@@ -59,7 +59,7 @@ export default function ContactPage() {
               <h2 className="text-3xl font-black mb-8">{t.contact.info_title}</h2>
               <div className="space-y-6">
                 <div className="flex items-start group">
-                  <div className="w-14 h-14 bg-white border border-neutral-200 rounded-2xl flex items-center justify-center mr-6 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors flex-shrink-0">
+                  <div className="w-14 h-14 bg-white border border-neutral-200 rounded-xl flex items-center justify-center mr-6 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors flex-shrink-0">
                     <MapPin size={24} />
                   </div>
                   <div>
@@ -69,7 +69,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start group">
-                  <div className="w-14 h-14 bg-white border border-neutral-200 rounded-2xl flex items-center justify-center mr-6 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors flex-shrink-0">
+                  <div className="w-14 h-14 bg-white border border-neutral-200 rounded-xl flex items-center justify-center mr-6 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors flex-shrink-0">
                     <Phone size={24} />
                   </div>
                   <div>
@@ -79,7 +79,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start group">
-                  <div className="w-14 h-14 bg-white border border-neutral-200 rounded-2xl flex items-center justify-center mr-6 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors flex-shrink-0">
+                  <div className="w-14 h-14 bg-white border border-neutral-200 rounded-xl flex items-center justify-center mr-6 group-hover:border-orange-500 group-hover:text-orange-500 transition-colors flex-shrink-0">
                     <Mail size={24} />
                   </div>
                   <div>
@@ -89,7 +89,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-orange-50 border border-orange-100 rounded-2xl">
+              <div className="mt-8 p-6 bg-orange-50 border border-orange-100 rounded-xl">
                 <p className="text-orange-800 font-medium leading-relaxed">
                   {t.contact.wholesale_note}
                 </p>

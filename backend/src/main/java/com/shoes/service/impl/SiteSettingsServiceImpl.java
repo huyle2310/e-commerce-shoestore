@@ -36,6 +36,7 @@ public class SiteSettingsServiceImpl implements SiteSettingsService {
         settings.setHomeShortDescVi(request.getHomeShortDescVi());
         settings.setHomeShortDescEn(request.getHomeShortDescEn());
         settings.setHomeBannersJson(request.getHomeBannersJson());
+        settings.setBannerIntervalMs(request.getBannerIntervalMs());
         settings.setHomeFeaturedImagesJson(request.getHomeFeaturedImagesJson());
         
         settings.setAboutTitleVi(request.getAboutTitleVi());
@@ -49,6 +50,10 @@ public class SiteSettingsServiceImpl implements SiteSettingsService {
         settings.setContactEmail(request.getContactEmail());
         settings.setContactAddressVi(request.getContactAddressVi());
         settings.setContactAddressEn(request.getContactAddressEn());
+        settings.setShippingPolicyVi(request.getShippingPolicyVi());
+        settings.setShippingPolicyEn(request.getShippingPolicyEn());
+        settings.setReturnPolicyVi(request.getReturnPolicyVi());
+        settings.setReturnPolicyEn(request.getReturnPolicyEn());
         settings.setSocialLinksJson(request.getSocialLinksJson());
 
         // --- DYNAMIC HOMEPAGE ---
@@ -78,6 +83,7 @@ public class SiteSettingsServiceImpl implements SiteSettingsService {
                 .homeShortDescVi(settings.getHomeShortDescVi())
                 .homeShortDescEn(settings.getHomeShortDescEn())
                 .homeBannersJson(settings.getHomeBannersJson())
+                .bannerIntervalMs(settings.getBannerIntervalMs())
                 .homeFeaturedImagesJson(settings.getHomeFeaturedImagesJson())
                 .aboutTitleVi(settings.getAboutTitleVi())
                 .aboutTitleEn(settings.getAboutTitleEn())
@@ -89,6 +95,10 @@ public class SiteSettingsServiceImpl implements SiteSettingsService {
                 .contactEmail(settings.getContactEmail())
                 .contactAddressVi(settings.getContactAddressVi())
                 .contactAddressEn(settings.getContactAddressEn())
+                .shippingPolicyVi(settings.getShippingPolicyVi())
+                .shippingPolicyEn(settings.getShippingPolicyEn())
+                .returnPolicyVi(settings.getReturnPolicyVi())
+                .returnPolicyEn(settings.getReturnPolicyEn())
                 .socialLinksJson(settings.getSocialLinksJson())
                 .homeHeroTitleVi(settings.getHomeHeroTitleVi())
                 .homeHeroTitleEn(settings.getHomeHeroTitleEn())

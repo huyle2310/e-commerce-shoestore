@@ -180,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = Product.builder()
                 .nameVi(request.getNameVi())
                 .nameEn(request.getNameEn() != null && !request.getNameEn().isEmpty() ? request.getNameEn() : request.getNameVi())
-                .slug(request.getNameVi().toLowerCase().replaceAll("[^a-z0-9]+", "-"))
+                .slug(generateSlug(request.getNameVi()))
                 .descriptionVi(request.getDescriptionVi())
                 .descriptionEn(request.getDescriptionEn() != null && !request.getDescriptionEn().isEmpty() ? request.getDescriptionEn() : request.getDescriptionVi())
                 .basePrice(request.getBasePrice())
@@ -238,6 +238,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.setNameVi(request.getNameVi());
         product.setNameEn(request.getNameEn() != null && !request.getNameEn().isEmpty() ? request.getNameEn() : request.getNameVi());
+        product.setSlug(generateSlug(request.getNameVi()));
         product.setDescriptionVi(request.getDescriptionVi());
         product.setDescriptionEn(request.getDescriptionEn() != null && !request.getDescriptionEn().isEmpty() ? request.getDescriptionEn() : request.getDescriptionVi());
         product.setBasePrice(request.getBasePrice());
@@ -383,7 +384,24 @@ public class ProductServiceImpl implements ProductService {
         response.setAverageRating(avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : 0.0);
         response.setTotalReviews(totalReviews != null ? totalReviews : 0);
         response.setSoldQuantity(soldQuantity != null ? soldQuantity : 0);
+        response.setCreatedAt(product.getCreatedAt());
 
         return response;
+    }
+
+    private String generateSlug(String input) {
+        if (input == null || input.isEmpty()) {
+            return java.util.UUID.randomUUID().toString();
+        }
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+        String slug = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        slug = slug.toLowerCase();
+        slug = slug.replace("đ", "d");
+        slug = slug.replaceAll("[^a-z0-9]+", "-");
+        slug = slug.replaceAll("^-+|-+$", "");
+        if (slug.isEmpty()) {
+            slug = java.util.UUID.randomUUID().toString();
+        }
+        return slug;
     }
 }

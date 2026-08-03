@@ -9,7 +9,13 @@ import ProductCard, { ProductProps } from '@/components/ui/ProductCard';
 
 function ShopContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('category') || '';
+  const rawCategory = searchParams.get('category') || '';
+  const isSlugFormat = /^[a-zA-Z0-9-]+$/.test(rawCategory);
+  const initialCategory = isSlugFormat ? rawCategory.toUpperCase().replace(/-/g, '_') : rawCategory;
+
+  const rawBrand = searchParams.get('brand') || '';
+  const initialBrand = rawBrand; // we'll match by brand ID or slug below
+
   const searchQuery = searchParams.get('q') || '';
 
   const [products, setProducts] = useState<ProductProps[]>([]);
@@ -23,7 +29,7 @@ function ShopContent() {
 
   // Filters State
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(initialBrand ? [initialBrand] : []);
   const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
@@ -39,7 +45,8 @@ function ShopContent() {
   // Sync state if URL changes
   useEffect(() => {
     if (initialCategory) setSelectedCategory(initialCategory);
-  }, [initialCategory]);
+    if (initialBrand) setSelectedBrands([initialBrand]);
+  }, [initialCategory, initialBrand]);
 
   // Check if pending price differs from applied
   useEffect(() => {
@@ -88,12 +95,31 @@ function ShopContent() {
 
         // Category / Target Audience filtering
         if (selectedCategory) {
-          data = data.filter(p => p.targetAudience === selectedCategory);
+          const normalizedSelected = selectedCategory.toUpperCase().replace(/-/g, '_');
+          data = data.filter(p =>
+            p.targetAudience === selectedCategory ||
+            p.targetAudience === normalizedSelected ||
+            p.category?.slug === selectedCategory ||
+            // @ts-ignore
+            p.category?.id === selectedCategory ||
+            p.category?.slug === rawCategory
+          );
         }
 
         // Brand filtering
         if (selectedBrands.length > 0) {
-          data = data.filter(p => p.brand && selectedBrands.includes(p.brand.id));
+          const selectedBrandsLower = selectedBrands.map(b => b.toLowerCase());
+          data = data.filter(p => {
+            if (!p.brand) return false;
+            const brandId = p.brand.id;
+            const brandSlug = (p.brand as any).slug;
+            const generatedSlug = p.brand.name ? p.brand.name.toLowerCase().replace(/\s+/g, '-') : '';
+
+            return selectedBrands.includes(brandId) ||
+              (brandSlug && selectedBrandsLower.includes(brandSlug.toLowerCase())) ||
+              (generatedSlug && selectedBrandsLower.includes(generatedSlug)) ||
+              (p.brand.name && selectedBrandsLower.includes(p.brand.name.toLowerCase()));
+          });
         }
 
         // Color filtering
@@ -106,7 +132,20 @@ function ShopContent() {
 
         // Sorting
         if (sortBy === 'newest') {
-          data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          data.sort((a: any, b: any) => {
+            const parseDate = (d: any) => {
+              if (!d) return 0;
+              if (Array.isArray(d)) {
+                // Java LocalDateTime array: [year, month, day, hour, minute, second, nano]
+
+                return new Date(d[0], d[1] - 1, d[2], d[3] || 0, d[4] || 0, d[5] || 0).getTime();
+              }
+              return new Date(d).getTime();
+            };
+            const timeA = parseDate(a.createdAt);
+            const timeB = parseDate(b.createdAt);
+            return timeB - timeA;
+          });
         } else if (sortBy === 'price-asc') {
           data.sort((a, b) => a.basePrice - b.basePrice);
         } else if (sortBy === 'price-desc') {
@@ -123,7 +162,7 @@ function ShopContent() {
       }
     };
     fetchProducts();
-  // Only appliedPriceRange triggers fetch (not pendingPriceRange)
+    // Only appliedPriceRange triggers fetch (not pendingPriceRange)
   }, [searchQuery, selectedCategory, selectedBrands, selectedColors, appliedPriceRange, sortBy]);
 
   const handleApplyPriceFilter = () => {
@@ -288,7 +327,7 @@ function ShopContent() {
                   {/* Apply Price Filter Button */}
                   <button
                     onClick={handleApplyPriceFilter}
-                    className={`w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${priceRangeChanged
+                    className={`w-full py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${priceRangeChanged
                       ? 'bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/30 animate-pulse'
                       : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                       }`}

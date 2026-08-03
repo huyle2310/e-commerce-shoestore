@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Eye, EyeOff, LayoutTemplate } from 'lucide-react';
 import api from '@/lib/axios';
 import { useSiteSettingsStore } from '@/store/siteSettingsStore';
 import ImageUpload from '@/components/ui/ImageUpload';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
 
 function SiteSettingsContent() {
   const { settings, fetchSettings, loading } = useSiteSettingsStore();
@@ -136,6 +140,13 @@ function SiteSettingsContent() {
     }
   };
 
+  const handleQuillChange = (field: string, content: string) => {
+    setFormData((prev: any) => {
+      if (prev[field] === content) return prev;
+      return { ...prev, [field]: content };
+    });
+  };
+
   // Generic Array Handlers
   const handleArrayChange = (field: string, index: number, key: string, value: any) => {
     const newArray = [...formData[field]];
@@ -184,13 +195,13 @@ function SiteSettingsContent() {
         </div>
 
         <div className="flex px-6 pt-4 space-x-2 border-b border-neutral-100 overflow-x-auto flex-shrink-0">
-          {['home', 'services', 'menu', 'about', 'contact'].map(t => (
+          {['home', 'services', 'menu', 'about', 'contact', 'policies'].map(t => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
               className={`px-4 py-3 font-bold border-b-2 whitespace-nowrap transition-all ${activeTab === t ? 'border-orange-500 text-orange-500' : 'border-transparent text-neutral-400 hover:text-neutral-700'}`}
             >
-              {t === 'home' ? 'Trang chủ' : t === 'services' ? 'Cam kết (Marquee)' : t === 'menu' ? 'Thanh Menu' : t === 'about' ? 'Giới thiệu' : 'Liên hệ'}
+              {t === 'home' ? 'Trang chủ' : t === 'services' ? 'Cam kết (Marquee)' : t === 'menu' ? 'Thanh Menu' : t === 'about' ? 'Giới thiệu' : t === 'contact' ? 'Liên hệ' : 'Chính sách'}
             </button>
           ))}
         </div>
@@ -198,42 +209,67 @@ function SiteSettingsContent() {
         <div className="flex-1 overflow-y-auto p-6 relative pb-32">
           {activeTab === 'home' && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <label className="block font-bold text-neutral-900 mb-2">Logo Website URL</label>
                 <ImageUpload value={formData.logoUrl} onChange={(url) => setFormData({ ...formData, logoUrl: url })} />
               </div>
 
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100 space-y-4">
-                <h3 className="font-bold text-lg border-b border-neutral-200 pb-2">Khu vực Hero</h3>
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100 space-y-4">
+                <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
+                  <h3 className="font-bold text-lg">Khu vực Hero</h3>
+                  <label className="flex items-center cursor-pointer relative">
+                    <span className="mr-3 text-sm font-bold text-neutral-700">Hiển thị Hero Banner</span>
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={!formData.homeHeroTitleVi?.startsWith('[HIDDEN]')}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        let titleVi = formData.homeHeroTitleVi || '';
+                        let titleEn = formData.homeHeroTitleEn || '';
+                        if (checked) {
+                          titleVi = titleVi.replace('[HIDDEN]', '');
+                          titleEn = titleEn.replace('[HIDDEN]', '');
+                        } else {
+                          if (!titleVi.startsWith('[HIDDEN]')) titleVi = '[HIDDEN]' + titleVi;
+                          if (!titleEn.startsWith('[HIDDEN]')) titleEn = '[HIDDEN]' + titleEn;
+                        }
+                        setFormData({ ...formData, homeHeroTitleVi: titleVi, homeHeroTitleEn: titleEn });
+                      }}
+                    />
+                    <div className={`block w-12 h-6 rounded-full transition-colors ${!formData.homeHeroTitleVi?.startsWith('[HIDDEN]') ? 'bg-orange-500' : 'bg-neutral-300'}`}></div>
+                    <div className={`absolute right-0 w-4 h-4 rounded-full bg-white transition-transform ${!formData.homeHeroTitleVi?.startsWith('[HIDDEN]') ? '-translate-x-1' : '-translate-x-7'} top-1`}></div>
+                  </label>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề chính (VI)</label>
-                    <input type="text" value={formData.homeHeroTitleVi} onChange={e => setFormData({ ...formData, homeHeroTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeHeroTitleVi?.replace('[HIDDEN]', '') || ''} onChange={e => setFormData({ ...formData, homeHeroTitleVi: (formData.homeHeroTitleVi?.startsWith('[HIDDEN]') ? '[HIDDEN]' : '') + e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề chính (EN)</label>
-                    <input type="text" value={formData.homeHeroTitleEn} onChange={e => setFormData({ ...formData, homeHeroTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeHeroTitleEn?.replace('[HIDDEN]', '') || ''} onChange={e => setFormData({ ...formData, homeHeroTitleEn: (formData.homeHeroTitleEn?.startsWith('[HIDDEN]') ? '[HIDDEN]' : '') + e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Mô tả ngắn (VI)</label>
-                    <textarea value={formData.homeShortDescVi || ''} onChange={e => setFormData({ ...formData, homeShortDescVi: e.target.value })} className="w-full h-24 p-4 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500 resize-none" />
+                    <textarea value={formData.homeShortDescVi || ''} onChange={e => setFormData({ ...formData, homeShortDescVi: e.target.value })} className="w-full h-24 p-4 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 resize-none" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Mô tả ngắn (EN)</label>
-                    <textarea value={formData.homeShortDescEn || ''} onChange={e => setFormData({ ...formData, homeShortDescEn: e.target.value })} className="w-full h-24 p-4 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500 resize-none" />
+                    <textarea value={formData.homeShortDescEn || ''} onChange={e => setFormData({ ...formData, homeShortDescEn: e.target.value })} className="w-full h-24 p-4 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 resize-none" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg">Danh sách Ảnh Banners Hero</h3>
                   <button onClick={() => addArrayItem('homeBanners', { url: '', link: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Ảnh</button>
                 </div>
                 {/* Banner interval setting */}
-                <div className="mb-4 flex items-center gap-4 bg-orange-50 border border-orange-100 rounded-xl p-4">
+                <div className="mb-4 flex items-center gap-4 bg-orange-50 border border-orange-100 rounded-lg p-4">
                   <div className="flex-1">
                     <label className="block font-bold text-neutral-700 mb-1 text-sm">⏱ Thời gian hiển thị mỗi ảnh (giây)</label>
                     <p className="text-xs text-neutral-500 mb-2">Carousel tự động chuyển ảnh sau khoảng thời gian này (dừng khi hover)</p>
@@ -250,7 +286,7 @@ function SiteSettingsContent() {
                   </div>
                 </div>
                 {formData.homeBanners.map((item: any, idx: number) => (
-                  <div key={idx} className="flex gap-4 items-start bg-white p-4 rounded-xl border border-neutral-200 mb-3 shadow-sm">
+                  <div key={idx} className="flex gap-4 items-start bg-white p-4 rounded-lg border border-neutral-200 mb-3 shadow-sm">
                     <div className="flex-1 space-y-3">
                       <ImageUpload value={item.url} onChange={(url) => handleArrayChange('homeBanners', idx, 'url', url)} />
                       <input type="text" value={item.link} onChange={e => handleArrayChange('homeBanners', idx, 'link', e.target.value)} placeholder="Link khi click (Tùy chọn)" className="w-full px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
@@ -265,37 +301,37 @@ function SiteSettingsContent() {
                 ))}
               </div>
 
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100 space-y-4">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100 space-y-4">
                 <h3 className="font-bold text-lg border-b border-neutral-200 pb-2">Khu vực Danh Mục</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề (VI)</label>
-                    <input type="text" value={formData.homeCategoriesTitleVi} onChange={e => setFormData({ ...formData, homeCategoriesTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeCategoriesTitleVi} onChange={e => setFormData({ ...formData, homeCategoriesTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề (EN)</label>
-                    <input type="text" value={formData.homeCategoriesTitleEn} onChange={e => setFormData({ ...formData, homeCategoriesTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeCategoriesTitleEn} onChange={e => setFormData({ ...formData, homeCategoriesTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Phụ đề (VI)</label>
-                    <input type="text" value={formData.homeCategoriesSubtitleVi} onChange={e => setFormData({ ...formData, homeCategoriesSubtitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeCategoriesSubtitleVi} onChange={e => setFormData({ ...formData, homeCategoriesSubtitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Phụ đề (EN)</label>
-                    <input type="text" value={formData.homeCategoriesSubtitleEn} onChange={e => setFormData({ ...formData, homeCategoriesSubtitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeCategoriesSubtitleEn} onChange={e => setFormData({ ...formData, homeCategoriesSubtitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg">Danh mục Hình Ảnh</h3>
                   <button onClick={() => addArrayItem('homeCategories', { titleVi: '', titleEn: '', link: '', imageUrl: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Danh Mục</button>
                 </div>
                 {formData.homeCategories.map((item: any, idx: number) => (
-                  <div key={idx} className="flex gap-4 items-start bg-white p-4 rounded-xl border border-neutral-200 mb-3 shadow-sm">
+                  <div key={idx} className="flex gap-4 items-start bg-white p-4 rounded-lg border border-neutral-200 mb-3 shadow-sm">
                     <div className="flex-1 space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <input type="text" value={item.titleVi} onChange={e => handleArrayChange('homeCategories', idx, 'titleVi', e.target.value)} placeholder="Tên danh mục (VI)" className="w-full px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
@@ -314,26 +350,26 @@ function SiteSettingsContent() {
                 ))}
               </div>
 
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100 space-y-4">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100 space-y-4">
                 <h3 className="font-bold text-lg border-b border-neutral-200 pb-2">Khu vực Nổi Bật</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề (VI)</label>
-                    <input type="text" value={formData.homeFeaturedTitleVi} onChange={e => setFormData({ ...formData, homeFeaturedTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeFeaturedTitleVi} onChange={e => setFormData({ ...formData, homeFeaturedTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề (EN)</label>
-                    <input type="text" value={formData.homeFeaturedTitleEn} onChange={e => setFormData({ ...formData, homeFeaturedTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeFeaturedTitleEn} onChange={e => setFormData({ ...formData, homeFeaturedTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Phụ đề (VI)</label>
-                    <input type="text" value={formData.homeFeaturedSubtitleVi} onChange={e => setFormData({ ...formData, homeFeaturedSubtitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeFeaturedSubtitleVi} onChange={e => setFormData({ ...formData, homeFeaturedSubtitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Phụ đề (EN)</label>
-                    <input type="text" value={formData.homeFeaturedSubtitleEn} onChange={e => setFormData({ ...formData, homeFeaturedSubtitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.homeFeaturedSubtitleEn} onChange={e => setFormData({ ...formData, homeFeaturedSubtitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                 </div>
               </div>
@@ -343,13 +379,13 @@ function SiteSettingsContent() {
 
           {activeTab === 'services' && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg">Dịch vụ / Cam kết (Thanh chạy ngang)</h3>
                   <button onClick={() => addArrayItem('homeServices', { titleVi: '', titleEn: '', iconUrl: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Cam Kết</button>
                 </div>
                 {formData.homeServices.map((item: any, idx: number) => (
-                  <div key={idx} className="flex gap-4 items-center bg-white p-4 rounded-xl border border-neutral-200 mb-3 shadow-sm">
+                  <div key={idx} className="flex gap-4 items-center bg-white p-4 rounded-lg border border-neutral-200 mb-3 shadow-sm">
                     <div className="flex-1 space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <input type="text" value={item.titleVi} onChange={e => handleArrayChange('homeServices', idx, 'titleVi', e.target.value)} placeholder="Tên cam kết (VI)" className="w-full px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
@@ -368,7 +404,7 @@ function SiteSettingsContent() {
           {activeTab === 'menu' && (
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Header Menu Array */}
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <div>
                     <h3 className="font-bold text-lg">Menu Trang chủ (Header)</h3>
@@ -377,7 +413,7 @@ function SiteSettingsContent() {
                   <button onClick={() => addArrayItem('headerMenu', { nameVi: '', nameEn: '', path: '', hasDropdown: false, dropdownType: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Menu</button>
                 </div>
                 {formData.headerMenu.map((item: any, idx: number) => (
-                  <div key={idx} className="bg-white p-3 rounded-xl border border-neutral-200 mb-2 shadow-sm space-y-2">
+                  <div key={idx} className="bg-white p-3 rounded-lg border border-neutral-200 mb-2 shadow-sm space-y-2">
                     <div className="flex gap-3 items-center">
                       <input type="text" value={item.nameVi} onChange={e => handleArrayChange('headerMenu', idx, 'nameVi', e.target.value)} placeholder="Tên (VI)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
                       <input type="text" value={item.nameEn} onChange={e => handleArrayChange('headerMenu', idx, 'nameEn', e.target.value)} placeholder="Tên (EN)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
@@ -422,7 +458,7 @@ function SiteSettingsContent() {
 
                     {/* Custom dropdown editor */}
                     {item.hasDropdown && item.dropdownType === 'custom' && (
-                      <div className="ml-1 mt-2 border border-orange-100 rounded-xl bg-orange-50/50 p-3 space-y-2">
+                      <div className="ml-1 mt-2 border border-orange-100 rounded-lg bg-orange-50/50 p-3 space-y-2">
                         <div className="flex justify-between items-center mb-2">
                           <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider">Mục trong dropdown</p>
                           <div className="flex gap-2">
@@ -533,13 +569,13 @@ function SiteSettingsContent() {
               </div>
 
               {/* Footer Menu Array */}
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg">Liên kết nhanh (Footer)</h3>
                   <button onClick={() => addArrayItem('footerMenu', { nameVi: '', nameEn: '', path: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Liên kết</button>
                 </div>
                 {formData.footerMenu.map((item: any, idx: number) => (
-                  <div key={idx} className="flex gap-3 items-center bg-white p-3 rounded-xl border border-neutral-200 mb-2 shadow-sm">
+                  <div key={idx} className="flex gap-3 items-center bg-white p-3 rounded-lg border border-neutral-200 mb-2 shadow-sm">
                     <input type="text" value={item.nameVi} onChange={e => handleArrayChange('footerMenu', idx, 'nameVi', e.target.value)} placeholder="Tên (VI)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
                     <input type="text" value={item.nameEn} onChange={e => handleArrayChange('footerMenu', idx, 'nameEn', e.target.value)} placeholder="Tên (EN)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
                     <input type="text" value={item.path} onChange={e => handleArrayChange('footerMenu', idx, 'path', e.target.value)} placeholder="Đường dẫn (VD: /contact)" className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg outline-none text-sm focus:border-orange-500" />
@@ -556,25 +592,25 @@ function SiteSettingsContent() {
 
           {activeTab === 'about' && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100 space-y-4">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề (VI)</label>
-                    <input type="text" value={formData.aboutTitleVi} onChange={e => setFormData({ ...formData, aboutTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.aboutTitleVi} onChange={e => setFormData({ ...formData, aboutTitleVi: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Tiêu đề (EN)</label>
-                    <input type="text" value={formData.aboutTitleEn} onChange={e => setFormData({ ...formData, aboutTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                    <input type="text" value={formData.aboutTitleEn} onChange={e => setFormData({ ...formData, aboutTitleEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Nội dung chi tiết (VI)</label>
-                    <textarea value={formData.aboutContentVi || ''} onChange={e => setFormData({ ...formData, aboutContentVi: e.target.value })} className="w-full h-64 p-4 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500 resize-none" />
+                    <ReactQuill theme="snow" value={formData.aboutContentVi || ''} onChange={content => handleQuillChange('aboutContentVi', content)} className="bg-white border border-neutral-200 rounded-lg overflow-hidden h-64 pb-10" />
                   </div>
                   <div>
                     <label className="block font-bold text-neutral-700 mb-2 text-sm">Nội dung chi tiết (EN)</label>
-                    <textarea value={formData.aboutContentEn || ''} onChange={e => setFormData({ ...formData, aboutContentEn: e.target.value })} className="w-full h-64 p-4 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500 resize-none" />
+                    <ReactQuill theme="snow" value={formData.aboutContentEn || ''} onChange={content => handleQuillChange('aboutContentEn', content)} className="bg-white border border-neutral-200 rounded-lg overflow-hidden h-64 pb-10" />
                   </div>
                 </div>
               </div>
@@ -583,33 +619,33 @@ function SiteSettingsContent() {
 
           {activeTab === 'contact' && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-neutral-700 mb-2 text-sm">Số điện thoại Hotline</label>
-                  <input type="text" value={formData.contactPhone} onChange={e => setFormData({ ...formData, contactPhone: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                  <input type="text" value={formData.contactPhone} onChange={e => setFormData({ ...formData, contactPhone: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                 </div>
                 <div>
                   <label className="block font-bold text-neutral-700 mb-2 text-sm">Email Hỗ trợ</label>
-                  <input type="text" value={formData.contactEmail} onChange={e => setFormData({ ...formData, contactEmail: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                  <input type="text" value={formData.contactEmail} onChange={e => setFormData({ ...formData, contactEmail: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                 </div>
                 <div>
                   <label className="block font-bold text-neutral-700 mb-2 text-sm">Địa chỉ Cửa hàng (VI)</label>
-                  <input type="text" value={formData.contactAddressVi} onChange={e => setFormData({ ...formData, contactAddressVi: e.target.value })} placeholder="Địa chỉ hiển thị trên Google Maps" className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                  <input type="text" value={formData.contactAddressVi} onChange={e => setFormData({ ...formData, contactAddressVi: e.target.value })} placeholder="Địa chỉ hiển thị trên Google Maps" className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                 </div>
                 <div>
                   <label className="block font-bold text-neutral-700 mb-2 text-sm">Địa chỉ Cửa hàng (EN)</label>
-                  <input type="text" value={formData.contactAddressEn} onChange={e => setFormData({ ...formData, contactAddressEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl outline-none focus:border-orange-500" />
+                  <input type="text" value={formData.contactAddressEn} onChange={e => setFormData({ ...formData, contactAddressEn: e.target.value })} className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500" />
                 </div>
               </div>
 
               {/* Social Links */}
-              <div className="bg-neutral-50 p-5 rounded-2xl border border-neutral-100">
+              <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg">Mạng xã hội</h3>
                   <button onClick={() => addArrayItem('socialLinks', { platform: 'Facebook', url: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Link</button>
                 </div>
                 {formData.socialLinks.map((item: any, idx: number) => (
-                  <div key={idx} className="flex gap-4 items-center bg-white p-3 rounded-xl border border-neutral-200 mb-2 shadow-sm">
+                  <div key={idx} className="flex gap-4 items-center bg-white p-3 rounded-lg border border-neutral-200 mb-2 shadow-sm">
                     <select value={item.platform} onChange={e => handleArrayChange('socialLinks', idx, 'platform', e.target.value)} className="w-40 px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none text-sm font-medium focus:border-orange-500">
                       <option value="Facebook">Facebook</option>
                       <option value="Instagram">Instagram</option>
@@ -625,11 +661,43 @@ function SiteSettingsContent() {
             </div>
           )}
 
+          {activeTab === 'policies' && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100 space-y-4">
+                <h3 className="font-bold text-lg border-b border-neutral-200 pb-2">Chính Sách Giao Hàng</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-neutral-700 mb-2 text-sm">Nội dung (VI)</label>
+                    <ReactQuill theme="snow" value={formData.shippingPolicyVi || ''} onChange={content => handleQuillChange('shippingPolicyVi', content)} className="bg-white border border-neutral-200 rounded-lg overflow-hidden h-48 pb-10" />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-neutral-700 mb-2 text-sm">Nội dung (EN)</label>
+                    <ReactQuill theme="snow" value={formData.shippingPolicyEn || ''} onChange={content => handleQuillChange('shippingPolicyEn', content)} className="bg-white border border-neutral-200 rounded-lg overflow-hidden h-48 pb-10" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-neutral-50 p-5 rounded-lg border border-neutral-100 space-y-4">
+                <h3 className="font-bold text-lg border-b border-neutral-200 pb-2">Chính Sách Đổi Trả & Bảo Hành</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-neutral-700 mb-2 text-sm">Nội dung (VI)</label>
+                    <ReactQuill theme="snow" value={formData.returnPolicyVi || ''} onChange={content => handleQuillChange('returnPolicyVi', content)} className="bg-white border border-neutral-200 rounded-lg overflow-hidden h-48 pb-10" />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-neutral-700 mb-2 text-sm">Nội dung (EN)</label>
+                    <ReactQuill theme="snow" value={formData.returnPolicyEn || ''} onChange={content => handleQuillChange('returnPolicyEn', content)} className="bg-white border border-neutral-200 rounded-lg overflow-hidden h-48 pb-10" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Save Button Container at bottom of Editor */}
           <div className="mt-8 pt-6 border-t border-neutral-100 flex justify-end">
             <button
               onClick={handleSave} disabled={saving}
-              className="flex items-center justify-center space-x-2 bg-black text-white px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-black/10 hover:bg-neutral-800 transition-all active:scale-95 disabled:opacity-70 w-full md:w-auto"
+              className="flex items-center justify-center space-x-2 bg-black text-white px-8 py-3.5 rounded-lg font-bold shadow-lg shadow-black/10 hover:bg-neutral-800 transition-all active:scale-95 disabled:opacity-70 w-full md:w-auto"
             >
               <Save size={20} />
               <span>{saving ? 'Đang lưu...' : 'Lưu cập nhật'}</span>

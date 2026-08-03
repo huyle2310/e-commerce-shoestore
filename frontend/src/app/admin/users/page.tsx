@@ -121,13 +121,13 @@ export default function AdminUsersPage() {
             placeholder="Tìm kiếm theo Tên, Email, SĐT..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+            className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
           />
         </div>
         <select 
           value={roleFilter} 
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-medium text-neutral-700"
+          className="px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none font-medium text-neutral-700"
         >
           <option value="ALL">Tất cả chức vụ</option>
           <option value="INVENTORY_STAFF">Nhân viên Kho</option>
@@ -239,7 +239,7 @@ export default function AdminUsersPage() {
                   type="text" 
                   value={newUser.fullName}
                   onChange={e => setNewUser({...newUser, fullName: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="Nguyễn Văn A"
                   required
                 />
@@ -251,7 +251,7 @@ export default function AdminUsersPage() {
                   type="email" 
                   value={newUser.email}
                   onChange={e => setNewUser({...newUser, email: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="nhanvien@domain.com"
                   required
                 />
@@ -263,7 +263,7 @@ export default function AdminUsersPage() {
                   type="password" 
                   value={newUser.password}
                   onChange={e => setNewUser({...newUser, password: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="Mật khẩu khởi tạo"
                   required
                 />
@@ -275,7 +275,7 @@ export default function AdminUsersPage() {
                   type="text" 
                   value={newUser.phone}
                   onChange={e => setNewUser({...newUser, phone: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="0901234567"
                 />
               </div>
@@ -285,7 +285,7 @@ export default function AdminUsersPage() {
                 <select 
                   value={newUser.role}
                   onChange={e => setNewUser({...newUser, role: e.target.value})}
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all font-medium text-neutral-900"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all font-medium text-neutral-900"
                 >
                   <option value="SALES_STAFF">Nhân viên Bán hàng</option>
                   <option value="INVENTORY_STAFF">Nhân viên Kho</option>
@@ -297,14 +297,14 @@ export default function AdminUsersPage() {
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-6 py-3 border border-neutral-200 text-neutral-700 font-bold rounded-xl hover:bg-neutral-50 transition-colors"
+                  className="flex-1 px-6 py-3 border border-neutral-200 text-neutral-700 font-bold rounded-lg hover:bg-neutral-50 transition-colors"
                 >
                   Hủy
                 </button>
                 <button 
                   type="submit"
                   disabled={creating}
-                  className="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {creating ? 'Đang tạo...' : 'Tạo tài khoản'}
                 </button>

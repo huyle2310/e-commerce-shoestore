@@ -175,7 +175,7 @@ export default function Navbar() {
         type: 'item',
         nameVi: c.nameVi || c.name || c.nameEn,
         nameEn: c.nameEn || c.name || c.nameVi,
-        path: `/shop?q=${c.name}`
+        path: `/shop?category=${c.slug || c.id}`
       }));
     }
     if (link.dropdownType === 'brands' && dropdownData.brands.length > 0) {
@@ -183,7 +183,7 @@ export default function Navbar() {
         type: 'item',
         nameVi: b.nameVi || b.name || b.nameEn,
         nameEn: b.nameEn || b.name || b.nameVi,
-        path: `/shop?q=${b.name}`
+        path: `/shop?brand=${b.name || b.slug || b.id}`
       }));
     }
     if (link.dropdownType === 'categories_brands') {
@@ -194,7 +194,7 @@ export default function Navbar() {
           type: 'item',
           nameVi: c.nameVi || c.name || c.nameEn,
           nameEn: c.nameEn || c.name || c.nameVi,
-          path: `/shop?q=${c.slug || c.id}`
+          path: `/shop?category=${c.slug || c.id}`
         })));
       }
       if (dropdownData.brands.length > 0) {
@@ -203,7 +203,7 @@ export default function Navbar() {
           type: 'item',
           nameVi: b.nameVi || b.name || b.nameEn,
           nameEn: b.nameEn || b.name || b.nameVi,
-          path: `/shop?q=${b.id}`
+          path: `/shop?brand=${b.slug || b.name || b.id}`
         })));
       }
       return items;
@@ -217,13 +217,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
 
-          {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center mt-2">
               {settings?.logoUrl ? (
-                <img src={settings.logoUrl} alt="Logo" className="h-10 object-contain" />
+                <img src={settings.logoUrl} alt="Logo" className="h-14 object-contain" />
               ) : (
-                <span className="text-2xl font-bold tracking-tighter text-white">VANGUARD<span className="text-white">.</span></span>
+                <span className="text-3xl font-bold tracking-tighter text-white">VANGUARD<span className="text-white">.</span></span>
               )}
             </Link>
           </div>
@@ -280,7 +279,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
                         transition={{ duration: 0.15 }}
-                        className={`absolute top-full left-0 mt-2 ${dropdownWidthClass} bg-neutral-100 rounded-2xl border border-neutral-200 shadow-xl overflow-hidden`}
+                        className={`absolute top-full left-0 mt-2 ${dropdownWidthClass} bg-neutral-100 rounded-xl border border-neutral-200 shadow-xl overflow-hidden`}
                         onMouseEnter={handleMouseEnterDropdown}
                         onMouseLeave={handleMouseLeaveNav}
                       >
@@ -290,7 +289,7 @@ export default function Navbar() {
                             <div className="flex-shrink-0 min-w-max mb-1">
                               <Link
                                 href={link.path}
-                                className="flex items-center px-4 py-2.5 text-sm font-bold text-orange-500 hover:bg-neutral-100 rounded-xl whitespace-nowrap"
+                                className="flex items-center px-4 py-2.5 text-sm font-bold text-orange-500 hover:bg-neutral-100 rounded-lg whitespace-nowrap"
                                 onClick={() => setActiveDropdown(null)}
                               >
                                 {language === 'vi' ? `Tất cả ${link.nameVi.toLowerCase()}` : `All ${link.nameEn.toLowerCase()}`}
@@ -320,7 +319,7 @@ export default function Navbar() {
                                   <Link
                                     key={idx}
                                     href={item.path || '#'}
-                                    className="flex items-center px-3 py-2.5 text-base text-neutral-600 hover:bg-neutral-100 hover:text-orange-500 rounded-xl transition-colors"
+                                    className="flex items-center px-3 py-2.5 text-base text-neutral-600 hover:bg-neutral-100 hover:text-orange-500 rounded-lg transition-colors"
                                     onClick={() => setActiveDropdown(null)}
                                   >
                                     {language === 'vi' ? (item.nameVi || item.nameEn) : (item.nameEn || item.nameVi)}
@@ -362,7 +361,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl border border-neutral-200 shadow-xl overflow-hidden z-50"
+                    className="absolute top-full right-0 mt-2 w-72 bg-white rounded-xl border border-neutral-200 shadow-xl overflow-hidden z-50"
                   >
                     {suggestionLoading ? (
                       <div className="p-4 text-center text-neutral-400 text-sm">
@@ -377,7 +376,7 @@ export default function Navbar() {
                             <Link
                               key={product.id}
                               href={`/shop/${product.slug}`}
-                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-neutral-100 rounded-xl transition-colors"
+                              className="flex items-center gap-3 px-3 py-2.5 hover:bg-neutral-100 rounded-lg transition-colors"
                               onClick={() => { setShowSuggestions(false); setSearchQuery(''); }}
                             >
                               {img && (
@@ -395,7 +394,7 @@ export default function Navbar() {
                         <div className="border-t border-neutral-100 mt-1 pt-1">
                           <button
                             onClick={handleSearch}
-                            className="w-full px-3 py-2.5 text-base text-orange-500 hover:bg-neutral-100 rounded-xl text-left transition-colors font-medium"
+                            className="w-full px-3 py-2.5 text-base text-orange-500 hover:bg-neutral-100 rounded-lg text-left transition-colors font-medium"
                           >
                             Xem tất cả kết quả cho &quot;{searchQuery}&quot; →
                           </button>
@@ -432,7 +431,7 @@ export default function Navbar() {
                   <span className="text-sm font-medium">{user?.fullName?.split(' ').pop()}</span>
                 </div>
 
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl border border-neutral-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg border border-neutral-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 overflow-hidden">
                   {user?.role && ['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(user.role) && (
                     <Link href="/admin" className="block px-4 py-3 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-orange-500">
                       Trang quản trị
@@ -446,7 +445,7 @@ export default function Navbar() {
                   </Link>
                   <button
                     onClick={async () => {
-                      try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) {}
+                      try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) { }
                       logout();
                     }}
                     className="w-full flex items-center px-4 py-3 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
@@ -511,7 +510,7 @@ export default function Navbar() {
                 <Search size={18} className="absolute left-4 text-neutral-500" />
               </form>
               {searchSuggestions.length > 0 && searchQuery.length >= 2 && (
-                <div className="mt-2 bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-lg">
+                <div className="mt-2 bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-lg">
                   {searchSuggestions.map((product: any) => (
                     <Link
                       key={product.id}
@@ -571,12 +570,12 @@ export default function Navbar() {
                     <Link href="/orders" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-orange-500 rounded-md transition-colors">
                       Đơn hàng của tôi
                     </Link>
-                    <button 
-                      onClick={async () => { 
-                        try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) {}
-                        logout(); 
-                        setIsOpen(false); 
-                      }} 
+                    <button
+                      onClick={async () => {
+                        try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) { }
+                        logout();
+                        setIsOpen(false);
+                      }}
                       className="w-full text-left px-3 py-3 text-base font-medium text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"
                     >
                       {t('logout')}
