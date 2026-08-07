@@ -1,0 +1,254 @@
+===================================================
+      DATABASE SCHEMA & RELATIONSHIPS EXPORT
+===================================================
+
+1. TABLE: users
+---------------------------------------------------
+- id (UUID, PK)
+- email (String)
+- password (String)
+- full_name (String)
+- phone (String)
+- address (String)
+- avatar_url (String)
+- pending_email (String)
+- total_spent (Decimal)
+- rank_name (String)
+- role (Enum)
+- is_active (Boolean)
+- reset_code (String)
+- reset_code_expiry (DateTime)
+- created_at (DateTime)
+- updated_at (DateTime)
+Relationships:
+- 1-N with orders (user_id)
+- 1-N with blogs (author_id)
+- 1-N with reviews (user_id)
+- 1-1 with carts (user_id)
+- 1-N with user_vouchers (user_id)
+- 1-1 with refresh_tokens (user_id)
+
+2. TABLE: products
+---------------------------------------------------
+- id (UUID, PK)
+- category_id (Integer, FK -> categories)
+- brand_id (Integer, FK -> brands)
+- name_vi (String)
+- name_en (String)
+- slug (String)
+- description_vi (String)
+- description_en (String)
+- clearance_name_vi (String)
+- clearance_description_vi (String)
+- base_price (Decimal)
+- target_audience (String)
+- is_active (Boolean)
+- created_at (DateTime)
+- updated_at (DateTime)
+Relationships:
+- 1-N with product_variants (product_id)
+- 1-N with product_images (product_id)
+- 1-N with reviews (product_id)
+- 1-N with recommendations (product_id)
+
+3. TABLE: product_variants
+---------------------------------------------------
+- id (UUID, PK)
+- product_id (UUID, FK -> products)
+- sku (String)
+- color_vi (String)
+- color_en (String)
+- size (String)
+- stock_quantity (Integer)
+- price_modifier (Decimal)
+- created_at (DateTime)
+- version (Long, Optimistic Lock)
+Relationships:
+- 1-N with order_items (variant_id)
+- 1-N with cart_items (variant_id)
+- 1-N with inventory_batches (variant_id)
+- 1-N with inventory_receipt_items (variant_id)
+
+4. TABLE: categories
+---------------------------------------------------
+- id (Integer, PK)
+- name_vi (String)
+- name_en (String)
+- slug (String)
+- parent_id (Integer, FK -> categories)
+- created_at (DateTime)
+Relationships:
+- 1-N with products (category_id)
+- 1-N with categories (parent_id)
+
+5. TABLE: brands
+---------------------------------------------------
+- id (Integer, PK)
+- name (String)
+- logo_url (String)
+- created_at (DateTime)
+Relationships:
+- 1-N with products (brand_id)
+
+6. TABLE: orders
+---------------------------------------------------
+- id (UUID, PK)
+- user_id (UUID, FK -> users)
+- voucher_id (UUID, FK -> vouchers)
+- email (String)
+- full_name (String)
+- phone (String)
+- shipping_address (String)
+- order_note (String)
+- shipping_fee (Decimal)
+- total_amount (Decimal)
+- discount_amount (Decimal)
+- final_amount (Decimal)
+- payment_method (String)
+- payment_status (String)
+- order_status (String)
+- created_at (DateTime)
+- updated_at (DateTime)
+Relationships:
+- 1-N with order_items (order_id)
+
+7. TABLE: order_items
+---------------------------------------------------
+- id (UUID, PK)
+- order_id (UUID, FK -> orders)
+- variant_id (UUID, FK -> product_variants)
+- inventory_batch_id (UUID, FK -> inventory_batches)
+- quantity (Integer)
+- unit_price (Decimal)
+- total_price (Decimal)
+
+8. TABLE: inventory_receipts
+---------------------------------------------------
+- id (UUID, PK)
+- receipt_type (String)
+- reference_code (String)
+- status (String)
+- note (String)
+- created_by (UUID, FK -> users)
+- created_at (DateTime)
+- updated_at (DateTime)
+Relationships:
+- 1-N with inventory_receipt_items (receipt_id)
+
+9. TABLE: inventory_receipt_items
+---------------------------------------------------
+- id (UUID, PK)
+- receipt_id (UUID, FK -> inventory_receipts)
+- variant_id (UUID, FK -> product_variants)
+- product_name (String)
+- sku (String)
+- color (String)
+- size (String)
+- expected_quantity (Integer)
+- actual_quantity (Integer)
+- import_price (Decimal)
+
+10. TABLE: inventory_batches
+---------------------------------------------------
+- id (UUID, PK)
+- batch_code (String)
+- variant_id (UUID, FK -> product_variants)
+- receipt_item_id (UUID, FK -> inventory_receipt_items)
+- parent_batch_id (UUID, FK -> inventory_batches)
+- quantity (Integer)
+- warehouse_type (Enum)
+- product_status (Enum)
+- quality_percentage (Integer)
+- condition_note (String)
+- clearance_price (Decimal)
+- import_date (DateTime)
+- import_price (Decimal)
+- image_url (String)
+- created_at (DateTime)
+- updated_at (DateTime)
+- version (Long, Optimistic Lock)
+
+11. TABLE: carts
+---------------------------------------------------
+- id (UUID, PK)
+- user_id (UUID, FK -> users)
+- created_at (DateTime)
+- updated_at (DateTime)
+Relationships:
+- 1-N with cart_items (cart_id)
+
+12. TABLE: cart_items
+---------------------------------------------------
+- id (UUID, PK)
+- cart_id (UUID, FK -> carts)
+- variant_id (UUID, FK -> product_variants)
+- inventory_batch_id (UUID, FK -> inventory_batches)
+- quantity (Integer)
+
+13. TABLE: blogs
+---------------------------------------------------
+- id (UUID, PK)
+- title_vi (String)
+- title_en (String)
+- slug (String)
+- thumbnail_url (String)
+- content_vi (Text)
+- content_en (Text)
+- short_description_vi (Text)
+- short_description_en (Text)
+- is_featured (Boolean)
+- author_id (UUID, FK -> users)
+- view_count (Integer)
+- tags (String)
+- is_published (Boolean)
+- seo_title_vi (String)
+- seo_title_en (String)
+- seo_description_vi (String)
+- seo_description_en (String)
+- published_at (DateTime)
+- created_at (DateTime)
+- updated_at (DateTime)
+
+14. TABLE: vouchers
+---------------------------------------------------
+- id (UUID, PK)
+- code (String)
+- discount_type (String)
+- discount_value (Decimal)
+- min_order_value (Decimal)
+- max_discount_amount (Decimal)
+- start_date (DateTime)
+- end_date (DateTime)
+- usage_limit (Integer)
+- used_count (Integer)
+- is_active (Boolean)
+- required_rank (String)
+- usage_limit_per_user (Integer)
+- image_url (String)
+Relationships:
+- 1-N with user_vouchers (voucher_id)
+- 1-N with orders (voucher_id)
+
+15. TABLE: user_vouchers
+---------------------------------------------------
+- user_id (UUID, PK, FK -> users)
+- voucher_id (UUID, PK, FK -> vouchers)
+- usage_count (Integer)
+- is_collected (Boolean)
+
+16. TABLE: reviews
+---------------------------------------------------
+- id (UUID, PK)
+- product_id (UUID, FK -> products)
+- user_id (UUID, FK -> users)
+- rating (Integer)
+- comment (Text)
+- created_at (DateTime)
+
+17. TABLE: site_settings
+---------------------------------------------------
+- id (Integer, PK)
+- logo_url (String)
+- home_short_desc_vi (Text)
+- home_banners_json (Text)
+- about_title_vi (String)

@@ -7,18 +7,30 @@ import api from '@/lib/axios';
 import { Package, Clock, CheckCircle2, Truck, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 export default function OrdersPage() {
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isSuccess = searchParams.get('success') === 'true';
-  
+
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    let auth = isAuthenticated;
+    if (!auth) {
+      try {
+        const persisted = localStorage.getItem('auth-storage');
+        if (persisted) {
+          const parsed = JSON.parse(persisted);
+          auth = parsed?.state?.isAuthenticated || false;
+        }
+      } catch (e) { }
+    }
+
+    if (!auth) {
       router.push('/login');
       return;
     }
@@ -45,13 +57,14 @@ export default function OrdersPage() {
       await api.put(`/orders/${orderId}/cancel`);
       // Update local state
       setOrders(orders.map(o => o.id === orderId ? { ...o, orderStatus: 'CANCELLED' } : o));
+      toast.success('Đã hủy đơn đặt hàng!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Không thể hủy đơn hàng');
+      toast.error(error.response?.data?.message || 'Không thể hủy đơn hàng');
     }
   };
 
   const getStatusInfo = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'PENDING': return { label: 'Chờ xác nhận', color: 'text-yellow-600 bg-yellow-50', icon: <Clock size={16} className="mr-1.5" /> };
       case 'SHIPPING': return { label: 'Đang giao hàng', color: 'text-blue-600 bg-blue-50', icon: <Truck size={16} className="mr-1.5" /> };
       case 'DELIVERED': return { label: 'Đã giao hàng', color: 'text-green-600 bg-green-50', icon: <CheckCircle2 size={16} className="mr-1.5" /> };
@@ -63,9 +76,9 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen pt-24 pb-16 bg-neutral-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {isSuccess && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8 p-6 bg-green-50 border border-green-200 rounded-3xl flex flex-col items-center text-center"
@@ -116,7 +129,7 @@ export default function OrdersPage() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="p-6">
                     <div className="space-y-4">
                       {order.items.map((item: any) => (
@@ -142,7 +155,7 @@ export default function OrdersPage() {
                     </div>
                     {order.orderStatus === 'PENDING' && order.paymentStatus !== 'PAID' && (
                       <div className="mt-6 pt-6 border-t border-neutral-100 flex justify-end">
-                        <button 
+                        <button
                           onClick={() => handleCancelOrder(order.id)}
                           className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-bold rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors"
                         >

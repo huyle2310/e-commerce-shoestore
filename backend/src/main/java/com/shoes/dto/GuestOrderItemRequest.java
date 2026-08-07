@@ -14,4 +14,5 @@ import java.util.UUID;
 public class GuestOrderItemRequest {
     private UUID variantId;
     private Integer quantity;
+    private UUID inventoryBatchId;
 }

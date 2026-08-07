@@ -64,6 +64,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUserStatus(UUID id, Boolean isActive) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        if (user.getRole() == Role.ADMIN) {
+            throw new RuntimeException("Không thể khóa tài khoản admin");
+        }
         user.setIsActive(isActive);
         return mapToResponse(userRepository.save(user));
     }
@@ -149,6 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse mapToResponse(User user) {
+        int totalOrders = orderRepository.countByUserId(user.getId());
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -159,6 +163,7 @@ public class UserServiceImpl implements UserService {
                 .role(user.getRole())
                 .isActive(user.getIsActive())
                 .totalSpent(user.getTotalSpent())
+                .totalOrders(totalOrders)
                 .rankName(user.getRankName())
                 .createdAt(user.getCreatedAt())
                 .build();

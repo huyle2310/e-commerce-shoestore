@@ -27,16 +27,16 @@ export default function BlogsPage() {
   return (
     <div className="pt-24 pb-16 bg-neutral-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-black tracking-tighter mb-6 uppercase"
           >
             TIN TỨC & SỰ KIỆN
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -56,12 +56,12 @@ export default function BlogsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogs.map((blog, index) => (
-              <motion.article 
+              <motion.article
                 key={blog.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-[2rem] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-xl transition-all group"
+                className="bg-white rounded-[1rem] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-xl transition-all group"
               >
                 <Link href={`/blogs/${blog.slug}`} className="block relative aspect-video overflow-hidden bg-neutral-100">
                   {blog.thumbnailUrl ? (
@@ -80,8 +80,7 @@ export default function BlogsPage() {
                     <h2 className="text-2xl font-black text-neutral-900 mb-4 line-clamp-2 hover:text-orange-500 transition-colors">{blog.titleVi}</h2>
                   </Link>
                   <p className="text-neutral-500 mb-6 line-clamp-3 leading-relaxed">
-                    {/* Extract text from HTML content basic way for excerpt */}
-                    {blog.contentVi.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
+                    {(blog.shortDescriptionVi || blog.contentVi).replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
                   </p>
                   <Link href={`/blogs/${blog.slug}`} className="inline-flex items-center font-bold text-orange-500 hover:text-orange-600 transition-colors group/link">
                     ĐỌC TIẾP <ArrowRight size={18} className="ml-2 group-hover/link:translate-x-2 transition-transform" />

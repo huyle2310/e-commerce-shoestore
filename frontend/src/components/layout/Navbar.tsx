@@ -127,6 +127,7 @@ export default function Navbar() {
   let navLinks: NavLink[] = [
     { nameVi: 'Trang chủ', nameEn: 'Home', path: '/' },
     { nameVi: 'Cửa hàng', nameEn: 'Shop', path: '/shop', hasDropdown: true, dropdownType: 'categories' },
+    { nameVi: 'Xả kho', nameEn: 'Clearance', path: '/shop/clearance' },
     { nameVi: 'Về chúng tôi', nameEn: 'About', path: '/about' },
     { nameVi: 'Liên hệ', nameEn: 'Contact', path: '/contact' },
   ];
@@ -171,12 +172,15 @@ export default function Navbar() {
       return link.children;
     }
     if (link.dropdownType === 'categories' && dropdownData.categories.length > 0) {
-      return dropdownData.categories.map((c: any) => ({
-        type: 'item',
-        nameVi: c.nameVi || c.name || c.nameEn,
-        nameEn: c.nameEn || c.name || c.nameVi,
-        path: `/shop?category=${c.slug || c.id}`
-      }));
+      return [
+        { type: 'item', nameVi: 'Hàng xả kho', nameEn: 'Clearance', path: '/shop/clearance' },
+        ...dropdownData.categories.map((c: any) => ({
+          type: 'item',
+          nameVi: c.nameVi || c.name || c.nameEn,
+          nameEn: c.nameEn || c.name || c.nameVi,
+          path: `/shop?category=${c.slug || c.id}`
+        }))
+      ];
     }
     if (link.dropdownType === 'brands' && dropdownData.brands.length > 0) {
       return dropdownData.brands.map((b: any) => ({
@@ -190,6 +194,7 @@ export default function Navbar() {
       const items: any[] = [];
       if (dropdownData.categories.length > 0) {
         items.push({ type: 'section', labelVi: 'Danh mục', labelEn: 'Categories' });
+        items.push({ type: 'item', nameVi: 'Hàng xả kho', nameEn: 'Clearance', path: '/shop/clearance' });
         items.push(...dropdownData.categories.map((c: any) => ({
           type: 'item',
           nameVi: c.nameVi || c.name || c.nameEn,

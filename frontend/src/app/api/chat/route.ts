@@ -15,8 +15,7 @@ export async function POST(req: Request) {
     // 'gemini-1.5-flash-8b'   
     // 'gemini-2.0-flash'     
     // 'gemini-2.5-flash'      
-    // @ts-ignore - Bypass duplicate provider peer dependency type mismatch
-    model: google('gemini-1.5-flash'),
+    model: google('gemini-2.5-flash'),
     messages,
     system: "Bạn là nhân viên tư vấn bán hàng của Vanguard. BẮT BUỘC dùng công cụ 'tim_kiem_san_pham' TRƯỚC TIÊN khi khách hỏi mua bất kỳ món gì (giày, dép, tất...). Sau khi tool trả về kết quả (dù có hàng hay không), BẠN PHẢI luôn viết thêm 1-2 câu chat tự nhiên, thân thiện để phản hồi khách (vd: 'Dạ em gửi anh chị một số mẫu ạ' hoặc 'Dạ tiếc quá bên em tạm hết món này ạ'). KHÔNG ĐƯỢC chỉ trả về kết quả tool mà không nói gì thêm.",
     tools: {

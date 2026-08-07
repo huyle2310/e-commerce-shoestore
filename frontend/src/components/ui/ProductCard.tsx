@@ -16,16 +16,28 @@ export interface ProductProps {
   images?: { imageUrl: string; isPrimary: boolean }[];
   createdAt?: string;
   averageRating?: number;
-  variants?: { stockQuantity: number }[];
+  variants?: {
+    stockQuantity: number;
+    effectivePrice?: number;
+    productStatus?: 'ACTIVE' | 'DISPOSED';
+  }[];
 }
 
 export default function ProductCard({ product }: { product: ProductProps }) {
   const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2370&auto=format&fit=crop';
   const nonPrimaryImages = product.images?.filter(img => img.imageUrl !== primaryImage) || [];
   const secondaryImage = nonPrimaryImages[0]?.imageUrl;
-  const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.basePrice);
+  const saleableVariants = product.variants?.filter(variant => variant.productStatus !== 'DISPOSED') || [];
+  const lowestEffectivePrice = saleableVariants
+    .map(variant => variant.effectivePrice)
+    .filter((price): price is number => typeof price === 'number')
+    .reduce<number | undefined>((lowest, price) => lowest === undefined || price < lowest ? price : lowest, undefined);
+  const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+    .format(lowestEffectivePrice ?? product.basePrice);
 
-  const totalStock = product.variants?.reduce((sum, variant) => sum + (variant.stockQuantity || 0), 0) ?? -1; // -1 means we don't know, so we don't blur
+  const totalStock = product.variants
+    ? saleableVariants.reduce((sum, variant) => sum + (variant.stockQuantity || 0), 0)
+    : -1;
   const isOutOfStock = totalStock === 0;
 
   return (

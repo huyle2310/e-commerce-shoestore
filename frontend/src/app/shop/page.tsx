@@ -108,7 +108,7 @@ function ShopContent() {
 
         // Brand filtering
         if (selectedBrands.length > 0) {
-          const selectedBrandsLower = selectedBrands.map(b => b.toLowerCase());
+          const selectedBrandsLower = selectedBrands.map(b => String(b).toLowerCase());
           data = data.filter(p => {
             if (!p.brand) return false;
             const brandId = p.brand.id;

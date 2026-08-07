@@ -39,6 +39,21 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductBySlug(slug));
     }
 
+    @GetMapping("/clearance")
+    public ResponseEntity<List<ProductResponse>> getClearanceProducts() {
+        return ResponseEntity.ok(productService.getClearanceProducts());
+    }
+
+    @GetMapping("/admin/clearance")
+    public ResponseEntity<List<ProductResponse>> getClearanceProductsAdmin() {
+        return ResponseEntity.ok(productService.getClearanceProductsAdmin());
+    }
+
+    @GetMapping("/clearance/{slug}")
+    public ResponseEntity<ProductResponse> getClearanceProductBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(productService.getClearanceProductBySlug(slug));
+    }
+
     @GetMapping("/{id}/similar")
     public ResponseEntity<List<ProductResponse>> getSimilarProducts(@PathVariable java.util.UUID id) {
         return ResponseEntity.ok(productService.getSimilarProducts(id));
@@ -78,5 +93,12 @@ public class ProductController {
     public ResponseEntity<ProductResponse> createProduct(
             @RequestBody com.shoes.dto.ProductRequest request) {
         return ResponseEntity.ok(productService.createProduct(request));
+    }
+
+    // API Admin: Delete Product
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable java.util.UUID id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -50,7 +50,6 @@ export default function ImportReceiptsPage() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">Phiếu nhập kho</h1>
-          <p className="text-neutral-500 mt-1">Lịch sử và danh sách các lần nhập hàng</p>
         </div>
         <Link href="/admin/inventory/imports/new" className="flex items-center space-x-2 bg-orange-500 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-orange-600 transition-colors">
           <Plus size={20} />

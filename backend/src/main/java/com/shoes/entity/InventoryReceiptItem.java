@@ -25,6 +25,19 @@ public class InventoryReceiptItem {
     @JoinColumn(name = "variant_id", nullable = false)
     private ProductVariant variant;
 
+    // Snapshot data để lưu trữ lịch sử không bị thay đổi nếu Product/Variant bị xóa hoặc đổi tên
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "sku", length = 100)
+    private String sku;
+
+    @Column(name = "color", length = 50)
+    private String color;
+
+    @Column(name = "size", length = 20)
+    private String size;
+
     @Column(name = "expected_quantity")
     private Integer expectedQuantity; // Tồn kho hiện tại (dùng cho Kiểm kê)
 

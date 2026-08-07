@@ -19,9 +19,19 @@ public class OrderResponse {
     private String phone;
     private String shippingAddress;
     private String orderNote;
+
+    /** Tổng tiền hàng (chưa gồm ship, chưa trừ giảm giá) */
     private BigDecimal totalAmount;
+
+    /** Phí vận chuyển – do backend tính, frontend chỉ hiển thị */
+    private BigDecimal shippingFee;
+
+    /** Số tiền giảm giá từ voucher */
     private BigDecimal discountAmount;
+
+    /** Thành tiền cuối cùng = totalAmount + shippingFee - discountAmount */
     private BigDecimal finalAmount;
+
     private String paymentMethod;
     private String paymentStatus;
     private String orderStatus;

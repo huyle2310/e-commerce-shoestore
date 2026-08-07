@@ -19,4 +19,16 @@ public class ProductVariantResponse {
     private String size;
     private Integer stockQuantity;
     private BigDecimal priceModifier;
+
+    /**
+     * Giá hiệu lực để hiển thị và tính tiền.
+     * Tạm thời lấy bằng originalPrice. 
+     * Khách hàng sẽ thấy giá giảm thực tế khi đưa vào giỏ hàng hoặc xem phần Xả kho.
+     */
+    private BigDecimal effectivePrice;
+
+    /**
+     * Giá gốc (basePrice + priceModifier).
+     */
+    private BigDecimal originalPrice;
 }

@@ -36,8 +36,14 @@ export default function CheckoutPage() {
   const [selectedWard, setSelectedWard] = useState<any>(null);
   const [userAddress, setUserAddress] = useState('');
 
-  // Automatically calculate shipping fee based on selected province
-  const shippingFee = (selectedProvince && (selectedProvince.name.includes('Hồ Chí Minh') || selectedProvince.name.includes('HCM'))) ? 20000 : 40000;
+  // Keep the preview aligned with the backend's delivery policy. The backend
+  // remains the source of truth when the order is created.
+  const provinceName = selectedProvince?.name || '';
+  const shippingFee = provinceName.includes('Hồ Chí Minh') || provinceName.includes('HCM')
+    ? 20000
+    : provinceName.includes('Hà Nội')
+      ? 25000
+      : 40000;
 
   const [voucherCode, setVoucherCode] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<any>(null);
@@ -226,7 +232,7 @@ export default function CheckoutPage() {
         const submitData: any = {
           ...formData,
           shippingAddress: fullShippingAddress,
-          shippingFee,
+          province: selectedProvince.name,
           voucherCode: appliedVoucher ? appliedVoucher.code : undefined
         };
         // Nếu là mua ngay (buyNow), gửi kèm items để backend ưu tiên tạo đơn trực tiếp
@@ -239,7 +245,7 @@ export default function CheckoutPage() {
         const submitData = {
           ...formData,
           shippingAddress: fullShippingAddress,
-          shippingFee,
+          province: selectedProvince.name,
           items: items.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
         };
         response = await api.post('/orders/guest', submitData);
@@ -252,7 +258,9 @@ export default function CheckoutPage() {
       }
 
       if (formData.paymentMethod === 'SEPAY') {
-        router.push(`/checkout/sepay?orderId=${response.data.id}&amount=${finalAmount}`);
+        // Use the server-calculated amount. It includes the authoritative
+        // shipping fee, voucher discount, and any clearance pricing.
+        router.push(`/checkout/sepay?orderId=${response.data.id}&amount=${response.data.finalAmount}`);
       } else {
         router.push(`/checkout/success?orderId=${response.data.id.split('-')[0].toUpperCase()}`);
       }

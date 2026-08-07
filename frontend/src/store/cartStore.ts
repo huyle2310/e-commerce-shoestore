@@ -91,7 +91,8 @@ export const useCartStore = create<CartState>()(
             if (localVariantDetails.stockQuantity && quantity > localVariantDetails.stockQuantity) {
                throw new Error('Số lượng mua vượt quá số lượng tồn kho');
             }
-            const unitPrice = localVariantDetails.product.basePrice + (localVariantDetails.priceModifier || 0);
+            const unitPrice = localVariantDetails.effectivePrice
+              ?? localVariantDetails.product.basePrice + (localVariantDetails.priceModifier || 0);
             newItems.push({
               id: 'local-' + Math.random().toString(36).substr(2, 9),
               variantId,

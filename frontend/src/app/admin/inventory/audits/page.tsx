@@ -83,7 +83,7 @@ export default function AuditReceiptsPage() {
                     <td className="p-4 font-medium">{receipt.items?.length || 0} mục</td>
                     <td className="p-4">
                       {receipt.status === 'COMPLETED' ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-green-50 text-green-600 text-xs font-bold">Đã Cân Bằng</span>
+                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-green-50 text-green-600 text-xs font-bold">Đã Duyệt</span>
                       ) : receipt.status === 'CANCELLED' ? (
                         <span className="inline-flex items-center px-2 py-1 rounded-md bg-red-50 text-red-600 text-xs font-bold">Đã hủy</span>
                       ) : (

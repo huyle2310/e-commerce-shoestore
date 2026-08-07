@@ -21,11 +21,15 @@ public class ProductResponse {
     private String slug;
     private String descriptionVi;
     private String descriptionEn;
+    private String clearanceNameVi;
+    private String clearanceDescriptionVi;
     private BigDecimal basePrice;
     private String targetAudience;
     private Boolean isActive;
+    private Boolean isClearanceActive;
     private List<ProductImageResponse> images;
     private List<ProductVariantResponse> variants;
+    private List<InventoryBatchResponse> clearanceBatches;
     private Double averageRating;
     private Integer totalReviews;
     private Integer soldQuantity;

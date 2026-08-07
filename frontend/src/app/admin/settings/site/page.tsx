@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import { Plus, Trash2, ArrowUp, ArrowDown, Save, Eye, EyeOff, LayoutTemplate } from 'lucide-react';
+import { Plus, Trash2, ArrowUp, ArrowDown, Save, LayoutTemplate } from 'lucide-react';
 import api from '@/lib/axios';
 import { useSiteSettingsStore } from '@/store/siteSettingsStore';
 import ImageUpload from '@/components/ui/ImageUpload';
@@ -36,8 +36,8 @@ function SiteSettingsContent() {
 
   const [saving, setSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [showPreview, setShowPreview] = useState(true);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  // const [showPreview, setShowPreview] = useState(true);
+  // const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -96,25 +96,25 @@ function SiteSettingsContent() {
   }, [settings]);
 
   // Live Preview Sync
-  useEffect(() => {
-    if (iframeRef.current && iframeRef.current.contentWindow && mounted) {
-      const payload = {
-        ...formData,
-        homeBannersJson: JSON.stringify(formData.homeBanners),
-        homeFeaturedImagesJson: JSON.stringify(formData.homeFeaturedImages),
-        socialLinksJson: JSON.stringify(formData.socialLinks),
-        homeServicesJson: JSON.stringify(formData.homeServices),
-        homeCategoriesJson: JSON.stringify(formData.homeCategories),
-        headerMenuJson: JSON.stringify(formData.headerMenu),
-        footerMenuJson: JSON.stringify(formData.footerMenu)
-      };
+  // useEffect(() => {
+  //   if (iframeRef.current && iframeRef.current.contentWindow && mounted) {
+  //     const payload = {
+  //       ...formData,
+  //       homeBannersJson: JSON.stringify(formData.homeBanners),
+  //       homeFeaturedImagesJson: JSON.stringify(formData.homeFeaturedImages),
+  //       socialLinksJson: JSON.stringify(formData.socialLinks),
+  //       homeServicesJson: JSON.stringify(formData.homeServices),
+  //       homeCategoriesJson: JSON.stringify(formData.homeCategories),
+  //       headerMenuJson: JSON.stringify(formData.headerMenu),
+  //       footerMenuJson: JSON.stringify(formData.footerMenu)
+  //     };
 
-      iframeRef.current.contentWindow.postMessage(
-        { type: 'PREVIEW_SETTINGS', payload },
-        '*'
-      );
-    }
-  }, [formData, mounted, showPreview]);
+  //     iframeRef.current.contentWindow.postMessage(
+  //       { type: 'PREVIEW_SETTINGS', payload },
+  //       '*'
+  //     );
+  //   }
+  // }, [formData, mounted, showPreview]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -175,23 +175,25 @@ function SiteSettingsContent() {
 
   if (loading && !settings) return <div className="p-8">Đang tải cấu hình...</div>;
 
-  const previewUrl = activeTab === 'about' ? '/about' : activeTab === 'contact' ? '/contact' : '/';
+  // const previewUrl = activeTab === 'about' ? '/about' : activeTab === 'contact' ? '/contact' : '/';
 
   return (
     <div className="flex h-[calc(100vh-5rem)] bg-neutral-100 overflow-hidden -m-8">
 
       {/* Editor Panel */}
-      <div className={`flex flex-col bg-white border-r border-neutral-200 transition-all duration-300 ${showPreview ? 'w-1/2' : 'w-full'}`}>
+      <div className="flex flex-col bg-white border-r border-neutral-200 transition-all duration-300 w-full">
         <div className="flex justify-between items-center p-6 border-b border-neutral-100 flex-shrink-0">
           <div>
             <h2 className="text-2xl font-bold flex items-center"><LayoutTemplate size={24} className="mr-2 text-orange-500" /> Quản lý Nội dung</h2>
           </div>
-          <button
+
+          {/*preview button */
+          /* <button
             onClick={() => setShowPreview(!showPreview)}
             className="flex items-center space-x-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-lg font-medium transition-colors"
           >
             {showPreview ? <><EyeOff size={18} /> <span>Đóng Preview</span></> : <><Eye size={18} /> <span>Xem trước</span></>}
-          </button>
+          </button> */}
         </div>
 
         <div className="flex px-6 pt-4 space-x-2 border-b border-neutral-100 overflow-x-auto flex-shrink-0">
@@ -266,7 +268,7 @@ function SiteSettingsContent() {
               <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-100">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-lg">Danh sách Ảnh Banners Hero</h3>
-                  <button onClick={() => addArrayItem('homeBanners', { url: '', link: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Ảnh</button>
+                  <button onClick={() => addArrayItem('homeBanners', { url: '', link: '' })} className="text-sm font-bold bg-neutral-900 text-white px-3 py-1.5 rounded-md flex items-center hover:bg-neutral-800"><Plus size={16} className="mr-1" /> Thêm Banner mới</button>
                 </div>
                 {/* Banner interval setting */}
                 <div className="mb-4 flex items-center gap-4 bg-orange-50 border border-orange-100 rounded-lg p-4">
@@ -707,7 +709,7 @@ function SiteSettingsContent() {
       </div>
 
       {/* Live Preview Panel */}
-      {showPreview && (
+      {/* {showPreview && (
         <div className="w-1/2 bg-neutral-200 flex flex-col relative border-l border-neutral-300">
           <div className="absolute top-4 left-4 z-10 bg-black/80 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
@@ -720,7 +722,7 @@ function SiteSettingsContent() {
             title="Live Preview"
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -119,7 +119,7 @@ export default function Footer() {
         <div className="border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs">
           <p>&copy; {new Date().getFullYear()} Vanguard Store. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <span className="font-bold text-white/50 hover:text-white transition-colors">VNPAY</span>
+            <span className="font-bold text-white/50 hover:text-white transition-colors">SEPAY</span>
             <span className="font-bold text-white/50 hover:text-white transition-colors">MOMO</span>
           </div>
         </div>

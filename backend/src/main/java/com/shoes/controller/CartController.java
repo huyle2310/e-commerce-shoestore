@@ -27,8 +27,9 @@ public class CartController {
     public ResponseEntity<CartResponse> addToCart(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam UUID variantId,
-            @RequestParam int quantity) {
-        return ResponseEntity.ok(cartService.addToCart(userDetails.getId(), variantId, quantity));
+            @RequestParam int quantity,
+            @RequestParam(required = false) UUID inventoryBatchId) {
+        return ResponseEntity.ok(cartService.addToCart(userDetails.getId(), variantId, quantity, inventoryBatchId));
     }
 
     @PutMapping("/items/{itemId}")

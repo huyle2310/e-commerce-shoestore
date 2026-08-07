@@ -17,9 +17,12 @@ public class ProductRequest {
     private String nameEn;
     private String descriptionVi;
     private String descriptionEn;
+    private String clearanceNameVi;
+    private String clearanceDescriptionVi;
     private BigDecimal basePrice;
     private String targetAudience;
     private Boolean isActive;
+    private Boolean isClearanceActive;
     
     private Integer categoryId;
     private Integer brandId;

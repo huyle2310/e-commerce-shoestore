@@ -33,4 +33,7 @@ public class OrderItem {
 
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
+
+    @Column(name = "inventory_batch_id")
+    private UUID inventoryBatchId;
 }

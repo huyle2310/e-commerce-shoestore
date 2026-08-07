@@ -20,7 +20,17 @@ interface ProductDetailProps {
   category?: { nameVi: string };
   brand?: { name: string };
   images: { imageUrl: string; isPrimary: boolean }[];
-  variants: { id: string; size: string; colorVi: string; stockQuantity: number; priceModifier: number }[];
+  variants: {
+    id: string;
+    size: string;
+    colorVi: string;
+    stockQuantity: number;
+    priceModifier: number;
+    effectivePrice?: number;
+    originalPrice?: number;
+    warehouseType?: 'INVENTORY' | 'CLEARANCE';
+    productStatus?: 'ACTIVE' | 'DISPOSED';
+  }[];
   averageRating: number;
   totalReviews: number;
 }
@@ -65,8 +75,15 @@ export default function ProductDetailPage() {
           setSelectedImage(response.data.images[0].imageUrl);
         }
         if (response.data.variants && response.data.variants.length > 0) {
-          setSelectedColor(response.data.variants[0].colorVi || '');
-          setSelectedSize(response.data.variants[0].size);
+          const saleableVariants = response.data.variants
+            .filter((variant: ProductDetailProps['variants'][number]) => variant.productStatus !== 'DISPOSED');
+          const defaultVariant = saleableVariants.find(
+            (variant: ProductDetailProps['variants'][number]) => variant.stockQuantity > 0
+          ) || saleableVariants[0];
+          if (defaultVariant) {
+            setSelectedColor(defaultVariant.colorVi || '');
+            setSelectedSize(defaultVariant.size);
+          }
         }
 
         // Fetch reviews
@@ -116,6 +133,7 @@ export default function ProductDetailPage() {
     }
 
     const variant = product?.variants.find(v =>
+      v.productStatus !== 'DISPOSED' &&
       v.size === selectedSize &&
       (colors.length === 0 || v.colorVi === selectedColor)
     );
@@ -152,6 +170,7 @@ export default function ProductDetailPage() {
     }
     const colorsArr = Array.from(new Set(product?.variants?.map(v => v.colorVi).filter(Boolean) || [])) as string[];
     const variant = product?.variants?.find(v =>
+      v.productStatus !== 'DISPOSED' &&
       v.size === selectedSize && (colorsArr.length === 0 || v.colorVi === selectedColor)
     );
     if (!variant) {
@@ -169,10 +188,10 @@ export default function ProductDetailPage() {
       color: variant.colorVi,
       size: variant.size,
       imageUrl: selectedImage || '',
-      unitPrice: (product?.basePrice || 0) + (variant.priceModifier || 0),
+      unitPrice: variant.effectivePrice ?? (product?.basePrice || 0) + (variant.priceModifier || 0),
       quantity: quantity,
       stockQuantity: variant.stockQuantity,
-      totalPrice: ((product?.basePrice || 0) + (variant.priceModifier || 0)) * quantity,
+      totalPrice: (variant.effectivePrice ?? (product?.basePrice || 0) + (variant.priceModifier || 0)) * quantity,
       sku: variant.id // Adding sku to fix TS error
     };
     
@@ -195,6 +214,7 @@ export default function ProductDetailPage() {
     // Find the variant matching current color + size selection
     const colorsArr = Array.from(new Set(product?.variants?.map(v => v.colorVi).filter(Boolean) || [])) as string[];
     const currentVariant = product?.variants?.find(v =>
+      v.productStatus !== 'DISPOSED' &&
       v.size === selectedSize && (colorsArr.length === 0 || v.colorVi === selectedColor)
     );
     if (currentVariant && num > currentVariant.stockQuantity) {
@@ -252,29 +272,35 @@ export default function ProductDetailPage() {
     return <div className="min-h-screen flex items-center justify-center text-2xl font-bold">Không tìm thấy sản phẩm</div>;
   }
 
-  const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.basePrice);
-  const colors = Array.from(new Set(product.variants?.map(v => v.colorVi).filter(Boolean) || [])) as string[];
-  const sizes = Array.from(new Set(product.variants?.map(v => v.size))).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const saleableVariants = product.variants?.filter(variant => variant.productStatus !== 'DISPOSED') || [];
+  const colors = Array.from(new Set(saleableVariants.map(v => v.colorVi).filter(Boolean))) as string[];
+  const sizes = Array.from(new Set(saleableVariants.map(v => v.size))).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
   const checkColorAvailable = (color: string) => {
     if (!selectedSize) return true;
-    const variant = product.variants?.find(v => v.size === selectedSize && v.colorVi === color);
+    const variant = saleableVariants.find(v => v.size === selectedSize && v.colorVi === color);
     return variant ? variant.stockQuantity > 0 : false;
   };
 
   const checkSizeAvailable = (size: string) => {
     if (!selectedColor && colors.length > 0) return true;
     if (colors.length === 0) {
-      const variant = product.variants?.find(v => v.size === size);
+      const variant = saleableVariants.find(v => v.size === size);
       return variant ? variant.stockQuantity > 0 : false;
     }
-    const variant = product.variants?.find(v => v.colorVi === selectedColor && v.size === size);
+    const variant = saleableVariants.find(v => v.colorVi === selectedColor && v.size === size);
     return variant ? variant.stockQuantity > 0 : false;
   };
 
-  const currentVariant = product.variants?.find(v => 
+  const currentVariant = saleableVariants.find(v =>
     v.size === selectedSize && (colors.length === 0 || v.colorVi === selectedColor)
   );
+  const currentPrice = currentVariant?.effectivePrice ?? product.basePrice;
+  const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentPrice);
+  const originalPrice = currentVariant?.originalPrice;
+  const isClearance = currentVariant?.warehouseType === 'CLEARANCE'
+    && originalPrice !== undefined
+    && originalPrice > currentPrice;
 
   return (
     <div className="pt-24 pb-16 bg-white min-h-screen">
@@ -335,7 +361,14 @@ export default function ProductDetailPage() {
               <span className="text-neutral-500 text-sm font-medium">{product.averageRating?.toFixed(1) || "0.0"} / 5 ({product.totalReviews || 0} Đánh giá)</span>
             </div>
 
-            <p className="text-3xl font-bold mb-8">{price}</p>
+            <div className="mb-8">
+              <p className="text-3xl font-bold">{price}</p>
+              {isClearance && originalPrice !== undefined && (
+                <p className="mt-1 text-sm font-medium text-neutral-400 line-through">
+                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(originalPrice)}
+                </p>
+              )}
+            </div>
 
             <div 
               className="text-neutral-600 mb-8 leading-relaxed line-clamp-4 prose prose-sm prose-neutral max-w-none"
@@ -463,7 +496,7 @@ export default function ProductDetailPage() {
               <div className="flex gap-3">
                 <button
                   onClick={handleAddToCart}
-                  disabled={adding || buyingNow || (!!currentVariant && currentVariant.stockQuantity === 0)}
+                  disabled={adding || buyingNow || !currentVariant || currentVariant.stockQuantity === 0}
                   className="flex-1 bg-black text-white font-bold text-lg py-4 rounded-full hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center disabled:opacity-70"
                 >
                   {adding ? <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div> : <><ShoppingCart size={20} className="mr-2" /> Thêm vào giỏ</>}
@@ -475,7 +508,7 @@ export default function ProductDetailPage() {
               {/* Mua ngay button */}
               <button
                 onClick={handleBuyNow}
-                disabled={adding || buyingNow || (!!currentVariant && currentVariant.stockQuantity === 0)}
+                disabled={adding || buyingNow || !currentVariant || currentVariant.stockQuantity === 0}
                 className="w-full bg-orange-500 text-white font-bold text-lg py-4 rounded-full hover:bg-neutral-800 transition-all flex items-center justify-center disabled:opacity-70 shadow-lg"
               >
                 {buyingNow ? (

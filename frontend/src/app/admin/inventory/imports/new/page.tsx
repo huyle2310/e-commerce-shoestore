@@ -79,8 +79,18 @@ export default function NewImportReceiptPage() {
         const parts = line.split(',');
         if (parts.length >= 3) {
           const sku = parts[0].trim();
-          const quantity = parseInt(parts[1].trim());
-          const price = parseInt(parts[2].trim());
+          let quantity, price, tenSp = '';
+          
+          if (parts.length >= 4 && isNaN(parseInt(parts[1].trim()))) {
+            // Định dạng mới: SKU, Tên SP, Số lượng, Giá nhập (Tên SP không phải số)
+            tenSp = parts[1].trim();
+            quantity = parseInt(parts[2].trim());
+            price = parseInt(parts[3].trim());
+          } else {
+            // Định dạng cũ: SKU, Số lượng, Giá nhập
+            quantity = parseInt(parts[1].trim());
+            price = parseInt(parts[2].trim());
+          }
 
           if (isNaN(quantity) || isNaN(price)) continue;
 
@@ -96,7 +106,7 @@ export default function NewImportReceiptPage() {
               importPrice: price
             });
           } else {
-            notFoundSkus.push(sku);
+            notFoundSkus.push(`Lỗi khi thêm sản phẩm ${tenSp ? tenSp + ' ' : ''}(${sku}) chưa có trong kho`);
           }
         }
       }
@@ -116,14 +126,14 @@ export default function NewImportReceiptPage() {
         
         let msg = `Đã thêm ${newItems.length} sản phẩm từ file.`;
         if (notFoundSkus.length > 0) {
-          msg += `\nKhông tìm thấy các mã SKU trong hệ thống: ${notFoundSkus.join(', ')}`;
+          msg += `\n\n${notFoundSkus.join('\n')}`;
         }
         alert(msg);
       } else {
         if (notFoundSkus.length > 0) {
-          alert(`Không tìm thấy mã SKU nào trong hệ thống!\nCác mã đã kiểm tra: ${notFoundSkus.join(', ')}`);
+          alert(notFoundSkus.join('\n'));
         } else {
-          alert('Không tìm thấy dữ liệu hợp lệ trong file.\nVui lòng đảm bảo file CSV có định dạng: SKU, Số lượng, Giá nhập');
+          alert('Không tìm thấy dữ liệu hợp lệ trong file.\nVui lòng đảm bảo file CSV có định dạng: SKU, [Tên SP], Số lượng, Giá nhập');
         }
       }
     };

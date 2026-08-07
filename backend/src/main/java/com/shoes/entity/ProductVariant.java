@@ -3,6 +3,7 @@ package com.shoes.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -46,6 +47,15 @@ public class ProductVariant {
     @Version
     @Column(columnDefinition = "bigint default 0")
     private Long version;
+
+    // ============================================================
+    // Derived Field (Trường dẫn xuất)
+    // ============================================================
+    // CẢNH BÁO: Không được phép cập nhật thủ công.
+    // Trường này chỉ được tự động cập nhật thông qua InventoryBatchService
+    // bằng công thức: SUM(quantity) WHERE status = ACTIVE
+    // ============================================================
+    // (Các trường warehouseType, productStatus, quality, clearance... đã được chuyển sang InventoryBatch)
 
     @PrePersist
     protected void onCreate() {

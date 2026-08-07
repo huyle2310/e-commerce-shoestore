@@ -24,8 +24,8 @@ export default function InventoryStocksPage() {
     }
   };
 
-  const filteredProducts = products.filter(p => 
-    p.nameVi.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredProducts = products.filter(p =>
+    p.nameVi.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -34,13 +34,12 @@ export default function InventoryStocksPage() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">Tồn kho hiện tại</h1>
-          <p className="text-neutral-500 mt-1">Quản lý số lượng tồn của tất cả sản phẩm</p>
         </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={20} />
-          <input 
-            type="text" 
-            placeholder="Tìm kiếm sản phẩm..." 
+          <input
+            type="text"
+            placeholder="Tìm kiếm sản phẩm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 min-w-[300px]"

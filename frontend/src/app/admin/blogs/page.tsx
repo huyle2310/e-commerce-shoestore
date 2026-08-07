@@ -59,7 +59,7 @@ export default function AdminBlogsPage() {
         alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
         return;
       }
-      
+
       const payload = {
         ...formData,
         titleEn: formData.titleEn || formData.titleVi,
@@ -74,7 +74,7 @@ export default function AdminBlogsPage() {
       }
       setIsModalOpen(false);
       setEditingId(null);
-      setFormData({ 
+      setFormData({
         titleVi: '', titleEn: '', slug: '', thumbnailUrl: '', contentVi: '', contentEn: '',
         shortDescriptionVi: '', shortDescriptionEn: '', tags: '', isFeatured: false, isPublished: false,
         seoTitleVi: '', seoTitleEn: '', seoDescriptionVi: '', seoDescriptionEn: '', publishedAt: null
@@ -89,12 +89,12 @@ export default function AdminBlogsPage() {
   const handleEdit = (blog: any) => {
     setEditingId(blog.id);
     setFormData({
-      titleVi: blog.titleVi || '', titleEn: blog.titleEn || '', slug: blog.slug || '', 
+      titleVi: blog.titleVi || '', titleEn: blog.titleEn || '', slug: blog.slug || '',
       thumbnailUrl: blog.thumbnailUrl || '', contentVi: blog.contentVi || '', contentEn: blog.contentEn || '',
-      shortDescriptionVi: blog.shortDescriptionVi || '', shortDescriptionEn: blog.shortDescriptionEn || '', 
+      shortDescriptionVi: blog.shortDescriptionVi || '', shortDescriptionEn: blog.shortDescriptionEn || '',
       tags: blog.tags || '', isFeatured: blog.isFeatured || false, isPublished: blog.isPublished || false,
-      seoTitleVi: blog.seoTitleVi || '', seoTitleEn: blog.seoTitleEn || '', 
-      seoDescriptionVi: blog.seoDescriptionVi || '', seoDescriptionEn: blog.seoDescriptionEn || '', 
+      seoTitleVi: blog.seoTitleVi || '', seoTitleEn: blog.seoTitleEn || '',
+      seoDescriptionVi: blog.seoDescriptionVi || '', seoDescriptionEn: blog.seoDescriptionEn || '',
       publishedAt: blog.publishedAt || null
     });
     setIsModalOpen(true);
@@ -118,10 +118,10 @@ export default function AdminBlogsPage() {
           <h2 className="text-2xl font-bold">Quản lý Bài viết</h2>
           <p className="text-neutral-500">Thêm và quản lý các bài viết tin tức, bộ sưu tập</p>
         </div>
-        <button 
+        <button
           onClick={() => {
             setEditingId(null);
-            setFormData({ 
+            setFormData({
               titleVi: '', titleEn: '', slug: '', thumbnailUrl: '', contentVi: '', contentEn: '',
               shortDescriptionVi: '', shortDescriptionEn: '', tags: '', isFeatured: false, isPublished: false,
               seoTitleVi: '', seoTitleEn: '', seoDescriptionVi: '', seoDescriptionEn: '', publishedAt: null
@@ -140,9 +140,8 @@ export default function AdminBlogsPage() {
             <tr className="bg-neutral-50 text-neutral-500 text-sm">
               <th className="p-4 font-medium rounded-tl-xl w-20">Ảnh</th>
               <th className="p-4 font-medium">Tiêu đề</th>
-              <th className="p-4 font-medium">Thể loại</th>
-              <th className="p-4 font-medium text-center">Lượt xem</th>
-              <th className="p-4 font-medium">Trạng thái</th>
+              <th className="p-4 font-medium">Tags</th>
+              <th className="p-4  px-12 text-center font-medium">Trạng thái</th>
               <th className="p-4 font-medium text-center rounded-tr-xl">Thao tác</th>
             </tr>
           </thead>
@@ -166,16 +165,15 @@ export default function AdminBlogsPage() {
                     <div className="text-xs text-neutral-500">{blog.slug}</div>
                   </td>
                   <td className="p-4 text-sm text-neutral-500">{blog.tags || '-'}</td>
-                  <td className="p-4 text-sm font-bold text-center text-neutral-700">{blog.viewCount || 0}</td>
                   <td className="p-4">
                     <div className="flex flex-col gap-1 items-start">
                       {blog.isPublished ? (
-                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Đã xuất bản</span>
+                        <span className="px-3 text-center w-full py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Đã xuất bản</span>
                       ) : (
-                        <span className="px-3 py-1 bg-neutral-100 text-neutral-700 rounded-full text-xs font-bold">Bản nháp</span>
+                        <span className="px-3 text-center w-full py-1 bg-neutral-100 text-neutral-700 rounded-full text-xs font-bold">Bản nháp</span>
                       )}
                       {blog.isFeatured && (
-                        <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">Nổi bật</span>
+                        <span className="px-3 text-center w-full py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">Nổi bật</span>
                       )}
                     </div>
                   </td>
@@ -194,27 +192,27 @@ export default function AdminBlogsPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl">
+          <div className="bg-white rounded-[0.4rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl">
             <h3 className="text-2xl font-bold mb-6">{editingId ? 'Chỉnh sửa bài viết' : 'Tạo bài viết mới'}</h3>
-            
+
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Tiêu đề bài viết *</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={formData.titleVi}
-                    onChange={(e) => setFormData({...formData, titleVi: e.target.value, slug: generateSlug(e.target.value)})}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
+                    onChange={(e) => setFormData({ ...formData, titleVi: e.target.value, slug: generateSlug(e.target.value) })}
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Đường dẫn (Slug) *</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={formData.slug}
-                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   />
                 </div>
               </div>
@@ -222,17 +220,17 @@ export default function AdminBlogsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Link Ảnh Thumbnail</label>
-                  <ImageUpload value={formData.thumbnailUrl} onChange={(url) => setFormData({...formData, thumbnailUrl: url})} />
+                  <ImageUpload value={formData.thumbnailUrl} onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })} />
                   {formData.thumbnailUrl && <img src={formData.thumbnailUrl} className="mt-3 h-20 rounded-lg object-cover" />}
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Thể loại (Tags)</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={formData.tags}
-                    onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
                     placeholder="thời trang, giày, thể thao..."
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                   />
                   <p className="text-xs text-neutral-500 mt-2">Phân cách bởi dấu phẩy</p>
                 </div>
@@ -242,13 +240,13 @@ export default function AdminBlogsPage() {
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Mô tả ngắn (VI)</label>
                   <div className="bg-white rounded-lg overflow-hidden border border-neutral-200">
-                    {mounted && <ReactQuill theme="snow" value={formData.shortDescriptionVi || ''} onChange={val => setFormData({...formData, shortDescriptionVi: val})} className="h-32 mb-10" />}
+                    {mounted && <ReactQuill theme="snow" value={formData.shortDescriptionVi || ''} onChange={val => setFormData({ ...formData, shortDescriptionVi: val })} className="h-32 mb-10" />}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-neutral-900 mb-2">Mô tả ngắn (EN)</label>
                   <div className="bg-white rounded-lg overflow-hidden border border-neutral-200">
-                    {mounted && <ReactQuill theme="snow" value={formData.shortDescriptionEn || ''} onChange={val => setFormData({...formData, shortDescriptionEn: val})} className="h-32 mb-10" />}
+                    {mounted && <ReactQuill theme="snow" value={formData.shortDescriptionEn || ''} onChange={val => setFormData({ ...formData, shortDescriptionEn: val })} className="h-32 mb-10" />}
                   </div>
                 </div>
               </div>
@@ -256,10 +254,10 @@ export default function AdminBlogsPage() {
               <div>
                 <label className="block text-sm font-bold text-neutral-900 mb-2">Nội dung bài viết *</label>
                 <div className="bg-white rounded-lg overflow-hidden border border-neutral-200">
-                  {mounted && <ReactQuill 
-                    theme="snow" 
-                    value={formData.contentVi || ''} 
-                    onChange={(content) => setFormData({...formData, contentVi: content})}
+                  {mounted && <ReactQuill
+                    theme="snow"
+                    value={formData.contentVi || ''}
+                    onChange={(content) => setFormData({ ...formData, contentVi: content })}
                     className="h-64"
                   />}
                 </div>
@@ -267,21 +265,21 @@ export default function AdminBlogsPage() {
 
               <div className="flex items-center pt-10 gap-8">
                 <div className="flex items-center">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     id="publish"
                     checked={formData.isPublished}
-                    onChange={(e) => setFormData({...formData, isPublished: e.target.checked})}
+                    onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
                     className="w-5 h-5 rounded text-orange-500 focus:ring-orange-500 mr-3"
                   />
                   <label htmlFor="publish" className="font-bold cursor-pointer">Xuất bản bài viết</label>
                 </div>
                 <div className="flex items-center">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     id="featured"
                     checked={formData.isFeatured}
-                    onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
+                    onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
                     className="w-5 h-5 rounded text-orange-500 focus:ring-orange-500 mr-3"
                   />
                   <label htmlFor="featured" className="font-bold cursor-pointer text-orange-600">Bài viết nổi bật</label>
@@ -294,61 +292,53 @@ export default function AdminBlogsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                   <div>
                     <label className="block text-sm font-bold text-neutral-900 mb-2">Meta Title (VI)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formData.seoTitleVi || ''}
-                      onChange={(e) => setFormData({...formData, seoTitleVi: e.target.value})}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
+                      onChange={(e) => setFormData({ ...formData, seoTitleVi: e.target.value })}
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-neutral-900 mb-2">Meta Title (EN)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={formData.seoTitleEn || ''}
-                      onChange={(e) => setFormData({...formData, seoTitleEn: e.target.value})}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
+                      onChange={(e) => setFormData({ ...formData, seoTitleEn: e.target.value })}
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                   <div>
                     <label className="block text-sm font-bold text-neutral-900 mb-2">Meta Description (VI)</label>
-                    <textarea 
+                    <textarea
                       value={formData.seoDescriptionVi || ''}
-                      onChange={(e) => setFormData({...formData, seoDescriptionVi: e.target.value})}
-                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none" 
+                      onChange={(e) => setFormData({ ...formData, seoDescriptionVi: e.target.value })}
+                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-neutral-900 mb-2">Meta Description (EN)</label>
-                    <textarea 
+                    <textarea
                       value={formData.seoDescriptionEn || ''}
-                      onChange={(e) => setFormData({...formData, seoDescriptionEn: e.target.value})}
-                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none" 
+                      onChange={(e) => setFormData({ ...formData, seoDescriptionEn: e.target.value })}
+                      className="w-full h-24 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none"
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-neutral-900 mb-2">Ngày xuất bản (Tùy chọn)</label>
-                  <input 
-                    type="datetime-local" 
-                    value={formData.publishedAt ? new Date(formData.publishedAt).toISOString().slice(0, 16) : ''}
-                    onChange={(e) => setFormData({...formData, publishedAt: e.target.value ? new Date(e.target.value).toISOString() : null})}
-                    className="w-full md:w-1/2 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" 
-                  />
-                </div>
+
               </div>
             </div>
 
             <div className="mt-10 flex justify-end gap-4 border-t border-neutral-100 pt-6">
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-6 py-3 border border-neutral-200 rounded-full font-bold hover:bg-neutral-50 transition-colors"
               >
                 Hủy bỏ
               </button>
-              <button 
+              <button
                 onClick={handleSave}
                 className="px-6 py-3 bg-orange-500 text-white rounded-full font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30"
               >

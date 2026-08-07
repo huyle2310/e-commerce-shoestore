@@ -23,6 +23,7 @@ public class UserResponse {
     private Role role;
     private Boolean isActive;
     private java.math.BigDecimal totalSpent;
+    private Integer totalOrders;
     private String rankName;
     private LocalDateTime createdAt;
 }

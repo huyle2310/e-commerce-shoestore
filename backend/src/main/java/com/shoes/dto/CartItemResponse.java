@@ -22,4 +22,9 @@ public class CartItemResponse {
     private Integer quantity;
     private Integer stockQuantity;
     private java.math.BigDecimal totalPrice;
+    
+    // Clearance info
+    private UUID inventoryBatchId;
+    private Integer qualityPercentage;
+    private String conditionNote;
 }

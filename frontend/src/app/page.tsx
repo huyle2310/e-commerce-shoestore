@@ -16,8 +16,8 @@ export default function HomePage() {
   const [recommendedProducts, setRecommendedProducts] = useState<ProductProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingRecs, setLoadingRecs] = useState(true);
-  const [banners, setBanners] = useState<any[]>([]);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(1); // 1 = next (right→left), -1 = prev (left→right)
   const [isHoveringCarousel, setIsHoveringCarousel] = useState(false);
   const { settings, fetchSettings } = useSiteSettingsStore();
   const { language } = useLanguageStore();
@@ -48,36 +48,25 @@ export default function HomePage() {
       }
     };
 
-    const fetchBanners = async () => {
-      try {
-        const response = await api.get('/banners');
-        const heroBanners = response.data.filter((b: any) => b.position === 'HOME_HERO');
-        setBanners(heroBanners);
-      } catch (error) {
-        console.error("Error fetching banners:", error);
-      }
-    };
-
     fetchProducts();
     fetchRecommendations();
-    fetchBanners();
   }, [fetchSettings]);
 
-  // Determine which banners to use
-  const carouselBanners = banners.length > 0
-    ? banners.map((b: any) => ({ url: b.imageUrl, link: b.targetUrl || b.link || '' }))
-    : (settings?.homeBanners || []);
+  // Use banners from SiteSettings
+  const carouselBanners = settings?.homeBanners || [];
 
   const intervalMs = settings?.bannerIntervalMs || 5000;
 
   // Auto slider - pauses on hover
   const goNext = useCallback(() => {
     if (carouselBanners.length <= 1) return;
+    setSlideDirection(1);
     setCurrentBannerIndex(prev => (prev + 1) % carouselBanners.length);
   }, [carouselBanners.length]);
 
   const goPrev = useCallback(() => {
     if (carouselBanners.length <= 1) return;
+    setSlideDirection(-1);
     setCurrentBannerIndex(prev => (prev - 1 + carouselBanners.length) % carouselBanners.length);
   }, [carouselBanners.length]);
 
@@ -102,13 +91,13 @@ export default function HomePage() {
         >
           {/* Slides - hiệu ứng trượt ngang */}
             <div className="absolute inset-0 overflow-hidden">
-              <AnimatePresence initial={false} custom={currentBannerIndex} mode="popLayout">
+              <AnimatePresence initial={false} custom={slideDirection} mode="popLayout">
                 <motion.div
                   key={currentBannerIndex}
-                  custom={currentBannerIndex}
-                  initial={{ x: '100%' }}
+                  custom={slideDirection}
+                  initial={{ x: slideDirection > 0 ? '100%' : '-100%' }}
                   animate={{ x: 0 }}
-                  exit={{ x: '-100%' }}
+                  exit={{ x: slideDirection > 0 ? '-100%' : '100%' }}
                   transition={{ duration: 0.65, ease: [0.32, 0.72, 0, 1] }}
                   className="absolute inset-0"
                 >

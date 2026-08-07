@@ -42,6 +42,12 @@ public class Product {
     @Column(name = "description_en", columnDefinition = "TEXT")
     private String descriptionEn;
 
+    @Column(name = "clearance_name_vi")
+    private String clearanceNameVi;
+
+    @Column(name = "clearance_description_vi", columnDefinition = "TEXT")
+    private String clearanceDescriptionVi;
+
     @Column(name = "base_price", nullable = false)
     private BigDecimal basePrice;
 
@@ -50,6 +56,9 @@ public class Product {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Column(name = "is_clearance_active")
+    private Boolean isClearanceActive;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -68,6 +77,7 @@ public class Product {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         if (isActive == null) isActive = true;
+        if (isClearanceActive == null) isClearanceActive = true;
     }
 
     @PreUpdate

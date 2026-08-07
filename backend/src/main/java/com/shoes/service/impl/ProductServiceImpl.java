@@ -9,6 +9,7 @@ import com.shoes.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ public class ProductServiceImpl implements ProductService {
     private final com.shoes.repository.ReviewRepository reviewRepository;
     private final com.shoes.repository.RecommendationRepository recommendationRepository;
     private final com.shoes.repository.OrderRepository orderRepository;
+    private final com.shoes.repository.OrderItemRepository orderItemRepository;
+    private final com.shoes.repository.InventoryBatchRepository batchRepository;
 
     @Override
     public List<ProductResponse> getAllProducts() {
@@ -45,9 +48,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getProductBySlug(String slug) {
-        Product product = productRepository.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        return mapToProductResponse(product);
+        // Reuse getClearanceProductBySlug so admin/public fetch includes clearance batches
+        return getClearanceProductBySlug(slug);
     }
 
     @Override
@@ -183,9 +185,12 @@ public class ProductServiceImpl implements ProductService {
                 .slug(generateSlug(request.getNameVi()))
                 .descriptionVi(request.getDescriptionVi())
                 .descriptionEn(request.getDescriptionEn() != null && !request.getDescriptionEn().isEmpty() ? request.getDescriptionEn() : request.getDescriptionVi())
+                .clearanceNameVi(request.getClearanceNameVi())
+                .clearanceDescriptionVi(request.getClearanceDescriptionVi())
                 .basePrice(request.getBasePrice())
                 .targetAudience(request.getTargetAudience())
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
+                .isClearanceActive(request.getIsClearanceActive() != null ? request.getIsClearanceActive() : true)
                 .variants(new java.util.ArrayList<>())
                 .images(new java.util.ArrayList<>())
                 .build();
@@ -208,7 +213,7 @@ public class ProductServiceImpl implements ProductService {
                         .colorVi(vr.getColorVi())
                         .colorEn(vr.getColorEn())
                         .size(vr.getSize())
-                        .stockQuantity(vr.getStockQuantity())
+                        .stockQuantity(0) // Mặc định luôn là 0, chỉ cộng khi nhập hàng
                         .priceModifier(vr.getPriceModifier())
                         .build();
                 product.getVariants().add(newVar);
@@ -232,6 +237,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @org.springframework.transaction.annotation.Transactional
+    public void deleteProduct(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+
+        if (orderItemRepository.existsByVariantProductId(id)) {
+            throw new RuntimeException("Không thể xóa sản phẩm này vì đã phát sinh đơn hàng. Vui lòng vô hiệu hóa thay vì xóa.");
+        }
+
+        productRepository.delete(product);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
     public ProductResponse updateProduct(UUID id, ProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -241,9 +259,14 @@ public class ProductServiceImpl implements ProductService {
         product.setSlug(generateSlug(request.getNameVi()));
         product.setDescriptionVi(request.getDescriptionVi());
         product.setDescriptionEn(request.getDescriptionEn() != null && !request.getDescriptionEn().isEmpty() ? request.getDescriptionEn() : request.getDescriptionVi());
+        product.setClearanceNameVi(request.getClearanceNameVi());
+        product.setClearanceDescriptionVi(request.getClearanceDescriptionVi());
         product.setBasePrice(request.getBasePrice());
         product.setTargetAudience(request.getTargetAudience());
         product.setIsActive(request.getIsActive());
+        if (request.getIsClearanceActive() != null) {
+            product.setIsClearanceActive(request.getIsClearanceActive());
+        }
 
         if (request.getCategoryId() != null) {
             product.setCategory(categoryRepository.findById(request.getCategoryId()).orElse(null));
@@ -275,7 +298,7 @@ public class ProductServiceImpl implements ProductService {
                         existingVar.setColorVi(vr.getColorVi());
                         existingVar.setColorEn(vr.getColorEn());
                         existingVar.setSize(vr.getSize());
-                        existingVar.setStockQuantity(vr.getStockQuantity());
+                        // Không cập nhật tồn kho: existingVar.setStockQuantity(vr.getStockQuantity());
                         existingVar.setPriceModifier(vr.getPriceModifier());
                     }
                 } else {
@@ -285,7 +308,7 @@ public class ProductServiceImpl implements ProductService {
                             .colorVi(vr.getColorVi())
                             .colorEn(vr.getColorEn())
                             .size(vr.getSize())
-                            .stockQuantity(vr.getStockQuantity())
+                            .stockQuantity(0) // Mặc định luôn là 0
                             .priceModifier(vr.getPriceModifier())
                             .build();
                     product.getVariants().add(newVar);
@@ -335,9 +358,12 @@ public class ProductServiceImpl implements ProductService {
                 .slug(product.getSlug())
                 .descriptionVi(product.getDescriptionVi())
                 .descriptionEn(product.getDescriptionEn())
+                .clearanceNameVi(product.getClearanceNameVi())
+                .clearanceDescriptionVi(product.getClearanceDescriptionVi())
                 .basePrice(product.getBasePrice())
                 .targetAudience(product.getTargetAudience())
                 .isActive(product.getIsActive())
+                .isClearanceActive(product.getIsClearanceActive())
                 .build();
 
         if (product.getCategory() != null) {
@@ -366,15 +392,22 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (product.getVariants() != null) {
-            response.setVariants(product.getVariants().stream().map(var -> ProductVariantResponse.builder()
-                    .id(var.getId())
-                    .sku(var.getSku())
-                    .colorVi(var.getColorVi())
-                    .colorEn(var.getColorEn())
-                    .size(var.getSize())
-                    .stockQuantity(var.getStockQuantity())
-                    .priceModifier(var.getPriceModifier())
-                    .build()).collect(Collectors.toList()));
+            response.setVariants(product.getVariants().stream().map(var -> {
+                BigDecimal base = product.getBasePrice() != null ? product.getBasePrice() : BigDecimal.ZERO;
+                BigDecimal mod  = var.getPriceModifier() != null ? var.getPriceModifier() : BigDecimal.ZERO;
+                BigDecimal originalPrice   = base.add(mod);
+                return ProductVariantResponse.builder()
+                        .id(var.getId())
+                        .sku(var.getSku())
+                        .colorVi(var.getColorVi())
+                        .colorEn(var.getColorEn())
+                        .size(var.getSize())
+                        .stockQuantity(var.getStockQuantity())
+                        .priceModifier(var.getPriceModifier())
+                        .effectivePrice(originalPrice) // Giá sẽ được tính lại chính xác lúc thanh toán
+                        .originalPrice(originalPrice)
+                        .build();
+            }).collect(Collectors.toList()));
         }
 
         Double avgRating = reviewRepository.getAverageRatingByProductId(product.getId());
@@ -403,5 +436,72 @@ public class ProductServiceImpl implements ProductService {
             slug = java.util.UUID.randomUUID().toString();
         }
         return slug;
+    }
+    @Override
+    public List<ProductResponse> getClearanceProducts() {
+        // Fetch all active clearance batches
+        List<com.shoes.entity.InventoryBatch> clearanceBatches = batchRepository.findInventoryBatches(com.shoes.entity.WarehouseType.CLEARANCE, com.shoes.entity.ProductStatus.ACTIVE);
+        
+        // Group by product ID
+        Set<UUID> productIds = clearanceBatches.stream()
+                .filter(b -> b.getQuantity() > 0)
+                .map(b -> b.getVariant().getProduct().getId())
+                .collect(Collectors.toSet());
+                
+        // Fetch products and map
+        return productRepository.findAllById(productIds).stream()
+                .filter(p -> p.getIsActive() != null && p.getIsActive() && (p.getIsClearanceActive() == null || p.getIsClearanceActive()))
+                .map(p -> mapToProductResponseWithClearance(p, clearanceBatches))
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> getClearanceProductsAdmin() {
+        List<com.shoes.entity.InventoryBatch> clearanceBatches = batchRepository.findInventoryBatches(com.shoes.entity.WarehouseType.CLEARANCE, com.shoes.entity.ProductStatus.ACTIVE);
+        Set<UUID> productIds = clearanceBatches.stream()
+                .filter(b -> b.getQuantity() > 0)
+                .map(b -> b.getVariant().getProduct().getId())
+                .collect(Collectors.toSet());
+        return productRepository.findAllById(productIds).stream()
+                .map(p -> mapToProductResponseWithClearance(p, clearanceBatches))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductResponse getClearanceProductBySlug(String slug) {
+        Product product = productRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+                
+        List<com.shoes.entity.InventoryBatch> clearanceBatches = batchRepository.findInventoryBatches(com.shoes.entity.WarehouseType.CLEARANCE, com.shoes.entity.ProductStatus.ACTIVE).stream()
+                .filter(b -> b.getVariant().getProduct().getId().equals(product.getId()) && b.getQuantity() > 0)
+                .collect(Collectors.toList());
+                
+        return mapToProductResponseWithClearance(product, clearanceBatches);
+    }
+
+    private ProductResponse mapToProductResponseWithClearance(Product product, List<com.shoes.entity.InventoryBatch> allClearanceBatches) {
+        ProductResponse response = mapToProductResponse(product);
+        List<InventoryBatchResponse> batchResponses = allClearanceBatches.stream()
+                .filter(b -> b.getVariant().getProduct().getId().equals(product.getId()) && b.getQuantity() > 0)
+                .map(b -> InventoryBatchResponse.builder()
+                        .id(b.getId())
+                        .batchCode(b.getBatchCode())
+                        .quantity(b.getQuantity())
+                        .warehouseType(b.getWarehouseType() != null ? b.getWarehouseType().name() : null)
+                        .productStatus(b.getProductStatus() != null ? b.getProductStatus().name() : null)
+                        .variantId(b.getVariant().getId())
+                        .sku(b.getVariant().getSku())
+                        .colorVi(b.getVariant().getColorVi())
+                        .colorEn(b.getVariant().getColorEn())
+                        .size(b.getVariant().getSize())
+                        .qualityPercentage(b.getQualityPercentage())
+                        .conditionNote(b.getConditionNote())
+                        .clearancePrice(b.getClearancePrice())
+                        .imageUrl(b.getImageUrl())
+                        .importDate(b.getImportDate())
+                        .importPrice(b.getImportPrice())
+                        .build())
+                .collect(Collectors.toList());
+        response.setClearanceBatches(batchResponses);
+        return response;
     }
 }

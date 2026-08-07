@@ -116,6 +116,7 @@ CREATE TABLE orders (
     phone VARCHAR(20) NOT NULL,
     shipping_address TEXT NOT NULL,
     order_note TEXT,
+    shipping_fee DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     total_amount DECIMAL(12,2) NOT NULL,
     discount_amount DECIMAL(12,2) DEFAULT 0.00,
     final_amount DECIMAL(12,2) NOT NULL,
@@ -147,17 +148,6 @@ CREATE TABLE reviews (
 );
 
 
--- 14. Bảng Banners (Quảng cáo/Slider)
-CREATE TABLE banners (
-    id SERIAL PRIMARY KEY,
-    title_vi VARCHAR(255),
-    title_en VARCHAR(255),
-    image_url TEXT NOT NULL,
-    target_url TEXT,
-    position VARCHAR(50), -- 'HOME_HERO', 'HOME_SIDE', etc.
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
 
 -- 15. Bảng Blogs (Bài viết tin tức)
 CREATE TABLE blogs (
@@ -174,7 +164,7 @@ CREATE TABLE blogs (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 16. Bảng Recommendations (Lưu trữ điểm số gợi ý - Tuỳ chọn nếu dùng CF/Content-based lưu Offline)
+-- 15. Bảng Recommendations (Lưu trữ điểm số gợi ý)
 CREATE TABLE recommendations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,

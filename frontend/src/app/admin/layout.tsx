@@ -57,6 +57,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: 'Tồn kho', path: '/admin/inventory/stocks' },
         { name: 'Nhập hàng', path: '/admin/inventory/imports' },
         { name: 'Kiểm kê', path: '/admin/inventory/audits' },
+        { name: 'Kho nhập', path: '/admin/warehouse/inventory' },
+        { name: 'Kho thanh lý', path: '/admin/warehouse/clearance' },
       ]
     },
     { name: 'Mã giảm giá', path: '/admin/vouchers', icon: <Ticket size={20} />, roles: ['ADMIN', 'SALES_STAFF'] },
@@ -85,7 +87,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex h-screen bg-neutral-100 font-sans">
       {/* Sidebar */}
-      <aside className="w-64 bg-neutral-950 text-white flex flex-col overflow-y-auto">
+      <aside className="w-70 bg-neutral-950 text-white flex flex-col overflow-y-auto">
         <div className="h-20 flex-shrink-0 flex items-center px-6 border-b border-neutral-800">
           <Link href="/admin" className="text-2xl font-bold tracking-tighter text-white">
             VANGUARD<span className="text-orange-500">.</span> Admin

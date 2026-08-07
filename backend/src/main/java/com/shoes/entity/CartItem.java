@@ -5,9 +5,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cart_items", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"cart_id", "variant_id"})
-})
+@Table(name = "cart_items")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,6 +26,9 @@ public class CartItem {
 
     @Column(nullable = false)
     private Integer quantity;
+
+    @Column(name = "inventory_batch_id")
+    private UUID inventoryBatchId;
 
     @PrePersist
     protected void onCreate() {

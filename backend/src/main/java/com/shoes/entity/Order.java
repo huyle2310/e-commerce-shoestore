@@ -42,6 +42,10 @@ public class Order {
     @Column(name = "order_note", columnDefinition = "TEXT")
     private String orderNote;
 
+    /** Phí vận chuyển – do backend tính dựa theo tỉnh/thành */
+    @Column(name = "shipping_fee")
+    private BigDecimal shippingFee;
+
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 

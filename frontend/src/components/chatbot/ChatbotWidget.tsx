@@ -222,16 +222,16 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Nút Chatbot */}
-          <div className="relative group flex items-center">
+          <div className="relative group flex items-center ">
             {/* Tooltip */}
-            <div className="absolute right-full mr-4 px-3 py-2 bg-neutral-800 text-white text-sm font-medium rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-md translate-x-2 group-hover:translate-x-0">
+            <div className="absolute right-full mr-4 px-3 py-2 bg-neutral-800 text-white text-sm font-medium rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-md translate-x-2  group-hover:translate-x-0">
               Chat với AI
               <div className="absolute top-1/2 -right-2 -translate-y-1/2 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-neutral-800"></div>
             </div>
 
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center justify-center bg-neutral-900 text-white w-14 h-14 rounded-full shadow-xl hover:scale-105 hover:bg-orange-500 transition-all duration-300 animate-in zoom-in"
+              className="flex items-center justify-center bg-neutral-900 text-white w-14 h-14 rounded-full cursor-pointer shadow-xl hover:scale-105 hover:bg-orange-500 transition-all duration-300 animate-in zoom-in"
             >
               <MessageCircle size={28} className="animate-wiggle" />
             </button>

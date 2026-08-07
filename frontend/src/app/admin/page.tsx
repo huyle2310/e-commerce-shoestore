@@ -24,6 +24,8 @@ export default function AdminDashboard() {
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState('day');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [mounted, setMounted] = useState(false);
 
   const token = useAuthStore(state => state.token);
@@ -36,10 +38,15 @@ export default function AdminDashboard() {
     if (!mounted || !token) return;
 
     const fetchStats = async () => {
+      if (filterType === 'custom' && (!startDate || !endDate)) return;
       setLoading(true);
       try {
+        let url = `/dashboard/stats?type=${filterType}`;
+        if (filterType === 'custom' && startDate && endDate) {
+          url += `&startDate=${startDate}&endDate=${endDate}`;
+        }
         const [statsRes, bestSellersRes] = await Promise.all([
-          api.get(`/dashboard/stats?type=${filterType}`),
+          api.get(url),
           api.get(`/products/best-sellers?limit=${TOP_LIMIT}`)
         ]);
         setStats(statsRes.data);
@@ -55,7 +62,7 @@ export default function AdminDashboard() {
       }
     };
     fetchStats();
-  }, [filterType, mounted, token]);
+  }, [filterType, startDate, endDate, mounted, token]);
 
   const cards = [
     { title: 'Tổng Doanh Thu', value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(stats.revenue), icon: <DollarSign size={24} />, color: 'bg-green-500', trend: stats.revenueTrend },
@@ -64,24 +71,34 @@ export default function AdminDashboard() {
     { title: 'Khách Hàng', value: stats.customers.toString(), icon: <Users size={24} />, color: 'bg-purple-500', trend: stats.customersTrend },
   ];
 
-  if (loading) {
+  if (loading && stats.chartData.length === 0) {
     return <div className="flex items-center justify-center h-[50vh] text-neutral-500 font-medium text-lg">Đang tính toán số liệu thống kê...</div>;
   }
 
   return (
     <div className="space-y-8">
       {/* Header and Filter */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <h1 className="text-2xl font-bold text-neutral-900">Tổng quan Hệ thống</h1>
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="bg-white border border-neutral-200 text-neutral-700 py-2 px-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium"
-        >
-          <option value="day">7 ngày gần nhất</option>
-          <option value="month">6 tháng gần nhất</option>
-          <option value="year">5 năm gần nhất</option>
-        </select>
+        <div className="flex flex-wrap items-center gap-3">
+          {filterType === 'custom' && (
+            <div className="flex items-center gap-2">
+              <input type="date" max={new Date().toISOString().split('T')[0]} value={startDate} onChange={e => setStartDate(e.target.value)} className="bg-white border border-neutral-200 text-neutral-700 py-2 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium" />
+              <span className="font-medium text-neutral-500">-</span>
+              <input type="date" max={new Date().toISOString().split('T')[0]} value={endDate} onChange={e => setEndDate(e.target.value)} className="bg-white border border-neutral-200 text-neutral-700 py-2 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium" />
+            </div>
+          )}
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="bg-white border border-neutral-200 text-neutral-700 py-2 px-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium"
+          >
+            <option value="day">7 ngày gần nhất</option>
+            <option value="month">6 tháng gần nhất</option>
+            <option value="year">5 năm gần nhất</option>
+            <option value="custom">Tùy chọn</option>
+          </select>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -117,7 +134,7 @@ export default function AdminDashboard() {
           className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm"
         >
           <h3 className="text-lg font-bold mb-6">
-            Doanh thu {filterType === 'day' ? '7 ngày' : filterType === 'month' ? '6 tháng' : '5 năm'} qua
+            Doanh thu {filterType === 'custom' && startDate && endDate ? `từ ${startDate} đến ${endDate}` : (filterType === 'day' ? '7 ngày' : filterType === 'month' ? '6 tháng' : '5 năm') + ' qua'}
           </h3>
           <div className="h-80" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -139,7 +156,7 @@ export default function AdminDashboard() {
           className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm"
         >
           <h3 className="text-lg font-bold mb-6">
-            Đơn hàng {filterType === 'day' ? '7 ngày' : filterType === 'month' ? '6 tháng' : '5 năm'} qua
+            Đơn hàng {filterType === 'custom' && startDate && endDate ? `từ ${startDate} đến ${endDate}` : (filterType === 'day' ? '7 ngày' : filterType === 'month' ? '6 tháng' : '5 năm') + ' qua'}
           </h3>
           <div className="h-80" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -201,13 +218,14 @@ export default function AdminDashboard() {
                 <th className="p-4 font-medium">Danh mục</th>
                 <th className="p-4 font-medium">Thương hiệu</th>
                 <th className="p-4 font-medium text-center">Đã bán</th>
-                <th className="p-4 font-medium text-right rounded-tr-xl">Giá bán</th>
+                <th className="p-4 font-medium text-right">Giá bán</th>
+                <th className="p-4 font-medium text-right rounded-tr-xl">Doanh thu</th>
               </tr>
             </thead>
             <tbody>
               {bestSellers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-neutral-500">Chưa có dữ liệu</td>
+                  <td colSpan={8} className="p-8 text-center text-neutral-500">Chưa có dữ liệu</td>
                 </tr>
               ) : (
                 [...bestSellers].sort((a, b) => (b.soldQuantity || 0) - (a.soldQuantity || 0)).slice(0, TOP_LIMIT).map((product, index) => (
@@ -231,6 +249,9 @@ export default function AdminDashboard() {
                     <td className="p-4 text-center font-bold text-neutral-900">{product.soldQuantity || 0}</td>
                     <td className="p-4 text-right font-bold text-orange-500">
                       {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.basePrice)}
+                    </td>
+                    <td className="p-4 text-right font-black text-green-600">
+                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.basePrice * (product.soldQuantity || 0))}
                     </td>
                   </tr>
                 ))

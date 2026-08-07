@@ -18,7 +18,10 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/stats")
-    public ResponseEntity<DashboardStatsResponse> getDashboardStats(@org.springframework.web.bind.annotation.RequestParam(defaultValue = "day") String type) {
-        return ResponseEntity.ok(dashboardService.getDashboardStats(type));
+    public ResponseEntity<DashboardStatsResponse> getDashboardStats(
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "day") String type,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate endDate) {
+        return ResponseEntity.ok(dashboardService.getDashboardStats(type, startDate, endDate));
     }
 }
