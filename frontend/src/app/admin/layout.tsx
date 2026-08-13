@@ -41,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       name: 'Quản lý Sản phẩm',
       key: 'products',
       icon: <Package size={20} />,
-      roles: ['ADMIN', 'INVENTORY_STAFF'],
+      roles: ['ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF'],
       subItems: [
         { name: 'Sản phẩm', path: '/admin/products' },
         { name: 'Danh mục', path: '/admin/categories' },

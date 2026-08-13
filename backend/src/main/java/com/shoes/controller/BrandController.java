@@ -5,6 +5,7 @@ import com.shoes.dto.BrandResponse;
 import com.shoes.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,16 +23,19 @@ public class BrandController {
         return ResponseEntity.ok(brandService.getAllBrands());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @PostMapping("/admin")
     public ResponseEntity<BrandResponse> createBrand(@RequestBody BrandRequest request) {
         return ResponseEntity.ok(brandService.createBrand(request));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @PutMapping("/admin/{id}")
     public ResponseEntity<BrandResponse> updateBrand(@PathVariable Integer id, @RequestBody BrandRequest request) {
         return ResponseEntity.ok(brandService.updateBrand(id, request));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteBrand(@PathVariable Integer id) {
         brandService.deleteBrand(id);

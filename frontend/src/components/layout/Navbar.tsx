@@ -345,17 +345,17 @@ export default function Navbar() {
           {/* Icons */}
           <div className="hidden md:flex items-center space-x-6">
             {/* Search Bar with Autocomplete */}
-            <div ref={searchRef} className="relative flex items-center">
+            <div ref={searchRef} className="relative flex items-center group">
               <form onSubmit={handleSearch} className="relative flex items-center">
+                <Search size={22} className="absolute left-2.5 text-neutral-100 group-hover:text-neutral-400 group-focus-within:text-neutral-400 group-hover:scale-75 group-focus-within:scale-75 transition-all z-10 pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearchInput(e.target.value)}
                   onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
                   placeholder={language === 'vi' ? 'Tìm kiếm...' : 'Search...'}
-                  className="bg-neutral-100 border border-transparent text-neutral-900 placeholder:text-neutral-500 text-base rounded-full pl-10 pr-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white focus:border-orange-500 w-48 transition-all focus:w-64"
+                  className="bg-transparent group-hover:bg-neutral-100 group-focus-within:bg-white border border-transparent text-neutral-900 placeholder-transparent group-hover:placeholder-neutral-500 group-focus-within:placeholder-neutral-500 text-base rounded-full pl-10 pr-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 w-10 group-hover:w-64 group-focus-within:w-64 transition-all duration-300 cursor-pointer group-hover:cursor-text"
                 />
-                <Search size={16} className="absolute left-3 text-neutral-400" />
               </form>
 
               {/* Autocomplete Dropdown */}

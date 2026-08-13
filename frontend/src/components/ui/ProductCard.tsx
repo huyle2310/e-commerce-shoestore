@@ -42,7 +42,7 @@ export default function ProductCard({ product }: { product: ProductProps }) {
 
   return (
     <div className={`group relative bg-white  overflow-hidden border border-neutral-100 hover:border-orange-500/30 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 ${isOutOfStock ? 'opacity-60 grayscale-[50%]' : ''}`}>
-      <Link href={`/shop/${product.slug}`} className="block relative aspect-square overflow-hidden bg-neutral-100 p-6">
+      <Link href={`/shop/${product.slug}`} className="block relative aspect-square overflow-hidden bg-neutral-100 p-5">
         <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
           {product.brand && (
             <span className="bg-black/80 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider w-fit">
@@ -75,7 +75,7 @@ export default function ProductCard({ product }: { product: ProductProps }) {
           <img
             src={secondaryImage}
             alt={`${product.nameVi} - Alternate`}
-            className="absolute inset-0 p-6 z-[6] w-full h-full object-contain opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out drop-shadow-2xl"
+            className="absolute inset-0 p-5 z-[6] w-full h-full object-contain opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out drop-shadow-2xl"
           />
         )}
       </Link>

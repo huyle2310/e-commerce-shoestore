@@ -114,6 +114,13 @@
             <artifactId>scrimage-webp</artifactId>
             <version>4.3.0</version>
         </dependency>
+        
+        <!-- Bucket4j for Rate Limiting -->
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.10.1</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -48,9 +48,6 @@ public class OrderServiceImpl implements OrderService {
                 || target.contains("tp hcm")) {
             return BigDecimal.valueOf(20_000);
         }
-        if (target.contains("hà nội") || target.contains("ha noi") || target.contains("hn")) {
-            return BigDecimal.valueOf(25_000);
-        }
         return BigDecimal.valueOf(40_000);
     }
 

@@ -11,5 +11,6 @@ import java.util.List;
 public class InventoryReceiptRequest {
     private String receiptType; // 'IMPORT', 'AUDIT'
     private String note;
+    private String supplierName;
     private List<InventoryReceiptItemRequest> items;
 }

@@ -1,0 +1,306 @@
+Project ECommerce {
+  database_type: 'PostgreSQL'
+  Note: 'E-commerce Database Schema'
+}
+
+Table blogs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  author_id uuid
+  title_vi varchar(255) [not null]
+  title_en varchar(255) [not null]
+  slug varchar(255) [not null, unique]
+  thumbnail_url text
+  content_vi text [not null]
+  content_en text [not null]
+  is_published boolean [default: false]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  is_featured boolean
+  published_at timestamp
+  seo_description_en text
+  seo_description_vi text
+  seo_title_en varchar(255)
+  seo_title_vi varchar(255)
+  short_description_en text
+  short_description_vi text
+  tags varchar(255)
+  view_count integer
+}
+
+Table brands {
+  id serial [pk]
+  name varchar(255) [not null, unique]
+  logo_url text
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table cart_items {
+  id uuid [pk, default: `gen_random_uuid()`]
+  cart_id uuid
+  variant_id uuid
+  quantity integer [not null, default: 1]
+  inventory_batch_id uuid
+}
+
+Table carts {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [unique]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table categories {
+  id serial [pk]
+  name_vi varchar(255) [not null]
+  name_en varchar(255) [not null]
+  slug varchar(255) [not null, unique]
+  parent_id integer
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table inventory_batches {
+  id uuid [pk]
+  batch_code varchar(50) [not null, unique]
+  variant_id uuid [not null]
+  receipt_item_id uuid
+  parent_batch_id uuid
+  quantity integer [not null]
+  warehouse_type varchar(20) [default: 'INVENTORY']
+  product_status varchar(20) [default: 'ACTIVE']
+  quality_percentage integer [default: 100]
+  condition_note text
+  clearance_price numeric
+  import_date timestamp
+  import_price numeric
+  created_at timestamp
+  updated_at timestamp
+  version bigint [default: 0]
+  image_url varchar(255)
+}
+
+Table inventory_receipt_items {
+  id uuid [pk]
+  actual_quantity integer [not null]
+  expected_quantity integer
+  import_price numeric
+  receipt_id uuid [not null]
+  variant_id uuid [not null]
+  color varchar(50)
+  product_name varchar(255)
+  size varchar(20)
+  sku varchar(100)
+}
+
+Table inventory_receipts {
+  id uuid [pk]
+  created_at timestamp
+  note text
+  receipt_type varchar(20) [not null]
+  reference_code varchar(50) [not null, unique]
+  status varchar(20) [not null]
+  updated_at timestamp
+  created_by uuid
+}
+
+Table order_items {
+  id uuid [pk, default: `gen_random_uuid()`]
+  order_id uuid
+  variant_id uuid
+  quantity integer [not null]
+  unit_price numeric [not null]
+  total_price numeric [not null]
+  inventory_batch_id uuid
+}
+
+Table orders {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid
+  voucher_id uuid
+  full_name varchar(255) [not null]
+  phone varchar(20) [not null]
+  shipping_address text [not null]
+  order_note text
+  total_amount numeric [not null]
+  discount_amount numeric [default: 0]
+  final_amount numeric [not null]
+  payment_method varchar(50) [not null]
+  payment_status varchar(50) [default: 'UNPAID']
+  order_status varchar(50) [default: 'PENDING']
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  email varchar(255)
+  shipping_fee numeric
+}
+
+Table product_images {
+  id uuid [pk, default: `gen_random_uuid()`]
+  product_id uuid
+  image_url text [not null]
+  is_primary boolean [default: false]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table product_variants {
+  id uuid [pk, default: `gen_random_uuid()`]
+  product_id uuid
+  sku varchar(100) [not null, unique]
+  color_vi varchar(50)
+  color_en varchar(50)
+  size varchar(20) [not null]
+  stock_quantity integer [not null, default: 0]
+  price_modifier numeric [default: 0]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  version bigint [default: 0]
+}
+
+Table products {
+  id uuid [pk, default: `gen_random_uuid()`]
+  category_id integer
+  brand_id integer
+  name_vi varchar(255) [not null]
+  name_en varchar(255) [not null]
+  slug varchar(255) [not null, unique]
+  description_vi text
+  description_en text
+  base_price numeric [not null]
+  is_active boolean [default: true]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  target_audience varchar(50)
+  clearance_description_vi text
+  clearance_name_vi varchar(255)
+  is_clearance_active boolean
+}
+
+Table recommendations {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid
+  recommended_product_id uuid
+  score numeric [not null]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table refresh_tokens {
+  id uuid [pk]
+  expiry_date timestamptz [not null]
+  token varchar(255) [not null, unique]
+  user_id uuid [unique]
+}
+
+Table reviews {
+  id uuid [pk, default: `gen_random_uuid()`]
+  product_id uuid
+  user_id uuid
+  rating integer
+  comment text
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table site_settings {
+  id integer [pk]
+  about_content_en text
+  about_content_vi text
+  about_slogan_en varchar(255)
+  about_slogan_vi varchar(255)
+  about_title_en varchar(255)
+  about_title_vi varchar(255)
+  contact_address_en varchar(255)
+  contact_address_vi varchar(255)
+  contact_email varchar(255)
+  contact_phone varchar(255)
+  footer_menu_json text
+  header_menu_json text
+  home_banners_json text
+  home_categories_json text
+  home_categories_subtitle_en varchar(255)
+  home_categories_subtitle_vi varchar(255)
+  home_categories_title_en varchar(255)
+  home_categories_title_vi varchar(255)
+  home_featured_images_json text
+  home_featured_subtitle_en varchar(255)
+  home_featured_subtitle_vi varchar(255)
+  home_featured_title_en varchar(255)
+  home_featured_title_vi varchar(255)
+  home_hero_title_en varchar(255)
+  home_hero_title_vi varchar(255)
+  home_services_json text
+  home_short_desc_en text
+  home_short_desc_vi text
+  logo_url varchar(255)
+  social_links_json text
+  return_policy_en text
+  return_policy_vi text
+  shipping_policy_en text
+  shipping_policy_vi text
+  banner_interval_ms integer
+}
+
+Table user_vouchers {
+  is_collected boolean
+  usage_count integer
+  user_id uuid [pk]
+  voucher_id uuid [pk]
+}
+
+Table users {
+  id uuid [pk, default: `gen_random_uuid()`]
+  email varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  full_name varchar(255) [not null]
+  phone varchar(20)
+  address text
+  avatar_url text
+  role varchar(50) [default: 'CUSTOMER']
+  is_active boolean [default: true]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  reset_code varchar(6)
+  reset_code_expiry timestamp
+  pending_email varchar(255)
+  rank_name varchar(20)
+  total_spent numeric
+}
+
+Table vouchers {
+  id uuid [pk, default: `gen_random_uuid()`]
+  code varchar(50) [not null, unique]
+  discount_type varchar(20) [not null]
+  discount_value numeric [not null]
+  min_order_value numeric [default: 0]
+  max_discount_amount numeric
+  start_date timestamptz [not null]
+  end_date timestamptz [not null]
+  usage_limit integer
+  used_count integer [default: 0]
+  is_active boolean [default: true]
+  required_rank varchar(20)
+  image_url varchar(255)
+  usage_limit_per_user integer
+}
+
+Ref: blogs.author_id > users.id
+Ref: cart_items.cart_id > carts.id [delete: cascade]
+Ref: cart_items.variant_id > product_variants.id [delete: cascade]
+Ref: carts.user_id - users.id [delete: cascade]
+Ref: categories.parent_id > categories.id [delete: set null]
+Ref: inventory_batches.parent_batch_id > inventory_batches.id
+Ref: inventory_batches.receipt_item_id > inventory_receipt_items.id
+Ref: inventory_batches.variant_id > product_variants.id
+Ref: inventory_receipt_items.receipt_id > inventory_receipts.id
+Ref: inventory_receipt_items.variant_id > product_variants.id
+Ref: inventory_receipts.created_by > users.id
+Ref: order_items.order_id > orders.id [delete: cascade]
+Ref: order_items.variant_id > product_variants.id [delete: set null]
+Ref: orders.user_id > users.id [delete: set null]
+Ref: orders.voucher_id > vouchers.id [delete: set null]
+Ref: product_images.product_id > products.id [delete: cascade]
+Ref: product_variants.product_id > products.id [delete: cascade]
+Ref: products.brand_id > brands.id [delete: set null]
+Ref: products.category_id > categories.id [delete: set null]
+Ref: recommendations.recommended_product_id > products.id [delete: cascade]
+Ref: recommendations.user_id > users.id [delete: cascade]
+Ref: refresh_tokens.user_id - users.id
+Ref: reviews.product_id > products.id [delete: cascade]
+Ref: reviews.user_id > users.id [delete: cascade]
+Ref: user_vouchers.voucher_id > vouchers.id
+Ref: user_vouchers.user_id > users.id

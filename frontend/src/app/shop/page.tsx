@@ -22,6 +22,16 @@ function ShopContent() {
   const [loading, setLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [openSections, setOpenSections] = useState({
+    categories: false,
+    brands: false,
+    colors: false,
+    price: false
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -229,117 +239,155 @@ function ShopContent() {
             >
               <div className="space-y-8 sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pb-4 pr-1">
                 {/* Categories / Target Audience */}
-                <div>
-                  <h3 className="text-lg font-bold mb-4 uppercase tracking-wider">Đối tượng</h3>
-                  <div className="space-y-3">
-                    <button
-                      onClick={() => setSelectedCategory('')}
-                      className={`block text-left w-full transition-colors ${selectedCategory === '' ? 'text-orange-500 font-bold' : 'text-neutral-500 hover:text-black'}`}
-                    >
-                      Tất cả
-                    </button>
-                    {targetAudiences.map(cat => (
-                      <button
-                        key={cat.id}
-                        onClick={() => setSelectedCategory(cat.id)}
-                        className={`block text-left w-full transition-colors ${selectedCategory === cat.id ? 'text-orange-500 font-bold' : 'text-neutral-500 hover:text-black'}`}
-                      >
-                        {cat.name}
-                      </button>
-                    ))}
-                  </div>
+                <div className="border-b border-neutral-200 pb-4">
+                  <button onClick={() => toggleSection('categories')} className="flex items-center justify-between w-full mb-2 group">
+                    <h3 className="text-lg font-bold uppercase tracking-wider group-hover:text-orange-500 transition-colors">Đối tượng</h3>
+                    <ChevronDown size={18} className={`transition-transform duration-300 ${openSections.categories ? 'rotate-180 text-orange-500' : 'text-neutral-400'}`} />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openSections.categories && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                        <div className="space-y-3 pt-2 pb-2">
+                          <button
+                            onClick={() => setSelectedCategory('')}
+                            className={`block text-left w-full transition-colors ${selectedCategory === '' ? 'text-orange-500 font-bold' : 'text-neutral-500 hover:text-black'}`}
+                          >
+                            Tất cả
+                          </button>
+                          {targetAudiences.map(cat => (
+                            <button
+                              key={cat.id}
+                              onClick={() => setSelectedCategory(cat.id)}
+                              className={`block text-left w-full transition-colors ${selectedCategory === cat.id ? 'text-orange-500 font-bold' : 'text-neutral-500 hover:text-black'}`}
+                            >
+                              {cat.name}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Brands */}
-                <div>
-                  <h3 className="text-lg font-bold mb-4 uppercase tracking-wider">Thương hiệu</h3>
-                  <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-                    {brands.map(brand => (
-                      <label key={brand.id} className="flex items-center space-x-3 cursor-pointer group">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedBrands.includes(brand.id) ? 'bg-orange-500 border-orange-500' : 'border-neutral-300 group-hover:border-orange-500'}`}>
-                          {selectedBrands.includes(brand.id) && <Check size={14} className="text-white" />}
+                <div className="border-b border-neutral-200 pb-4">
+                  <button onClick={() => toggleSection('brands')} className="flex items-center justify-between w-full mb-2 group">
+                    <h3 className="text-lg font-bold uppercase tracking-wider group-hover:text-orange-500 transition-colors">Thương hiệu</h3>
+                    <ChevronDown size={18} className={`transition-transform duration-300 ${openSections.brands ? 'rotate-180 text-orange-500' : 'text-neutral-400'}`} />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openSections.brands && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                        <div className="space-y-3 max-h-48 overflow-y-auto pr-2 pt-2 pb-2">
+                          {brands.map(brand => (
+                            <label key={brand.id} className="flex items-center space-x-3 cursor-pointer group">
+                              <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedBrands.includes(brand.id) ? 'bg-orange-500 border-orange-500' : 'border-neutral-300 group-hover:border-orange-500'}`}>
+                                {selectedBrands.includes(brand.id) && <Check size={14} className="text-white" />}
+                              </div>
+                              <input
+                                type="checkbox"
+                                className="hidden"
+                                checked={selectedBrands.includes(brand.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedBrands([...selectedBrands, brand.id]);
+                                  } else {
+                                    setSelectedBrands(selectedBrands.filter(id => id !== brand.id));
+                                  }
+                                }}
+                              />
+                              <span className={`transition-colors ${selectedBrands.includes(brand.id) ? 'font-bold text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-900'}`}>{brand.name}</span>
+                            </label>
+                          ))}
                         </div>
-                        <input
-                          type="checkbox"
-                          className="hidden"
-                          checked={selectedBrands.includes(brand.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedBrands([...selectedBrands, brand.id]);
-                            } else {
-                              setSelectedBrands(selectedBrands.filter(id => id !== brand.id));
-                            }
-                          }}
-                        />
-                        <span className={`transition-colors ${selectedBrands.includes(brand.id) ? 'font-bold text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-900'}`}>{brand.name}</span>
-                      </label>
-                    ))}
-                  </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Colors */}
-                <div>
-                  <h3 className="text-lg font-bold mb-4 uppercase tracking-wider">Màu sắc</h3>
-                  <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-                    {colors.map(color => (
-                      <label key={color} className="flex items-center space-x-3 cursor-pointer group">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedColors.includes(color) ? 'bg-orange-500 border-orange-500' : 'border-neutral-300 group-hover:border-orange-500'}`}>
-                          {selectedColors.includes(color) && <Check size={14} className="text-white" />}
+                <div className="border-b border-neutral-200 pb-4">
+                  <button onClick={() => toggleSection('colors')} className="flex items-center justify-between w-full mb-2 group">
+                    <h3 className="text-lg font-bold uppercase tracking-wider group-hover:text-orange-500 transition-colors">Màu sắc</h3>
+                    <ChevronDown size={18} className={`transition-transform duration-300 ${openSections.colors ? 'rotate-180 text-orange-500' : 'text-neutral-400'}`} />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openSections.colors && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                        <div className="space-y-3 max-h-48 overflow-y-auto pr-2 pt-2 pb-2">
+                          {colors.map(color => (
+                            <label key={color} className="flex items-center space-x-3 cursor-pointer group">
+                              <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${selectedColors.includes(color) ? 'bg-orange-500 border-orange-500' : 'border-neutral-300 group-hover:border-orange-500'}`}>
+                                {selectedColors.includes(color) && <Check size={14} className="text-white" />}
+                              </div>
+                              <input
+                                type="checkbox"
+                                className="hidden"
+                                checked={selectedColors.includes(color)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedColors([...selectedColors, color]);
+                                  } else {
+                                    setSelectedColors(selectedColors.filter(c => c !== color));
+                                  }
+                                }}
+                              />
+                              <span className={`transition-colors ${selectedColors.includes(color) ? 'font-bold text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-900'}`}>{color}</span>
+                            </label>
+                          ))}
                         </div>
-                        <input
-                          type="checkbox"
-                          className="hidden"
-                          checked={selectedColors.includes(color)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedColors([...selectedColors, color]);
-                            } else {
-                              setSelectedColors(selectedColors.filter(c => c !== color));
-                            }
-                          }}
-                        />
-                        <span className={`transition-colors ${selectedColors.includes(color) ? 'font-bold text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-900'}`}>{color}</span>
-                      </label>
-                    ))}
-                  </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Price Range - with Apply button */}
-                <div>
-                  <h3 className="text-lg font-bold mb-4 uppercase tracking-wider">Mức giá</h3>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <input
-                      type="number"
-                      placeholder="Từ"
-                      value={pendingPriceRange[0] === 0 ? '' : pendingPriceRange[0]}
-                      onChange={(e) => setPendingPriceRange([e.target.value ? parseInt(e.target.value) : 0, pendingPriceRange[1]])}
-                      className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 text-sm"
-                    />
-                    <span className="text-neutral-500 flex-shrink-0">-</span>
-                    <input
-                      type="number"
-                      placeholder="Đến"
-                      value={pendingPriceRange[1] === 50000000 ? '' : pendingPriceRange[1]}
-                      onChange={(e) => setPendingPriceRange([pendingPriceRange[0], e.target.value ? parseInt(e.target.value) : 50000000])}
-                      className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 text-sm"
-                    />
-                  </div>
-                  {/* Apply Price Filter Button */}
-                  <button
-                    onClick={handleApplyPriceFilter}
-                    className={`w-full py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${priceRangeChanged
-                      ? 'bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/30 animate-pulse'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                      }`}
-                  >
-                    <SlidersHorizontal size={16} />
-                    Lọc kết quả
+                <div className="border-b border-neutral-200 pb-4">
+                  <button onClick={() => toggleSection('price')} className="flex items-center justify-between w-full mb-2 group">
+                    <h3 className="text-lg font-bold uppercase tracking-wider group-hover:text-orange-500 transition-colors">Mức giá</h3>
+                    <ChevronDown size={18} className={`transition-transform duration-300 ${openSections.price ? 'rotate-180 text-orange-500' : 'text-neutral-400'}`} />
                   </button>
-                  {appliedPriceRange[0] > 0 || appliedPriceRange[1] < 50000000 ? (
-                    <p className="text-xs text-orange-500 mt-2 font-medium">
-                      Đang lọc: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(appliedPriceRange[0])} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(appliedPriceRange[1])}
-                    </p>
-                  ) : null}
+                  <AnimatePresence initial={false}>
+                    {openSections.price && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                        <div className="pt-2 pb-2">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <input
+                              type="number"
+                              placeholder="Từ"
+                              value={pendingPriceRange[0] === 0 ? '' : pendingPriceRange[0]}
+                              onChange={(e) => setPendingPriceRange([e.target.value ? parseInt(e.target.value) : 0, pendingPriceRange[1]])}
+                              className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 text-sm"
+                            />
+                            <span className="text-neutral-500 flex-shrink-0">-</span>
+                            <input
+                              type="number"
+                              placeholder="Đến"
+                              value={pendingPriceRange[1] === 50000000 ? '' : pendingPriceRange[1]}
+                              onChange={(e) => setPendingPriceRange([pendingPriceRange[0], e.target.value ? parseInt(e.target.value) : 50000000])}
+                              className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 text-sm"
+                            />
+                          </div>
+                          {/* Apply Price Filter Button */}
+                          <button
+                            onClick={handleApplyPriceFilter}
+                            className={`w-full py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${priceRangeChanged
+                              ? 'bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/30 animate-pulse'
+                              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                              }`}
+                          >
+                            <SlidersHorizontal size={16} />
+                            Lọc kết quả
+                          </button>
+                          {appliedPriceRange[0] > 0 || appliedPriceRange[1] < 50000000 ? (
+                            <p className="text-xs text-orange-500 mt-2 font-medium">
+                              Đang lọc: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(appliedPriceRange[0])} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(appliedPriceRange[1])}
+                            </p>
+                          ) : null}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
               </div>

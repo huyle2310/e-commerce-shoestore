@@ -245,7 +245,12 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Không thể xóa sản phẩm này vì đã phát sinh đơn hàng. Vui lòng vô hiệu hóa thay vì xóa.");
         }
 
-        productRepository.delete(product);
+        try {
+            productRepository.delete(product);
+            productRepository.flush();
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new RuntimeException("Không thể xóa sản phẩm hoặc biến thể này vì đã có dữ liệu ràng buộc (nhập kho, lịch sử...). Vui lòng Đổi trạng thái hiển thị (Ẩn) thay vì xóa.");
+        }
     }
 
     @Override
@@ -346,8 +351,12 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        Product savedProduct = productRepository.save(product);
-        return mapToProductResponse(savedProduct);
+        try {
+            Product savedProduct = productRepository.saveAndFlush(product);
+            return mapToProductResponse(savedProduct);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new RuntimeException("Không thể xóa biến thể vì đã có dữ liệu liên quan (nhập kho, đơn hàng). Vui lòng giữ lại biến thể này.");
+        }
     }
 
     private ProductResponse mapToProductResponse(Product product) {

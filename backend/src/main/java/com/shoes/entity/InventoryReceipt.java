@@ -30,6 +30,9 @@ public class InventoryReceipt {
     @Column(columnDefinition = "TEXT")
     private String note;
 
+    @Column(name = "supplier_name", length = 255)
+    private String supplierName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;

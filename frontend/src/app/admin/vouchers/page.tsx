@@ -81,6 +81,11 @@ export default function AdminVouchersPage() {
       return;
     }
 
+    if (new Date(editingVoucher.startDate) >= new Date(editingVoucher.endDate)) {
+      toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+      return;
+    }
+
     // Ensure numbers
     const payload = {
       ...editingVoucher,

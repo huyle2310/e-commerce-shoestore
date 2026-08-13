@@ -16,6 +16,7 @@ public class InventoryReceiptResponse {
     private String referenceCode;
     private String status;
     private String note;
+    private String supplierName;
     private String createdBy; // User full name or email
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

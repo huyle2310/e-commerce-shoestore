@@ -30,12 +30,8 @@ interface InventoryBatchResponse {
   importPrice?: number;
 }
 
-interface GroupedVariant {
-  variantId: string;
-  sku: string;
+interface GroupedProduct {
   productNameVi: string;
-  colorVi: string;
-  size: string;
   primaryImageUrl?: string;
   totalQuantity: number;
   batches: InventoryBatchResponse[];
@@ -444,14 +440,14 @@ export default function InventoryWarehousePage() {
     if (!confirm(`Xác nhận phục hồi lô hàng "${batch.batchCode}" về kho nhập?`)) return;
     try {
       await api.post(`/warehouse/batches/${batch.id}/restore`);
-      fetchBatches();
+      fetchBatches(true);
     } catch (e: any) {
       alert(e.response?.data?.message || 'Có lỗi xảy ra');
     }
   };
 
-  const fetchBatches = useCallback(async () => {
-    setLoading(true);
+  const fetchBatches = useCallback(async (quiet = false) => {
+    if (!quiet) setLoading(true);
     try {
       const params = new URLSearchParams();
       if (statusFilter) params.append('productStatus', statusFilter);
@@ -461,30 +457,26 @@ export default function InventoryWarehousePage() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!quiet) setLoading(false);
     }
   }, [statusFilter]);
 
   useEffect(() => { fetchBatches(); }, [fetchBatches]);
 
-  // Group batches into Variants
-  const groupedVariants: GroupedVariant[] = [];
-  const variantMap = new Map<string, GroupedVariant>();
+  // Group batches into Products
+  const productMap = new Map<string, GroupedProduct>();
 
   for (const b of batches) {
-    if (!variantMap.has(b.variantId)) {
-      variantMap.set(b.variantId, {
-        variantId: b.variantId,
-        sku: b.sku,
-        productNameVi: b.productNameVi,
-        colorVi: b.colorVi,
-        size: b.size,
+    const key = b.productNameVi || 'Unknown';
+    if (!productMap.has(key)) {
+      productMap.set(key, {
+        productNameVi: key,
         primaryImageUrl: b.primaryImageUrl,
         totalQuantity: 0,
         batches: []
       });
     }
-    const grp = variantMap.get(b.variantId)!;
+    const grp = productMap.get(key)!;
     grp.batches.push(b);
     if (b.productStatus === 'ACTIVE') {
       grp.totalQuantity += b.quantity;
@@ -492,9 +484,9 @@ export default function InventoryWarehousePage() {
   }
 
   // Convert map to array and filter by search
-  const displayGroups = Array.from(variantMap.values()).filter(g =>
-    g.sku?.toLowerCase().includes(search.toLowerCase()) ||
-    g.productNameVi?.toLowerCase().includes(search.toLowerCase())
+  const displayGroups = Array.from(productMap.values()).filter(g =>
+    g.productNameVi.toLowerCase().includes(search.toLowerCase()) ||
+    g.batches.some(b => b.sku.toLowerCase().includes(search.toLowerCase()))
   );
 
   displayGroups.forEach(g => {
@@ -611,14 +603,14 @@ export default function InventoryWarehousePage() {
               </thead>
               <tbody className="divide-y divide-neutral-100">
                 {displayGroups.map(grp => (
-                  <React.Fragment key={grp.variantId}>
-                    {/* Parent Row (Variant) */}
+                  <React.Fragment key={grp.productNameVi}>
+                    {/* Parent Row (Product) */}
                     <tr
                       className="hover:bg-neutral-50 transition-colors cursor-pointer bg-white"
-                      onClick={() => toggleExpand(grp.variantId)}
+                      onClick={() => toggleExpand(grp.productNameVi)}
                     >
                       <td className="px-5 py-4 text-neutral-400">
-                        {expanded[grp.variantId] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                        {expanded[grp.productNameVi] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
@@ -630,7 +622,7 @@ export default function InventoryWarehousePage() {
                           <div>
                             <p className="font-semibold text-neutral-900">{grp.productNameVi}</p>
                             <p className="text-neutral-500 text-xs mt-0.5">
-                              {grp.sku} • {grp.colorVi} • Size {grp.size}
+                              {grp.batches.length} Lô hàng
                             </p>
                           </div>
                         </div>
@@ -639,7 +631,6 @@ export default function InventoryWarehousePage() {
                         {grp.totalQuantity} <span className="text-xs font-normal text-neutral-500">đôi (Active)</span>
                       </td>
                       <td className="px-5 py-4 text-neutral-400 text-xs" colSpan={3}>
-                        {grp.batches.length} Lô hàng
                       </td>
                       <td className="px-5 py-4 text-right" colSpan={2}>
                         {/* Parent row has no actions */}
@@ -647,15 +638,19 @@ export default function InventoryWarehousePage() {
                     </tr>
 
                     {/* Child Rows (Batches) */}
-                    {expanded[grp.variantId] && grp.batches.map((batch, idx) => (
+                    {expanded[grp.productNameVi] && grp.batches.map((batch, idx) => (
                       <tr key={batch.id} className={`bg-neutral-50/50 ${idx === grp.batches.length - 1 ? 'border-b-2 border-neutral-200' : ''}`}>
                         <td className="px-5 py-3"></td>
                         <td className="px-5 py-3">
-                          <div className="flex items-center gap-2 pl-4">
-                            <Package size={14} className="text-neutral-400" />
-                            <code className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                              {batch.batchCode}
-                            </code>
+                          <div className="pl-4">
+                            <div className="font-semibold text-neutral-800 text-sm">{batch.sku}</div>
+                            <div className="text-xs text-neutral-500">{batch.colorVi} • Size {batch.size}</div>
+                            <div className="mt-1 flex items-center gap-1">
+                              <Package size={12} className="text-neutral-400" />
+                              <code className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                                {batch.batchCode}
+                              </code>
+                            </div>
                           </div>
                         </td>
                         <td className="px-5 py-3 font-semibold text-neutral-800 pl-4">{batch.quantity}</td>
@@ -731,21 +726,21 @@ export default function InventoryWarehousePage() {
         <AdjustModal
           batch={adjustTarget}
           onClose={() => setAdjustTarget(null)}
-          onSuccess={fetchBatches}
+          onSuccess={() => fetchBatches(true)}
         />
       )}
       {clearanceTarget && (
         <ClearanceModal
           batch={clearanceTarget}
           onClose={() => setClearanceTarget(null)}
-          onSuccess={fetchBatches}
+          onSuccess={() => fetchBatches(true)}
         />
       )}
       {disposeTarget && (
         <DisposeModal
           batch={disposeTarget}
           onClose={() => setDisposeTarget(null)}
-          onSuccess={fetchBatches}
+          onSuccess={() => fetchBatches(true)}
         />
       )}
     </div>

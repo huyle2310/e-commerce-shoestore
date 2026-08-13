@@ -70,9 +70,10 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-xl text-neutral-500 leading-relaxed max-w-3xl mx-auto whitespace-pre-line"
-          >
-            {content || (language === 'vi' ? 'Ra đời từ đam mê cháy bỏng với văn hóa sát mặt đất, Vanguard khởi đầu với một sứ mệnh duy nhất: Mang đến cho giới trẻ Việt Nam những đôi giày thể thao đỉnh cao nhất, với chất lượng dịch vụ tiệm cận sự hoàn hảo. Hơn cả một cửa hàng, chúng tôi là một cộng đồng.' : 'Born from a burning passion for sneaker culture, Vanguard started with a single mission: To bring Vietnamese youth the top sports shoes, with service quality approaching perfection. More than a store, we are a community.')}
-          </motion.div>
+            dangerouslySetInnerHTML={{ 
+              __html: (content || (language === 'vi' ? 'Ra đời từ đam mê cháy bỏng với văn hóa sát mặt đất, Vanguard khởi đầu với một sứ mệnh duy nhất: Mang đến cho giới trẻ Việt Nam những đôi giày thể thao đỉnh cao nhất, với chất lượng dịch vụ tiệm cận sự hoàn hảo. Hơn cả một cửa hàng, chúng tôi là một cộng đồng.' : 'Born from a burning passion for sneaker culture, Vanguard started with a single mission: To bring Vietnamese youth the top sports shoes, with service quality approaching perfection. More than a store, we are a community.')).replace(/&nbsp;/g, ' ')
+            }}
+          />
         </div>
       </section>
       

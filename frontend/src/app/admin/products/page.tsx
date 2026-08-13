@@ -110,6 +110,26 @@ export default function AdminProductsPage() {
   const handleVariantChange = (index: number, field: string, value: any) => {
     const newVariants = [...editingProduct.variants];
     newVariants[index][field] = value;
+    
+    if (field === 'colorVi' || field === 'size') {
+      let prefix = 'SP';
+      if (editingProduct.nameVi) {
+        prefix = editingProduct.nameVi.split(' ').filter(Boolean).map((w: string) => w[0]).join('').toUpperCase().substring(0, 4);
+      }
+      const color = newVariants[index].colorVi || '';
+      const size = newVariants[index].size || '';
+      
+      const toSkuCode = (str: string) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').trim().replace(/\s+/g, '-').toUpperCase();
+      const colorCode = toSkuCode(color);
+      const sizeCode = toSkuCode(size);
+      
+      let newSku = `SKU-${prefix}`;
+      if (colorCode) newSku += `-${colorCode}`;
+      if (sizeCode) newSku += `-${sizeCode}`;
+      
+      newVariants[index].sku = newSku;
+    }
+
     setEditingProduct({ ...editingProduct, variants: newVariants });
   };
 
@@ -148,7 +168,7 @@ export default function AdminProductsPage() {
   };
 
   const addVariant = () => {
-    // Tự động tạo SKU gợi ý: SKU + Tên SP (chữ cái đầu) + Random
+    // Tự động tạo SKU gợi ý: SKU + Tên SP (chữ cái đầu)
     let prefix = 'SP';
     if (editingProduct.nameVi) {
       prefix = editingProduct.nameVi
@@ -159,8 +179,7 @@ export default function AdminProductsPage() {
         .toUpperCase()
         .substring(0, 4);
     }
-    const randomCode = Math.floor(1000 + Math.random() * 9000);
-    const defaultSku = `SKU-${prefix}-${randomCode}`;
+    const defaultSku = `SKU-${prefix}`;
 
     setEditingProduct({
       ...editingProduct,
@@ -179,10 +198,13 @@ export default function AdminProductsPage() {
       prefix = editingProduct.nameVi.split(' ').filter(Boolean).map((w: string) => w[0]).join('').toUpperCase().substring(0, 4);
     }
 
+    const toSkuCode = (str: string) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').trim().replace(/\s+/g, '-').toUpperCase();
+    const colorCode = toSkuCode(quickColor);
+
     const newVariants = quickSizes.map(size => {
-      const randomCode = Math.floor(1000 + Math.random() * 9000);
+      const sizeCode = toSkuCode(size);
       return {
-        sku: `SKU-${prefix}-${randomCode}`,
+        sku: `SKU-${prefix}-${colorCode}-${sizeCode}`,
         colorVi: quickColor,
         colorEn: '',
         size: size,

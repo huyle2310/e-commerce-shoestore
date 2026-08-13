@@ -59,6 +59,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .receiptType(request.getReceiptType().toUpperCase())
                 .status("PENDING")
                 .note(request.getNote())
+                .supplierName(request.getSupplierName())
                 .createdBy(user)
                 .items(new ArrayList<>())
                 .build();
@@ -191,6 +192,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .referenceCode(receipt.getReferenceCode())
                 .status(receipt.getStatus())
                 .note(receipt.getNote())
+                .supplierName(receipt.getSupplierName())
                 .createdBy(receipt.getCreatedBy() != null ? receipt.getCreatedBy().getFullName() : "System")
                 .createdAt(receipt.getCreatedAt())
                 .updatedAt(receipt.getUpdatedAt())

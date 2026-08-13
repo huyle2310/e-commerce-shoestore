@@ -4,6 +4,7 @@ import com.shoes.dto.ProductResponse;
 import com.shoes.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ProductController {
     }
 
     // API Admin lấy tất cả sản phẩm (bao gồm cả ẩn)
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @GetMapping("/admin/all")
     public ResponseEntity<List<ProductResponse>> getAllProductsAdmin() {
         return ResponseEntity.ok(productService.getAllProductsAdmin());
@@ -44,6 +46,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getClearanceProducts());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @GetMapping("/admin/clearance")
     public ResponseEntity<List<ProductResponse>> getClearanceProductsAdmin() {
         return ResponseEntity.ok(productService.getClearanceProductsAdmin());
@@ -81,6 +84,7 @@ public class ProductController {
     }
 
     // API Admin: Update Product
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @PutMapping("/admin/{id}")
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable java.util.UUID id,
@@ -89,6 +93,7 @@ public class ProductController {
     }
 
     // API Admin: Create Product
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @PostMapping("/admin")
     public ResponseEntity<ProductResponse> createProduct(
             @RequestBody com.shoes.dto.ProductRequest request) {
@@ -96,6 +101,7 @@ public class ProductController {
     }
 
     // API Admin: Delete Product
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF')")
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable java.util.UUID id) {
         productService.deleteProduct(id);

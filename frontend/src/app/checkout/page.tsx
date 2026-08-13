@@ -41,9 +41,7 @@ export default function CheckoutPage() {
   const provinceName = selectedProvince?.name || '';
   const shippingFee = provinceName.includes('Hồ Chí Minh') || provinceName.includes('HCM')
     ? 20000
-    : provinceName.includes('Hà Nội')
-      ? 25000
-      : 40000;
+    : 40000;
 
   const [voucherCode, setVoucherCode] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<any>(null);
