@@ -55,8 +55,10 @@ export default function ProductDetailPage() {
 
   // Reviews state
   const [reviews, setReviews] = useState<any[]>([]);
-  const [newRating, setNewRating] = useState(5);
+  const [newRating, setNewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [newComment, setNewComment] = useState('');
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [reviewSuccess, setReviewSuccess] = useState('');
@@ -113,14 +115,14 @@ export default function ProductDetailPage() {
 
   // Tự động điền lại đánh giá cũ nếu user đã từng đánh giá
   useEffect(() => {
-    if (isAuthenticated && user && reviews.length > 0) {
+    if (isAuthenticated && user && reviews.length > 0 && !hasSubmitted) {
       const myReview = reviews.find(r => r.userId === user.id);
       if (myReview) {
         setNewRating(myReview.rating);
         setNewComment(myReview.comment);
       }
     }
-  }, [isAuthenticated, user, reviews]);
+  }, [isAuthenticated, user, reviews, hasSubmitted]);
 
   const handleAddToCart = async () => {
     if (colors.length > 0 && !selectedColor) {
@@ -232,6 +234,10 @@ export default function ProductDetailPage() {
       setReviewError('Vui lòng đăng nhập để đánh giá');
       return;
     }
+    if (newRating === 0) {
+      setReviewError('Vui lòng chọn số sao đánh giá');
+      return;
+    }
     setReviewLoading(true);
     setReviewError('');
     setReviewSuccess('');
@@ -252,9 +258,9 @@ export default function ProductDetailPage() {
         }
         return [newReview, ...prev];
       });
-      // setNewComment(''); // Giữ nguyên comment để tiện sửa lại tiếp
-      setReviewSuccess('Cảm ơn bạn đã cập nhật đánh giá!');
-      setNewRating(5);
+      setHasSubmitted(true);
+      setNewComment('');
+      setNewRating(0);
       setReviewSuccess('Cảm ơn bạn đã đánh giá sản phẩm!');
       setTimeout(() => setReviewSuccess(''), 3000);
     } catch (err: any) {
@@ -371,7 +377,7 @@ export default function ProductDetailPage() {
             </div>
 
             <div 
-              className="text-neutral-600 mb-8 leading-relaxed line-clamp-4 prose prose-sm prose-neutral max-w-none"
+              className="text-neutral-600 mb-8 leading-relaxed line-clamp-4 prose prose-sm prose-neutral max-w-none whitespace-pre-wrap"
               dangerouslySetInnerHTML={{ __html: language === 'vi' ? (product.descriptionVi?.replace(/&nbsp;/g, ' ') || '') : ((product.descriptionEn || product.descriptionVi)?.replace(/&nbsp;/g, ' ') || '') }}
             />
 
@@ -550,7 +556,7 @@ export default function ProductDetailPage() {
           <div className="max-w-4xl mx-auto px-4">
             {activeTab === 'description' && (
               <div 
-                className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed"
+                className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed whitespace-pre-wrap"
                 dangerouslySetInnerHTML={{ __html: language === 'vi' ? (product.descriptionVi?.replace(/&nbsp;/g, ' ') || '') : ((product.descriptionEn || product.descriptionVi)?.replace(/&nbsp;/g, ' ') || '') }}
               />
             )}
@@ -589,13 +595,14 @@ export default function ProductDetailPage() {
                   <form onSubmit={handleSubmitReview} className="space-y-4">
                     <div>
                       <label className="block text-sm font-bold mb-2">Đánh giá của bạn</label>
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-2" onMouseLeave={() => setHoverRating(0)}>
                         {[1, 2, 3, 4, 5].map(star => (
                           <button
                             key={star}
                             type="button"
                             onClick={() => setNewRating(star)}
-                            className={star <= newRating ? "text-yellow-400" : "text-neutral-300 hover:text-yellow-200"}
+                            onMouseEnter={() => setHoverRating(star)}
+                            className={star <= (hoverRating || newRating) ? "text-yellow-400" : "text-neutral-300 transition-colors"}
                           >
                             <Star size={28} className="fill-current" />
                           </button>

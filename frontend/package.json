@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^0.0.52",
+    "@ai-sdk/openai": "^0.0.35",
     "@ai-sdk/react": "^0.0.50",
     "@react-oauth/google": "^0.13.5",
     "ai": "^3.3.16",
@@ -22,8 +23,10 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hot-toast": "^2.6.0",
+    "react-markdown": "^10.1.0",
     "react-quill-new": "^3.8.3",
     "recharts": "^3.8.1",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
     "zod": "^3.23.8",
     "zustand": "^5.0.14"

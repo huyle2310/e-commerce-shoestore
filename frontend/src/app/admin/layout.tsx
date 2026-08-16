@@ -36,7 +36,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   const navItems = [
-    { name: 'Tổng quan', path: '/admin', icon: <LayoutDashboard size={20} />, roles: ['ADMIN', 'SALES_STAFF'] },
+    {
+      name: 'Tổng quan', path: '/admin', icon: <LayoutDashboard size={20} />,
+      roles: ['ADMIN', 'SALES_STAFF']
+    },
     {
       name: 'Quản lý Sản phẩm',
       key: 'products',
@@ -61,10 +64,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: 'Kho thanh lý', path: '/admin/warehouse/clearance' },
       ]
     },
-    { name: 'Mã giảm giá', path: '/admin/vouchers', icon: <Ticket size={20} />, roles: ['ADMIN', 'SALES_STAFF'] },
-    { name: 'Đơn hàng', path: '/admin/orders', icon: <ShoppingBag size={20} />, roles: ['ADMIN', 'SALES_STAFF'] },
-    { name: 'Khách hàng', path: '/admin/customers', icon: <Users size={20} />, roles: ['ADMIN', 'SALES_STAFF'] },
-    { name: 'Nhân viên', path: '/admin/users', icon: <UserCog size={20} />, roles: ['ADMIN'] },
+    {
+      name: 'Mã giảm giá', path: '/admin/vouchers', icon: <Ticket size={20} />,
+      roles: ['ADMIN', 'SALES_STAFF']
+    },
+    {
+      name: 'Đơn hàng', path: '/admin/orders', icon: <ShoppingBag size={20} />,
+      roles: ['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF']
+    },
+    {
+      name: 'Khách hàng', path: '/admin/customers', icon: <Users size={20} />,
+      roles: ['ADMIN', 'SALES_STAFF']
+    },
+    {
+      name: 'Nhân viên', path: '/admin/users', icon: <UserCog size={20} />,
+      roles: ['ADMIN']
+    },
     {
       name: 'Quản lý nội dung',
       key: 'content',

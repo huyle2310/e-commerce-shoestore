@@ -59,8 +59,7 @@ public class InventoryController {
         List<com.shoes.entity.Product> products = productRepository.findAll();
         InventoryReceiptRequest req = new InventoryReceiptRequest();
         req.setReceiptType("IMPORT");
-        req.setNote("Auto-seeded 30 items for all variants");
-        
+
         List<com.shoes.dto.InventoryReceiptItemRequest> items = new java.util.ArrayList<>();
         for (com.shoes.entity.Product p : products) {
             if (p.getVariants() != null) {
@@ -74,11 +73,11 @@ public class InventoryController {
                 }
             }
         }
-        
+
         req.setItems(items);
         InventoryReceiptResponse res = inventoryService.createReceipt(userDetails.getId(), req);
         inventoryService.approveReceipt(res.getId());
-        
+
         return ResponseEntity.ok("Seeded " + items.size() + " variants successfully");
     }
 }

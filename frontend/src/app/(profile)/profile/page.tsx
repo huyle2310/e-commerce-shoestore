@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [savingInfo, setSavingInfo] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
@@ -46,6 +47,12 @@ export default function ProfilePage() {
   const [otpSent, setOtpSent] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
     if (!isAuthenticated) {
       router.push('/login?redirect=/profile');
       return;
@@ -82,7 +89,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
-  }, [isAuthenticated, router]);
+  }, [mounted, isAuthenticated, router]);
 
   useEffect(() => {
     if (formData.address && provinces.length > 0 && !selectedProvince) {

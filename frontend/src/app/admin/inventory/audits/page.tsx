@@ -50,7 +50,7 @@ export default function AuditReceiptsPage() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">Kiểm kê kho</h1>
-          <p className="text-neutral-500 mt-1">Danh sách các lần kiểm kê, điều chỉnh lệch kho</p>
+          <p className="text-neutral-500 mt-1">Danh sách các lần kiểm kho</p>
         </div>
         <Link href="/admin/inventory/audits/new" className="flex items-center space-x-2 bg-blue-500 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-600 transition-colors">
           <Plus size={20} />

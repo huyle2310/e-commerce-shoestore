@@ -32,8 +32,10 @@ public class ProductController {
 
     // API Public search products
     @GetMapping("/search")
-    public ResponseEntity<com.shoes.dto.ProductSearchResponse> searchProducts(@RequestParam String keyword) {
-        return ResponseEntity.ok(productService.searchProducts(keyword));
+    public ResponseEntity<com.shoes.dto.ProductSearchResponse> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "false") boolean exactMatch) {
+        return ResponseEntity.ok(productService.searchProducts(keyword, exactMatch));
     }
 
     @GetMapping("/{slug}")

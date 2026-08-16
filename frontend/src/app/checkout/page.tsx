@@ -120,7 +120,7 @@ export default function CheckoutPage() {
         if (matchedProvince) {
           setSelectedProvince(matchedProvince);
           setFormData(prev => ({ ...prev, streetAddress: street }));
-          
+
           fetch(`https://provinces.open-api.vn/api/v2/p/${matchedProvince.code}?depth=2`)
             .then(res => res.json())
             .then(data => {
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting.current) return;
-    
+
     if (items.length === 0) {
       setError('Giỏ hàng trống');
       return;

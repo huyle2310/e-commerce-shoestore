@@ -200,8 +200,9 @@ export const useCartStore = create<CartState>()(
       name: 'cart-storage',
       partialize: (state) => ({ 
         items: state.items, 
-        totalAmount: state.totalAmount 
-      }), // Do NOT persist buyNowItem and loading state
+        totalAmount: state.totalAmount,
+        buyNowItem: state.buyNowItem
+      }), // Persist buyNowItem so it survives login redirects
     }
   )
 );

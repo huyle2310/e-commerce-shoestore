@@ -40,7 +40,7 @@ export default function LoginPage() {
 
       toast.success(t.auth.login.success);
 
-      if (role === 'ADMIN') {
+      if (['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(role)) {
         router.push('/admin');
       } else {
         const searchParams = new URLSearchParams(window.location.search);
@@ -67,7 +67,7 @@ export default function LoginPage() {
 
       toast.success(t.auth.login.google_success);
 
-      if (role === 'ADMIN') {
+      if (['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(role)) {
         router.push('/admin');
       } else {
         const searchParams = new URLSearchParams(window.location.search);

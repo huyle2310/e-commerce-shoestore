@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +34,9 @@ public class ProductServiceImpl implements ProductService {
     private final com.shoes.repository.OrderRepository orderRepository;
     private final com.shoes.repository.OrderItemRepository orderItemRepository;
     private final com.shoes.repository.InventoryBatchRepository batchRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<ProductResponse> getAllProducts() {
@@ -60,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductSearchResponse searchProducts(String keyword) {
+    public ProductSearchResponse searchProducts(String keyword, boolean exactMatch) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return new ProductSearchResponse(Collections.emptyList(), null);
         }
@@ -73,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (suggestion != null && !suggestion.equalsIgnoreCase(trimmedKeyword)) {
             // Found a better spelling suggestion, query using suggestion
-            List<Product> suggestedProducts = productRepository.searchByKeyword(suggestion);
+            List<Product> suggestedProducts = exactMatch ? searchProductsInDb(suggestion) : productRepository.searchByKeyword(suggestion);
             return new ProductSearchResponse(
                     suggestedProducts.stream().map(this::mapToProductResponse).collect(Collectors.toList()),
                     suggestion
@@ -81,11 +87,49 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // No suggestion needed (exact match or no better suggestion found)
-        List<Product> exactMatches = productRepository.searchByKeyword(trimmedKeyword);
+        List<Product> exactMatches = exactMatch ? searchProductsInDb(trimmedKeyword) : productRepository.searchByKeyword(trimmedKeyword);
         return new ProductSearchResponse(
                 exactMatches.stream().map(this::mapToProductResponse).collect(Collectors.toList()),
                 null
         );
+    }
+
+    private List<Product> searchProductsInDb(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        String[] words = keyword.trim().split("\\s+");
+        java.util.List<String> processedWords = new java.util.ArrayList<>();
+        for (String w : words) {
+            if (w.matches("0+\\d+")) {
+                processedWords.add(w.replaceFirst("^0+", ""));
+            } else {
+                processedWords.add(w);
+            }
+        }
+
+        StringBuilder jpql = new StringBuilder(
+            "SELECT DISTINCT p FROM Product p " +
+            "LEFT JOIN p.brand b " +
+            "LEFT JOIN p.category c " +
+            "WHERE p.isActive = true"
+        );
+
+        for (int i = 0; i < processedWords.size(); i++) {
+            jpql.append(" AND (");
+            jpql.append("LOWER(p.nameVi) LIKE LOWER(:w").append(i).append(") OR ");
+            jpql.append("LOWER(p.nameEn) LIKE LOWER(:w").append(i).append(") OR ");
+            jpql.append("LOWER(b.name) LIKE LOWER(:w").append(i).append(") OR ");
+            jpql.append("LOWER(c.nameVi) LIKE LOWER(:w").append(i).append(") OR ");
+            jpql.append("LOWER(c.nameEn) LIKE LOWER(:w").append(i).append(")");
+            jpql.append(")");
+        }
+
+        TypedQuery<Product> query = entityManager.createQuery(jpql.toString(), Product.class);
+        for (int i = 0; i < processedWords.size(); i++) {
+            query.setParameter("w" + i, "%" + processedWords.get(i) + "%");
+        }
+        return query.getResultList();
     }
 
     private Set<String> getSearchDictionary() {

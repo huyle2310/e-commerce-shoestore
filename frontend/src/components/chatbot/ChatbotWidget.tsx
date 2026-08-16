@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { MessageCircle, X, Send, Bot, User, Loader2, Trash2, Phone } from 'lucide-react';
 import { useLanguageStore } from '@/store/languageStore';
 import vi from '@/i18n/vi.json';
@@ -99,42 +101,57 @@ export default function ChatbotWidget() {
                   ? 'bg-orange-500 text-white rounded-tr-sm'
                   : 'bg-white border border-neutral-200 text-neutral-800 rounded-tl-sm shadow-sm'
                   }`}>
-                  {m.content && <div>{m.content}</div>}
+                  {m.content && !m.content.includes('"type":"function"') && !m.content.includes('"tim_kiem_san_pham"') && (
+                    <div className="text-sm">
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          table: ({node, ...props}) => <table className="w-full border-collapse border border-neutral-300 my-2 text-xs" {...props} />,
+                          th: ({node, ...props}) => <th className="border border-neutral-300 bg-neutral-100 px-2 py-1.5 text-left font-bold" {...props} />,
+                          td: ({node, ...props}) => <td className="border border-neutral-200 px-2 py-1.5" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-1.5" {...props} />
+                        }}
+                      >
+                        {m.content}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                   {m.toolInvocations?.map((toolInvocation: any) => {
-                    if (toolInvocation.toolName === 'tim_kiem_san_pham') {
-                      if (toolInvocation.state === 'result') {
-                        const res = toolInvocation.result;
-                        if (typeof res === 'string') {
-                          return (
-                            <div key={toolInvocation.toolCallId} className="mt-2">
-                              {!m.content && <div className="mb-2">{t.chatbot.check_inventory}</div>}
-                              <div className="italic text-neutral-500">{res}</div>
-                            </div>
-                          );
+                    if ('result' in toolInvocation) {
+                      const res = toolInvocation.result;
+                      if (typeof res === 'string') {
+                        if (res.startsWith('System: Khách chỉ đang chào hỏi')) {
+                          return <div key={toolInvocation.toolCallId} className="mt-2">Dạ em chào anh chị ạ. Anh chị cần tìm mẫu giày dép hay phụ kiện nào hôm nay không ạ?</div>;
                         }
-                        if (Array.isArray(res)) {
-                          return (
-                            <div key={toolInvocation.toolCallId} className="mt-2 space-y-2">
-                              {!m.content && <div className="mb-2">{t.chatbot.found_products}</div>}
-                              {res.map((product: any) => (
-                                <div key={product.id} className="border border-neutral-100 p-2 rounded-lg bg-neutral-50 flex flex-col cursor-pointer hover:bg-neutral-100" onClick={() => window.location.href = `/shop/${product.slug || product.id}`}>
-                                  <p className="font-semibold text-xs text-neutral-900 truncate">{product.name}</p>
-                                  <p className="text-xs text-orange-500 font-bold mt-1">
-                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.discountPrice || product.price)}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          );
+                        if (res.startsWith('System: Khách đang hỏi thêm thông tin')) {
+                          return <div key={toolInvocation.toolCallId} className="mt-2">Dạ với câu hỏi này anh chị cho em xin thêm một xíu thông tin (tên giày, size...) để em check kho chính xác nhất nhé!</div>;
                         }
-                      } else {
+                        if (res.startsWith('System:')) return null;
+                        return <div key={toolInvocation.toolCallId} className="italic text-neutral-500 mt-2">{res}</div>;
+                      } else if (Array.isArray(res) && res.length > 0) {
                         return (
-                          <div key={toolInvocation.toolCallId} className="flex items-center space-x-2 text-neutral-500 italic text-xs mt-1">
-                            <Loader2 size={12} className="animate-spin" />
-                            <span>{t.chatbot.searching}</span>
+                          <div key={toolInvocation.toolCallId} className="mt-2">
+                            <p className="mb-2">Dạ em tìm được một số sản phẩm này, anh/chị tham khảo nhé:</p>
+                            <div className="grid grid-cols-1 gap-2">
+                              {res.map((product: any) => (
+                              <div key={product.id} className="border border-neutral-100 p-2 rounded-lg bg-neutral-50 flex flex-col cursor-pointer hover:bg-neutral-100" onClick={() => window.location.href = `/shop/${product.slug || product.id}`}>
+                                <p className="font-semibold text-xs text-neutral-900 truncate">{product.name}</p>
+                                <p className="text-xs text-orange-500 font-bold mt-1">
+                                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.discountPrice || product.price)}
+                                </p>
+                              </div>
+                            ))}
+                            </div>
                           </div>
                         );
                       }
+                    } else {
+                      return (
+                        <div key={toolInvocation.toolCallId} className="flex items-center space-x-2 text-neutral-500 italic text-xs mt-1">
+                          <Loader2 size={12} className="animate-spin" />
+                          <span>{t.chatbot.searching}</span>
+                        </div>
+                      );
                     }
                     return null;
                   })}
@@ -169,12 +186,21 @@ export default function ChatbotWidget() {
               <input
                 value={input}
                 onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if ((input || '').trim() && !isLoading) {
+                      // @ts-ignore
+                      handleSubmit(e);
+                    }
+                  }
+                }}
                 placeholder={t.chatbot.placeholder}
                 className="w-full bg-neutral-100 text-sm rounded-full pl-4 pr-12 py-3 outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
               />
               <button
                 type="submit"
-                disabled={!input.trim() || isLoading}
+                disabled={!(input || '').trim() || isLoading}
                 className="absolute right-1.5 bg-neutral-900 text-white p-2 rounded-full hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:hover:bg-neutral-900"
               >
                 {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} className="ml-0.5" />}

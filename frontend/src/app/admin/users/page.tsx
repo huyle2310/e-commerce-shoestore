@@ -10,7 +10,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
-  
+
   const [updating, setUpdating] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
       toast.error("Vui lòng điền đầy đủ Email, Mật khẩu và Họ tên!");
       return;
     }
-    
+
     setCreating(true);
     try {
       await api.post('/users/admin', newUser);
@@ -56,7 +56,7 @@ export default function AdminUsersPage() {
 
   const handleUpdateRole = async (userId: string, newRole: string) => {
     if (!window.confirm(`Bạn có chắc muốn đổi quyền của người dùng này thành ${newRole}?`)) return;
-    
+
     setUpdating(userId);
     try {
       await api.put(`/users/admin/${userId}/role?role=${newRole}`);
@@ -72,7 +72,7 @@ export default function AdminUsersPage() {
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     const action = currentStatus ? 'Vô hiệu hoá' : 'Kích hoạt';
     if (!window.confirm(`Bạn có chắc muốn ${action} tài khoản này?`)) return;
-    
+
     setUpdating(userId);
     try {
       await api.put(`/users/admin/${userId}/status?isActive=${!currentStatus}`);
@@ -86,7 +86,7 @@ export default function AdminUsersPage() {
   };
 
   const getRoleBadge = (role: string) => {
-    switch(role) {
+    switch (role) {
       case 'ADMIN': return <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold flex items-center w-fit"><ShieldAlert size={14} className="mr-1" /> Quản trị viên</span>;
       case 'INVENTORY_STAFF': return <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold flex items-center w-fit"><ShieldCheck size={14} className="mr-1" /> NV Kho</span>;
       case 'SALES_STAFF': return <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center w-fit"><UserCog size={14} className="mr-1" /> NV Bán hàng</span>;
@@ -116,16 +116,16 @@ export default function AdminUsersPage() {
       <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
         <div className="relative flex-1 max-w-md w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={20} />
-          <input 
-            type="text" 
-            placeholder="Tìm kiếm theo Tên, Email, SĐT..." 
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo Tên, Email, SĐT..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
           />
         </div>
-        <select 
-          value={roleFilter} 
+        <select
+          value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           className="px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none font-medium text-neutral-700"
         >
@@ -188,25 +188,24 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <select 
-                        value={user.role} 
+                      <select
+                        value={user.role}
                         onChange={(e) => handleUpdateRole(user.id, e.target.value)}
-                        disabled={updating === user.id}
-                        className="text-xs bg-white border border-neutral-200 rounded-lg px-2 py-1 focus:ring-1 focus:ring-orange-500 outline-none w-32"
+                        disabled={updating === user.id || user.role === 'ADMIN'}
+                        className="text-xs bg-white border border-neutral-200 rounded-lg px-2 py-1 focus:ring-1 focus:ring-orange-500 outline-none w-32 disabled:opacity-50 disabled:bg-neutral-100 disabled:cursor-not-allowed"
                       >
                         <option value="INVENTORY_STAFF">NV Kho</option>
                         <option value="SALES_STAFF">NV Bán hàng</option>
                         <option value="ADMIN">Quản trị viên</option>
                       </select>
-                      
-                      <button 
+
+                      <button
                         onClick={() => handleToggleStatus(user.id, user.isActive)}
-                        disabled={updating === user.id}
-                        className={`text-xs px-2 py-1 rounded-lg w-32 border transition-colors ${
-                          user.isActive 
-                            ? 'border-red-200 text-red-600 hover:bg-red-50' 
-                            : 'border-green-200 text-green-600 hover:bg-green-50'
-                        }`}
+                        disabled={updating === user.id || user.role === 'ADMIN'}
+                        className={`text-xs px-2 py-1 rounded-lg w-32 border transition-colors ${user.isActive
+                          ? 'border-red-200 text-red-600 hover:bg-red-50'
+                          : 'border-green-200 text-green-600 hover:bg-green-50'
+                          } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:border-neutral-200 disabled:text-neutral-400`}
                       >
                         {user.isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
                       </button>
@@ -224,21 +223,21 @@ export default function AdminUsersPage() {
           <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-6 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/50">
               <h3 className="text-xl font-bold text-neutral-900">Tạo tài khoản Nhân viên</h3>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-neutral-400 hover:text-neutral-600 transition-colors"
               >
                 <UserX size={24} />
               </button>
             </div>
-            
+
             <form onSubmit={handleCreateUser} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Họ và tên *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={newUser.fullName}
-                  onChange={e => setNewUser({...newUser, fullName: e.target.value})}
+                  onChange={e => setNewUser({ ...newUser, fullName: e.target.value })}
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="Nguyễn Văn A"
                   required
@@ -247,10 +246,10 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Email *</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={newUser.email}
-                  onChange={e => setNewUser({...newUser, email: e.target.value})}
+                  onChange={e => setNewUser({ ...newUser, email: e.target.value })}
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="nhanvien@domain.com"
                   required
@@ -259,10 +258,10 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Mật khẩu *</label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   value={newUser.password}
-                  onChange={e => setNewUser({...newUser, password: e.target.value})}
+                  onChange={e => setNewUser({ ...newUser, password: e.target.value })}
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="Mật khẩu khởi tạo"
                   required
@@ -271,10 +270,10 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Số điện thoại</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={newUser.phone}
-                  onChange={e => setNewUser({...newUser, phone: e.target.value})}
+                  onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                   placeholder="0901234567"
                 />
@@ -282,9 +281,9 @@ export default function AdminUsersPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Phân quyền *</label>
-                <select 
+                <select
                   value={newUser.role}
-                  onChange={e => setNewUser({...newUser, role: e.target.value})}
+                  onChange={e => setNewUser({ ...newUser, role: e.target.value })}
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all font-medium text-neutral-900"
                 >
                   <option value="SALES_STAFF">Nhân viên Bán hàng</option>
@@ -294,14 +293,14 @@ export default function AdminUsersPage() {
               </div>
 
               <div className="pt-4 flex gap-3">
-                <button 
+                <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 px-6 py-3 border border-neutral-200 text-neutral-700 font-bold rounded-lg hover:bg-neutral-50 transition-colors"
                 >
                   Hủy
                 </button>
-                <button 
+                <button
                   type="submit"
                   disabled={creating}
                   className="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

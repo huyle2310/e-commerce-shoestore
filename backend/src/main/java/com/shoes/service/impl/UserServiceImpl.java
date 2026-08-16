@@ -55,6 +55,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUserRole(UUID id, Role role) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        if (user.getRole() == Role.ADMIN) {
+            throw new RuntimeException("Không thể thay đổi quyền của tài khoản Admin");
+        }
         user.setRole(role);
         return mapToResponse(userRepository.save(user));
     }

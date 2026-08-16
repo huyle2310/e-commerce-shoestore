@@ -40,11 +40,8 @@ public interface InventoryBatchRepository extends JpaRepository<InventoryBatch, 
 
     /** Truy vấn phục vụ thuật toán xuất kho Order Deduction */
     @Query("SELECT b FROM InventoryBatch b " +
-           "WHERE b.variant.id = :variantId AND b.productStatus = 'ACTIVE' AND b.quantity > 0 " +
-           "ORDER BY " +
-           "  CASE WHEN b.warehouseType = 'CLEARANCE' THEN 0 ELSE 1 END ASC, " +
-           "  b.qualityPercentage ASC, " +
-           "  b.importDate ASC")
+           "WHERE b.variant.id = :variantId AND b.productStatus = 'ACTIVE' AND b.warehouseType = 'INVENTORY' AND b.quantity > 0 " +
+           "ORDER BY b.importDate ASC")
     List<InventoryBatch> findActiveBatchesForDeduction(@Param("variantId") UUID variantId);
 
     /** Lấy tổng tồn kho ACTIVE của 1 variant */

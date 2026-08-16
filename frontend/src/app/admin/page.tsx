@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 
-const TOP_LIMIT = 10;
+const TOP_LIMIT = 10; // Số lượng top sp
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -179,13 +179,13 @@ export default function AdminDashboard() {
         transition={{ delay: 0.6 }}
         className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm mt-8"
       >
-        <h3 className="text-lg font-bold mb-6">Biểu đồ Top Sản Phẩm Bán Chạy</h3>
+        <h3 className="text-lg font-bold mb-6">Top Sản Phẩm Bán Chạy</h3>
         <div className="h-96" style={{ minWidth: 0, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <BarChart
               data={[...bestSellers].sort((a, b) => (b.soldQuantity || 0) - (a.soldQuantity || 0)).slice(0, TOP_LIMIT).map((p, i) => ({
                 name: p.nameVi.length > 20 ? p.nameVi.substring(0, 20) + '...' : p.nameVi,
-                'Chỉ số bán chạy': p.soldQuantity || 0
+                'Đã bán': p.soldQuantity || 0
               }))}
               layout="vertical"
               margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
@@ -194,7 +194,7 @@ export default function AdminDashboard() {
               <XAxis type="number" axisLine={false} tickLine={false} hide />
               <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={150} tick={{ fontSize: 12, fill: '#6b7280' }} />
               <Tooltip cursor={{ fill: '#f5f5f5' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-              <Bar dataKey="Chỉ số bán chạy" fill="#f97316" radius={[0, 8, 8, 0]} barSize={24} />
+              <Bar dataKey="Đã bán" fill="#f97316" radius={[0, 8, 8, 0]} barSize={24} />
             </BarChart>
           </ResponsiveContainer>
         </div>

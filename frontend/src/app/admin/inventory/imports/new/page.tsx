@@ -513,9 +513,12 @@ export default function NewImportReceiptPage() {
                               <div className="w-40">
                                 <label className="block text-xs font-bold text-neutral-500 uppercase mb-1.5">Giá nhập (VNĐ)</label>
                                 <input
-                                  type="number" min="0"
-                                  value={item.importPrice}
-                                  onChange={e => updateVariantRow(gIdx, iIdx, 'importPrice', e.target.value === '' ? '' : parseInt(e.target.value))}
+                                  type="text"
+                                  value={item.importPrice ? new Intl.NumberFormat('vi-VN').format(item.importPrice) : ''}
+                                  onChange={e => {
+                                    const val = e.target.value.replace(/\D/g, '');
+                                    updateVariantRow(gIdx, iIdx, 'importPrice', val === '' ? '' : parseInt(val, 10));
+                                  }}
                                   disabled={!isValid}
                                   className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:bg-white disabled:opacity-50 disabled:bg-neutral-100"
                                 />

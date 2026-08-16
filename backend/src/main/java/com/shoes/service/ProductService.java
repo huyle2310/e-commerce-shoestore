@@ -12,7 +12,7 @@ public interface ProductService {
     ProductResponse createProduct(com.shoes.dto.ProductRequest request);
     ProductResponse updateProduct(UUID id, com.shoes.dto.ProductRequest request);
     void deleteProduct(UUID id);
-    com.shoes.dto.ProductSearchResponse searchProducts(String keyword);
+    com.shoes.dto.ProductSearchResponse searchProducts(String keyword, boolean exactMatch);
     List<ProductResponse> getRecommendations(UUID userId);
     List<ProductResponse> getSimilarProducts(UUID productId);
     List<ProductResponse> getBestSellingProducts(int limit);

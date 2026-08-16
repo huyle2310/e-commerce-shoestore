@@ -110,7 +110,7 @@ export default function AdminProductsPage() {
   const handleVariantChange = (index: number, field: string, value: any) => {
     const newVariants = [...editingProduct.variants];
     newVariants[index][field] = value;
-    
+
     if (field === 'colorVi' || field === 'size') {
       let prefix = 'SP';
       if (editingProduct.nameVi) {
@@ -118,15 +118,15 @@ export default function AdminProductsPage() {
       }
       const color = newVariants[index].colorVi || '';
       const size = newVariants[index].size || '';
-      
+
       const toSkuCode = (str: string) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').trim().replace(/\s+/g, '-').toUpperCase();
       const colorCode = toSkuCode(color);
       const sizeCode = toSkuCode(size);
-      
+
       let newSku = `SKU-${prefix}`;
       if (colorCode) newSku += `-${colorCode}`;
       if (sizeCode) newSku += `-${sizeCode}`;
-      
+
       newVariants[index].sku = newSku;
     }
 
@@ -345,7 +345,6 @@ export default function AdminProductsPage() {
                       <img src={product.images?.find((i: any) => i.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://via.placeholder.com/50'} alt={product.nameVi} className="w-12 h-12 rounded-lg object-cover bg-neutral-100 border" />
                       <div>
                         <p className="font-bold text-neutral-900 line-clamp-1">{product.nameVi}</p>
-                        <p className="text-sm text-neutral-500">SKU: {product.variants?.[0]?.sku || 'N/A'}</p>
                       </div>
                     </div>
                   </td>
@@ -409,7 +408,10 @@ export default function AdminProductsPage() {
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className={`block text-sm font-bold mb-2 ${activeTab === 'clearance' ? 'text-neutral-400' : ''}`}>Giá cơ bản</label>
-                  <input disabled={activeTab === 'clearance'} type="number" value={editingProduct.basePrice} onChange={e => setEditingProduct({ ...editingProduct, basePrice: parseFloat(e.target.value) })} className={`w-full px-4 py-3 rounded-lg border border-neutral-200 outline-none focus:border-orange-500 ${activeTab === 'clearance' ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed' : 'bg-neutral-50'}`} />
+                  <input disabled={activeTab === 'clearance'} type="text" value={editingProduct.basePrice ? new Intl.NumberFormat('vi-VN').format(editingProduct.basePrice) : ''} onChange={e => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setEditingProduct({ ...editingProduct, basePrice: val ? parseFloat(val) : 0 });
+                  }} className={`w-full px-4 py-3 rounded-lg border border-neutral-200 outline-none focus:border-orange-500 ${activeTab === 'clearance' ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed' : 'bg-neutral-50'}`} />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className={`block text-sm font-bold mb-2 ${activeTab === 'clearance' ? 'text-neutral-400' : ''}`}>Thương hiệu (Hãng){activeTab === 'clearance'}</label>
@@ -527,26 +529,33 @@ export default function AdminProductsPage() {
                   <div className="space-y-4">
                     {editingProduct.variants?.map((variant: any, index: number) => (
                       <div key={index} className="grid grid-cols-12 gap-4 p-4 border border-neutral-200 rounded-lg items-center bg-neutral-50 relative">
-                        <div className="col-span-3">
+                        <div className="col-span-2">
                           <label className="block text-xs font-bold text-neutral-500 mb-1">SKU</label>
-                          <input type="text" value={variant.sku} onChange={e => handleVariantChange(index, 'sku', e.target.value)} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500" />
+                          <input type="text" value={variant.sku} onChange={e => handleVariantChange(index, 'sku', e.target.value)} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500 text-sm" />
                         </div>
-                        <div className="col-span-3">
+                        <div className="col-span-2">
                           <label className="block text-xs font-bold text-neutral-500 mb-1">Màu sắc (VI)</label>
-                          <input type="text" value={variant.colorVi} onChange={e => handleVariantChange(index, 'colorVi', e.target.value)} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500" />
+                          <input type="text" value={variant.colorVi} onChange={e => handleVariantChange(index, 'colorVi', e.target.value)} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500 text-sm" />
                         </div>
                         <div className="col-span-2">
                           <label className="block text-xs font-bold text-red-500 mb-1">Size *</label>
-                          <select required value={variant.size} onChange={e => handleVariantChange(index, 'size', e.target.value)} className={`w-full p-2 border ${!variant.size ? 'border-red-400 bg-red-50' : 'border-neutral-300'} rounded-lg outline-none focus:border-orange-500`}>
-                            <option value="">Chọn Size</option>
+                          <select required value={variant.size} onChange={e => handleVariantChange(index, 'size', e.target.value)} className={`w-full p-2 border ${!variant.size ? 'border-red-400 bg-red-50' : 'border-neutral-300'} rounded-lg outline-none focus:border-orange-500 text-sm`}>
+                            <option value="">Chọn</option>
                             {predefinedSizes.map(sz => <option key={sz} value={sz}>{sz}</option>)}
                           </select>
                         </div>
+                        <div className="col-span-3">
+                          <label className="block text-xs font-bold text-neutral-500 mb-1">Giá bán (VNĐ)</label>
+                          <input type="text" value={new Intl.NumberFormat('vi-VN').format((editingProduct.basePrice || 0) + (variant.priceModifier || 0))} onChange={e => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            handleVariantChange(index, 'priceModifier', (val ? Number(val) : 0) - (editingProduct.basePrice || 0));
+                          }} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500 text-sm" placeholder="Nhập giá bán..." />
+                        </div>
                         <div className="col-span-2">
                           <label className="block text-xs font-bold text-neutral-500 mb-1">Tồn kho</label>
-                          <input type="number" disabled value={variant.stockQuantity || 0} title="Tồn kho chỉ được cộng khi nhập hàng" className="w-full p-2 border border-neutral-300 rounded-lg outline-none bg-neutral-100 text-neutral-500 cursor-not-allowed" />
+                          <input type="number" disabled value={variant.stockQuantity || 0} title="Tồn kho chỉ được cộng khi nhập hàng" className="w-full p-2 border border-neutral-300 rounded-lg outline-none bg-neutral-100 text-neutral-500 cursor-not-allowed text-sm" />
                         </div>
-                        <div className="col-span-2 flex justify-end mt-5">
+                        <div className="col-span-1 flex justify-end mt-5">
                           <button onClick={() => removeVariant(index)} className="p-2 text-red-500 hover:bg-red-100 rounded-lg"><Trash2 size={20} /></button>
                         </div>
                       </div>
@@ -581,11 +590,12 @@ export default function AdminProductsPage() {
                         </div>
                         <div className="col-span-2">
                           <label className="block text-xs font-bold text-neutral-500 mb-1">Giá xả kho (VNĐ)</label>
-                          <input type="number"
-                            value={batch.clearancePrice || ''}
+                          <input type="text"
+                            value={batch.clearancePrice ? new Intl.NumberFormat('vi-VN').format(batch.clearancePrice) : ''}
                             onChange={e => {
+                              const val = e.target.value.replace(/\D/g, '');
                               const newBatches = [...editingProduct.clearanceBatches];
-                              newBatches[index].clearancePrice = Number(e.target.value);
+                              newBatches[index].clearancePrice = val ? Number(val) : 0;
                               setEditingProduct({ ...editingProduct, clearanceBatches: newBatches });
                             }}
                             className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500 bg-white" />
