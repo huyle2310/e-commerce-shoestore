@@ -120,12 +120,19 @@ function ClearancePriceModal({ batch, onClose, onSuccess }: {
             <label className="block text-sm font-semibold text-neutral-700 mb-2">
               Giá xả kho (VNĐ) <span className="text-red-500">*</span>
             </label>
-            <input
-              type="number" min={1} value={priceStr}
-              onChange={e => setPriceStr(e.target.value)}
-              placeholder="VD: 500000"
-              className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
+            <div className="relative">
+              <input
+                type="text" 
+                value={priceStr ? new Intl.NumberFormat('vi-VN').format(Number(priceStr)) : ''}
+                onChange={e => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  setPriceStr(val);
+                }}
+                placeholder="VD: 500.000"
+                className="w-full border border-neutral-200 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">đ</span>
+            </div>
           </div>
         </div>
         <div className="flex gap-3 px-6 pb-6">
@@ -296,7 +303,8 @@ export default function ClearanceWarehousePage() {
 
   const displayGroups = Array.from(variantMap.values()).filter(g =>
     g.sku?.toLowerCase().includes(search.toLowerCase()) ||
-    g.productNameVi?.toLowerCase().includes(search.toLowerCase())
+    g.productNameVi?.toLowerCase().includes(search.toLowerCase()) ||
+    g.batches.some(b => b.batchCode.toLowerCase().includes(search.toLowerCase()))
   );
 
   const toggleExpand = (variantId: string) => {
@@ -343,7 +351,7 @@ export default function ClearanceWarehousePage() {
           <div className="relative flex-1 min-w-60">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
             <input
-              type="text" placeholder="Tìm SKU, tên sản phẩm..."
+              type="text" placeholder="Tìm tên sản phẩm, SKU, Mã lô..."
               value={search} onChange={e => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             />

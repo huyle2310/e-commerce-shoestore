@@ -62,6 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .nameVi(category.getNameVi())
                 .nameEn(category.getNameEn())
                 .slug(category.getSlug())
+                .createdAt(category.getCreatedAt())
                 .build();
     }
 }

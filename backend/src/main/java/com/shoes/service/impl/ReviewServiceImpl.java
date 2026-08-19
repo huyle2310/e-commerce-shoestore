@@ -85,4 +85,12 @@ public class ReviewServiceImpl implements ReviewService {
                 .createdAt(review.getCreatedAt())
                 .build();
     }
+
+    @Override
+    @Transactional
+    public void deleteReview(UUID reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        reviewRepository.delete(review);
+    }
 }

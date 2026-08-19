@@ -76,6 +76,37 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @org.springframework.transaction.annotation.Transactional
+    public UserResponse updateUserFromAdmin(UUID id, com.shoes.dto.AdminUserUpdateRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        if (user.getRole() == Role.ADMIN && request.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Không thể hạ quyền của tài khoản Admin");
+        }
+        
+        // Validate email uniqueness if changed
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new RuntimeException("Email đã tồn tại trong hệ thống");
+            }
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getFullName() != null) user.setFullName(request.getFullName());
+        if (request.getPhone() != null) user.setPhone(request.getPhone());
+        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getRole() != null) user.setRole(request.getRole());
+        if (request.getIsActive() != null) {
+            if (user.getRole() == Role.ADMIN && !request.getIsActive()) {
+                throw new RuntimeException("Không thể khóa tài khoản admin");
+            }
+            user.setIsActive(request.getIsActive());
+        }
+
+        return mapToResponse(userRepository.save(user));
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
     public UserResponse updateProfile(UUID userId, com.shoes.dto.UserProfileUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));

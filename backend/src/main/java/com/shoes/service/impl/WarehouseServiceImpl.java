@@ -283,6 +283,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 .imageUrl(batch.getImageUrl())
                 .importDate(batch.getImportDate())
                 .importPrice(batch.getImportPrice())
+                .version(batch.getVersion())
                 .build();
     }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, ShieldAlert, ShieldCheck, UserCog, UserCheck, UserX, UserPlus, Mail, Phone, MapPin } from 'lucide-react';
+import { Search, ShieldAlert, ShieldCheck, UserCog, UserCheck, UserX, UserPlus, Mail, Phone, Edit, Lock, Unlock } from 'lucide-react';
 import api from '@/lib/axios';
 import { toast } from 'react-hot-toast';
 
@@ -16,6 +16,9 @@ export default function AdminUsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ email: '', password: '', fullName: '', phone: '', role: 'SALES_STAFF' });
   const [creating, setCreating] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -54,16 +57,28 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleUpdateRole = async (userId: string, newRole: string) => {
-    if (!window.confirm(`Bạn có chắc muốn đổi quyền của người dùng này thành ${newRole}?`)) return;
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser.email || !editingUser.fullName) {
+      toast.error("Vui lòng điền đủ Họ tên và Email!");
+      return;
+    }
 
-    setUpdating(userId);
+    setUpdating(editingUser.id);
     try {
-      await api.put(`/users/admin/${userId}/role?role=${newRole}`);
-      toast.success("Cập nhật quyền thành công!");
+      await api.put(`/users/admin/${editingUser.id}`, {
+        fullName: editingUser.fullName,
+        email: editingUser.email,
+        phone: editingUser.phone,
+        role: editingUser.role,
+        isActive: editingUser.isActive
+      });
+      toast.success("Cập nhật thông tin thành công!");
+      setIsEditModalOpen(false);
+      setEditingUser(null);
       fetchUsers();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Lỗi khi cập nhật quyền");
+      toast.error(error.response?.data?.message || "Lỗi khi cập nhật");
     } finally {
       setUpdating(null);
     }
@@ -106,7 +121,6 @@ export default function AdminUsersPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h2 className="text-2xl font-bold">Quản lý Nhân viên</h2>
-          <p className="text-neutral-500">Quản lý danh sách nhân sự và phân quyền nội bộ</p>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="bg-orange-500 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-600 transition-colors flex items-center shadow-lg shadow-orange-500/20">
           <UserPlus size={20} className="mr-2" /> Tạo Nhân viên
@@ -187,27 +201,23 @@ export default function AdminUsersPage() {
                     )}
                   </td>
                   <td className="p-4">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleUpdateRole(user.id, e.target.value)}
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => { setEditingUser({ ...user }); setIsEditModalOpen(true); }}
                         disabled={updating === user.id || user.role === 'ADMIN'}
-                        className="text-xs bg-white border border-neutral-200 rounded-lg px-2 py-1 focus:ring-1 focus:ring-orange-500 outline-none w-32 disabled:opacity-50 disabled:bg-neutral-100 disabled:cursor-not-allowed"
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Chỉnh sửa"
                       >
-                        <option value="INVENTORY_STAFF">NV Kho</option>
-                        <option value="SALES_STAFF">NV Bán hàng</option>
-                        <option value="ADMIN">Quản trị viên</option>
-                      </select>
+                        <Edit size={18} />
+                      </button>
 
                       <button
                         onClick={() => handleToggleStatus(user.id, user.isActive)}
                         disabled={updating === user.id || user.role === 'ADMIN'}
-                        className={`text-xs px-2 py-1 rounded-lg w-32 border transition-colors ${user.isActive
-                          ? 'border-red-200 text-red-600 hover:bg-red-50'
-                          : 'border-green-200 text-green-600 hover:bg-green-50'
-                          } disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:border-neutral-200 disabled:text-neutral-400`}
+                        className={`p-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${user.isActive ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'}`}
+                        title={user.isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
                       >
-                        {user.isActive ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
+                        {user.isActive ? <Lock size={18} /> : <Unlock size={18} />}
                       </button>
                     </div>
                   </td>
@@ -306,6 +316,98 @@ export default function AdminUsersPage() {
                   className="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {creating ? 'Đang tạo...' : 'Tạo tài khoản'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isEditModalOpen && editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/50">
+              <h3 className="text-xl font-bold text-neutral-900">Sửa thông tin Nhân viên</h3>
+              <button
+                onClick={() => { setIsEditModalOpen(false); setEditingUser(null); }}
+                className="text-neutral-400 hover:text-neutral-600 transition-colors"
+              >
+                <UserX size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateUser} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Họ và tên *</label>
+                <input
+                  type="text"
+                  value={editingUser.fullName}
+                  onChange={e => setEditingUser({ ...editingUser, fullName: e.target.value })}
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Email *</label>
+                <input
+                  type="email"
+                  value={editingUser.email}
+                  onChange={e => setEditingUser({ ...editingUser, email: e.target.value })}
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Số điện thoại</label>
+                <input
+                  type="text"
+                  value={editingUser.phone || ''}
+                  onChange={e => setEditingUser({ ...editingUser, phone: e.target.value })}
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Phân quyền *</label>
+                <select
+                  value={editingUser.role}
+                  onChange={e => setEditingUser({ ...editingUser, role: e.target.value })}
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none transition-all font-medium text-neutral-900"
+                >
+                  <option value="SALES_STAFF">Nhân viên Bán hàng</option>
+                  <option value="INVENTORY_STAFF">Nhân viên Kho</option>
+                  <option value="ADMIN" disabled>Quản trị viên</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mt-4 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editingUser.isActive}
+                    onChange={e => setEditingUser({ ...editingUser, isActive: e.target.checked })}
+                    className="w-4 h-4 rounded border-neutral-300 text-orange-500 focus:ring-orange-500"
+                  />
+                  Tài khoản đang hoạt động
+                </label>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setIsEditModalOpen(false); setEditingUser(null); }}
+                  className="flex-1 px-6 py-3 border border-neutral-200 text-neutral-700 font-bold rounded-lg hover:bg-neutral-50 transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={updating === editingUser.id}
+                  className="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {updating === editingUser.id ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </button>
               </div>
             </form>

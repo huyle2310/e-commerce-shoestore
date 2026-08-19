@@ -52,7 +52,7 @@ public class InventoryReceipt {
         updatedAt = LocalDateTime.now();
         if (status == null) status = "PENDING";
         if (referenceCode == null) {
-            referenceCode = (receiptType != null ? receiptType : "REC") + "-" + System.currentTimeMillis();
+            referenceCode = (receiptType != null ? receiptType : "REC") + "-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         }
     }
 

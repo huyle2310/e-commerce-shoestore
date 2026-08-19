@@ -16,6 +16,14 @@ export const translations = {
     return30Days: "Đổi trả 30 ngày",
     readMore: "Đọc thêm",
     categorySubtitle: "Khám phá danh mục nổi bật",
+    profile: "Hồ sơ cá nhân",
+    myOrders: "Đơn hàng của tôi",
+    adminPage: "Trang quản trị",
+    hello: "Xin chào, ",
+    newsAndEvents: "TIN TỨC & SỰ KIỆN",
+    newsSubtitle: "Cập nhật những xu hướng thời trang mới nhất, các bộ sưu tập giới hạn và câu chuyện từ cộng đồng Vanguard.",
+    noBlogsYet: "Chưa có bài viết nào",
+    checkBackLater: "Hãy quay lại sau để cập nhật những tin tức mới nhất.",
   },
   en: {
     buyNow: "Buy Now",
@@ -34,6 +42,14 @@ export const translations = {
     return30Days: "30 Days Return",
     readMore: "Read More",
     categorySubtitle: "Explore our categories",
+    profile: "Profile",
+    myOrders: "My Orders",
+    adminPage: "Admin Page",
+    hello: "Hello, ",
+    newsAndEvents: "NEWS & EVENTS",
+    newsSubtitle: "Stay updated with the latest fashion trends, limited collections, and stories from the Vanguard community.",
+    noBlogsYet: "No blogs yet",
+    checkBackLater: "Check back later for the latest news.",
   }
 };
 

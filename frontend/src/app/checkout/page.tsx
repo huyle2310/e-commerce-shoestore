@@ -84,11 +84,11 @@ export default function CheckoutPage() {
               return v.isActive && now >= startDate && now <= endDate && totalAmount >= (v.minOrderValue || 0) && (v.usageLimit ? v.usedCount < v.usageLimit : true);
             });
             setEligibleVouchers(eligible);
-          } catch (e) {
-            console.error("Error fetching vouchers", e);
+          } catch (e: any) {
+            console.error("Error fetching vouchers", e.message || e);
           }
-        } catch (error) {
-          console.error("Error fetching profile", error);
+        } catch (error: any) {
+          console.error("Error fetching profile", error.message || error);
         }
       };
       fetchProfile();
@@ -134,7 +134,7 @@ export default function CheckoutPage() {
                 }
               }
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err?.message || err));
         }
       }
     }
@@ -151,8 +151,8 @@ export default function CheckoutPage() {
         const response = await fetch(`https://provinces.open-api.vn/api/v2/p/${provinceCode}?depth=2`);
         const data = await response.json();
         if (data.wards) setWards(data.wards);
-      } catch (err) {
-        console.error("Error fetching wards", err);
+      } catch (err: any) {
+        console.error("Error fetching wards", err?.message || err);
       }
     }
   };

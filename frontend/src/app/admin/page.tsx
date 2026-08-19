@@ -83,9 +83,9 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap items-center gap-3">
           {filterType === 'custom' && (
             <div className="flex items-center gap-2">
-              <input type="date" max={new Date().toISOString().split('T')[0]} value={startDate} onChange={e => setStartDate(e.target.value)} className="bg-white border border-neutral-200 text-neutral-700 py-2 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium" />
+              <input type="date" max={endDate || new Date().toISOString().split('T')[0]} value={startDate} onChange={e => setStartDate(e.target.value)} className="bg-white border border-neutral-200 text-neutral-700 py-2 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium" />
               <span className="font-medium text-neutral-500">-</span>
-              <input type="date" max={new Date().toISOString().split('T')[0]} value={endDate} onChange={e => setEndDate(e.target.value)} className="bg-white border border-neutral-200 text-neutral-700 py-2 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium" />
+              <input type="date" min={startDate} max={new Date().toISOString().split('T')[0]} value={endDate} onChange={e => setEndDate(e.target.value)} className="bg-white border border-neutral-200 text-neutral-700 py-2 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium" />
             </div>
           )}
           <select
@@ -141,8 +141,17 @@ export default function AdminDashboard() {
               <BarChart data={stats.chartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f5" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: '#f5f5f5' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  width={100}
+                  tickFormatter={(value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)}
+                />
+                <Tooltip 
+                  cursor={{ fill: '#f5f5f5' }} 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  formatter={(value: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)}
+                />
                 <Bar dataKey="sales" name="Doanh thu" fill="#f97316" radius={[4, 4, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>

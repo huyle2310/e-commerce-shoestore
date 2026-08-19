@@ -61,6 +61,14 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserStatus(id, isActive));
     }
 
+    // Cập nhật toàn bộ thông tin người dùng (từ Admin)
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<UserResponse> updateUserFromAdmin(
+            @PathVariable UUID id,
+            @RequestBody com.shoes.dto.AdminUserUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateUserFromAdmin(id, request));
+    }
+
     // Cập nhật thông tin cá nhân
     @PutMapping("/profile")
     public ResponseEntity<UserResponse> updateProfile(

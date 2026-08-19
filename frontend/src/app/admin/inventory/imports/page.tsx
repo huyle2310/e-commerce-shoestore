@@ -69,6 +69,7 @@ export default function ImportReceiptsPage() {
                   <th className="p-4 font-semibold text-neutral-600">Mã phiếu</th>
                   <th className="p-4 font-semibold text-neutral-600">Ngày tạo</th>
                   <th className="p-4 font-semibold text-neutral-600">Nhà cung cấp</th>
+                  {/* <th className="p-4 font-semibold text-neutral-600">Ghi chú</th> */}
                   <th className="p-4 font-semibold text-neutral-600">Người tạo</th>
                   <th className="p-4 font-semibold text-neutral-600">Số loại SP</th>
                   <th className="p-4 font-semibold text-neutral-600">Trạng thái</th>
@@ -81,6 +82,7 @@ export default function ImportReceiptsPage() {
                     <td className="p-4 font-bold text-neutral-900">{receipt.referenceCode}</td>
                     <td className="p-4 text-neutral-600">{new Date(receipt.createdAt).toLocaleString('vi-VN')}</td>
                     <td className="p-4 text-neutral-600">{receipt.supplierName || '---'}</td>
+                    {/* <td className='p-4 text-neutral-600'>{receipt.note || '---'}</td> */}
                     <td className="p-4 text-neutral-600">{receipt.createdBy}</td>
                     <td className="p-4 font-medium">{receipt.items?.length || 0} mục</td>
                     <td className="p-4">
@@ -127,7 +129,7 @@ export default function ImportReceiptsPage() {
                 <XCircle size={24} />
               </button>
             </div>
-            
+
             <div className="p-6 overflow-y-auto flex-1">
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
@@ -136,11 +138,10 @@ export default function ImportReceiptsPage() {
                     <p><span className="font-medium">Người tạo:</span> {selectedReceipt.createdBy}</p>
                     <p><span className="font-medium">Nhà cung cấp:</span> {selectedReceipt.supplierName || '---'}</p>
                     <p>
-                      <span className="font-medium">Trạng thái:</span> 
-                      <span className={`ml-2 inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${
-                        selectedReceipt.status === 'COMPLETED' ? 'bg-green-50 text-green-600' : 
+                      <span className="font-medium">Trạng thái:</span>
+                      <span className={`ml-2 inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${selectedReceipt.status === 'COMPLETED' ? 'bg-green-50 text-green-600' :
                         selectedReceipt.status === 'CANCELLED' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
-                      }`}>
+                        }`}>
                         {selectedReceipt.status === 'COMPLETED' ? 'Đã hoàn tất' : selectedReceipt.status === 'CANCELLED' ? 'Đã hủy' : 'Chờ duyệt'}
                       </span>
                     </p>
@@ -191,23 +192,23 @@ export default function ImportReceiptsPage() {
                 </div>
               </div>
             </div>
-            
+
             {selectedReceipt.status === 'PENDING' && (
               <div className="p-4 border-t border-neutral-200 bg-neutral-50 flex justify-end space-x-3">
-                <button 
+                <button
                   onClick={() => {
                     cancelReceipt(selectedReceipt.id);
                     setSelectedReceipt(null);
-                  }} 
+                  }}
                   className="px-4 py-2 bg-white border border-neutral-200 text-red-600 font-bold rounded-lg hover:bg-red-50 transition-colors"
                 >
                   Hủy phiếu
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     approveReceipt(selectedReceipt.id);
                     setSelectedReceipt(null);
-                  }} 
+                  }}
                   className="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Xác nhận nhập kho

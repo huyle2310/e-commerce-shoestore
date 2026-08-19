@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -33,9 +34,11 @@ public class ProductController {
     // API Public search products
     @GetMapping("/search")
     public ResponseEntity<com.shoes.dto.ProductSearchResponse> searchProducts(
-            @RequestParam String keyword,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(defaultValue = "false") boolean exactMatch) {
-        return ResponseEntity.ok(productService.searchProducts(keyword, exactMatch));
+        return ResponseEntity.ok(productService.searchProducts(keyword, exactMatch, minPrice, maxPrice));
     }
 
     @GetMapping("/{slug}")

@@ -5,6 +5,7 @@ import com.shoes.dto.ForgotPasswordRequest;
 import com.shoes.dto.LoginRequest;
 import com.shoes.dto.RegisterRequest;
 import com.shoes.dto.ResetPasswordRequest;
+import com.shoes.dto.VerifyRegistrationRequest;
 import com.shoes.dto.VerifyResetCodeRequest;
 import com.shoes.entity.Role;
 import com.shoes.entity.User;
@@ -101,6 +102,10 @@ public class AuthController {
                             .isActive(true)
                             .build();
                     user = userRepository.save(user);
+                } else {
+                    if (!Boolean.TRUE.equals(user.getIsActive())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Tài khoản của bạn đã bị khóa.");
+                    }
                 }
 
                 CustomUserDetails userDetails = new CustomUserDetails(user);
@@ -132,8 +137,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return new ResponseEntity<>("Error: Email is already taken!", HttpStatus.BAD_REQUEST);
+        User existingUser = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);
+        if (existingUser != null) {
+            if (Boolean.TRUE.equals(existingUser.getIsActive())) {
+                return new ResponseEntity<>("Error: Email is already taken!", HttpStatus.BAD_REQUEST);
+            } else {
+                // Update existing inactive user and resend OTP
+                existingUser.setFullName(registerRequest.getFullName());
+                existingUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+                existingUser.setPhone(registerRequest.getPhone());
+                
+                String code = String.format("%06d", new Random().nextInt(999999));
+                existingUser.setResetCode(code);
+                existingUser.setResetCodeExpiry(LocalDateTime.now().plusMinutes(15));
+                
+                userRepository.save(existingUser);
+                emailService.sendRegistrationOtp(existingUser.getEmail(), code);
+                
+                return new ResponseEntity<>("OTP sent to your email", HttpStatus.OK);
+            }
         }
 
         User user = User.builder()
@@ -142,12 +164,40 @@ public class AuthController {
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .phone(registerRequest.getPhone())
                 .role(Role.CUSTOMER)
-                .isActive(true)
+                .isActive(false)
                 .build();
 
+        String code = String.format("%06d", new Random().nextInt(999999));
+        user.setResetCode(code);
+        user.setResetCodeExpiry(LocalDateTime.now().plusMinutes(15));
+
         userRepository.save(user);
+        emailService.sendRegistrationOtp(user.getEmail(), code);
 
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/verify-registration")
+    public ResponseEntity<?> verifyRegistration(@Valid @RequestBody VerifyRegistrationRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        if (user == null || Boolean.TRUE.equals(user.getIsActive())) {
+            return ResponseEntity.badRequest().body("Yêu cầu không hợp lệ hoặc tài khoản đã được kích hoạt");
+        }
+
+        if (user.getResetCode() == null || user.getResetCodeExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Mã xác nhận đã hết hạn");
+        }
+
+        if (!user.getResetCode().equals(request.getCode())) {
+            return ResponseEntity.badRequest().body("Mã xác nhận không chính xác");
+        }
+
+        user.setIsActive(true);
+        user.setResetCode(null);
+        user.setResetCodeExpiry(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Xác thực tài khoản thành công");
     }
 
     @PostMapping("/forgot-password")

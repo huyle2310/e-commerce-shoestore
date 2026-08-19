@@ -24,6 +24,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewsByProduct(productId));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     public ResponseEntity<ReviewResponse> addReview(
             @PathVariable UUID productId,
@@ -38,5 +39,14 @@ public class ReviewController {
         
         ReviewResponse response = reviewService.addReview(productId, userId, request);
         return ResponseEntity.ok(response);
+    }
+
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN')")
+    @DeleteMapping("/admin/{reviewId}")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable UUID productId,
+            @PathVariable UUID reviewId) {
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
     }
 }

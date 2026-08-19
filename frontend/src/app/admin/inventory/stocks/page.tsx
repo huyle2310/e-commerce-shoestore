@@ -8,6 +8,7 @@ export default function InventoryStocksPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showOutOfStockOnly, setShowOutOfStockOnly] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -24,10 +25,20 @@ export default function InventoryStocksPage() {
     }
   };
 
-  const filteredProducts = products.filter(p =>
-    p.nameVi.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.slug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products
+    .map(p => {
+      if (showOutOfStockOnly) {
+        const outOfStockVariants = p.variants.filter((v: any) => v.stockQuantity === 0);
+        if (outOfStockVariants.length === 0) return null;
+        return { ...p, variants: outOfStockVariants };
+      }
+      return p;
+    })
+    .filter(p => p !== null)
+    .filter((p: any) =>
+      p.nameVi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   return (
     <div className="space-y-6">
@@ -35,15 +46,26 @@ export default function InventoryStocksPage() {
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">Tồn kho hiện tại</h1>
         </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={20} />
-          <input
-            type="text"
-            placeholder="Tìm kiếm sản phẩm..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 min-w-[300px]"
-          />
+        <div className="flex items-center space-x-4">
+          <label className="flex items-center space-x-2 cursor-pointer text-sm text-neutral-600 hover:text-neutral-900">
+            <input
+              type="checkbox"
+              checked={showOutOfStockOnly}
+              onChange={(e) => setShowOutOfStockOnly(e.target.checked)}
+              className="rounded border-neutral-300 text-orange-500 focus:ring-orange-500"
+            />
+            <span>Chỉ hiển thị hết hàng</span>
+          </label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={20} />
+            <input
+              type="text"
+              placeholder="Tìm kiếm sản phẩm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 min-w-[300px]"
+            />
+          </div>
         </div>
       </div>
 

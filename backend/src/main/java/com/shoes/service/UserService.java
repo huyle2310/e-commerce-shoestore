@@ -12,6 +12,7 @@ public interface UserService {
     UserResponse createUser(UserCreateRequest request);
     UserResponse updateUserRole(UUID id, Role role);
     UserResponse updateUserStatus(UUID id, Boolean isActive);
+    UserResponse updateUserFromAdmin(UUID id, com.shoes.dto.AdminUserUpdateRequest request);
     UserResponse updateProfile(UUID userId, com.shoes.dto.UserProfileUpdateRequest request);
     UserResponse getUserById(UUID userId);
     void updatePassword(UUID userId, com.shoes.dto.UserPasswordUpdateRequest request);

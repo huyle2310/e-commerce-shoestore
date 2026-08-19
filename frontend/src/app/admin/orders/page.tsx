@@ -50,7 +50,7 @@ export default function AdminOrdersPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'PENDING': return <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold flex items-center w-fit"><Clock size={14} className="mr-1" /> Chờ xác nhận</span>;
       case 'CONFIRMED': return <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold flex items-center w-fit"><Package size={14} className="mr-1" /> Chờ xuất kho</span>;
       case 'SHIPPING': return <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold flex items-center w-fit"><Truck size={14} className="mr-1" /> Đang giao hàng</span>;
@@ -64,7 +64,6 @@ export default function AdminOrdersPage() {
     <div className="bg-white rounded-3xl border border-neutral-100 p-6 min-h-[calc(100vh-8rem)]">
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-2">Quản lý Đơn hàng</h2>
-        <p className="text-neutral-500">Theo dõi và cập nhật trạng thái các đơn hàng</p>
       </div>
 
       <div className="mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
@@ -80,9 +79,8 @@ export default function AdminOrdersPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${
-                activeTab === tab.id ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-              }`}
+              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeTab === tab.id ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
             >
               {tab.label}
             </button>
@@ -108,6 +106,7 @@ export default function AdminOrdersPage() {
               <th className="p-4 font-medium rounded-tl-xl">Mã đơn hàng</th>
               <th className="p-4 font-medium">Khách hàng</th>
               <th className="p-4 font-medium">Ngày đặt</th>
+              <th className="p-4 font-medium">Cập nhật cuối</th>
               <th className="p-4 font-medium">Tổng tiền</th>
               <th className="p-4 font-medium">Trạng thái</th>
               <th className="p-4 font-medium text-center rounded-tr-xl">Thao tác</th>
@@ -116,11 +115,11 @@ export default function AdminOrdersPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-neutral-500">Đang tải dữ liệu...</td>
+                <td colSpan={7} className="p-8 text-center text-neutral-500">Đang tải dữ liệu...</td>
               </tr>
             ) : orders.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-neutral-500">Không có đơn hàng nào</td>
+                <td colSpan={7} className="p-8 text-center text-neutral-500">Không có đơn hàng nào</td>
               </tr>
             ) : (
               orders.filter(o => {
@@ -142,15 +141,23 @@ export default function AdminOrdersPage() {
                   <td className="p-4 text-sm text-neutral-600">
                     {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                   </td>
+                  <td className="p-4 text-sm text-neutral-600">
+                    {new Date(order.updatedAt || order.createdAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                  </td>
                   <td className="p-4 font-bold text-orange-500">
                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.finalAmount)}
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 flex flex-col gap-1 items-start">
                     {getStatusBadge(order.orderStatus)}
+                    {order.orderStatus === 'CANCELLED' && order.paymentStatus === 'PAID' && (
+                      <span className="px-2 py-0.5 bg-red-600 text-white rounded text-[10px] uppercase tracking-wider font-bold shadow-sm">
+                        CẦN HOÀN TIỀN
+                      </span>
+                    )}
                   </td>
                   <td className="p-4">
                     <div className="flex items-center justify-center gap-2">
-                      <button 
+                      <button
                         onClick={() => setSelectedOrder(order)}
                         className="p-1.5 text-neutral-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
                         title="Xem chi tiết"
@@ -167,8 +174,8 @@ export default function AdminOrdersPage() {
                           <Package size={14} className="mr-1" /> Xuất kho
                         </button>
                       )}
-                      <select 
-                        value={order.orderStatus} 
+                      <select
+                        value={order.orderStatus}
                         onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
                         disabled={updating === order.id || order.orderStatus === 'DELIVERED' || order.orderStatus === 'CANCELLED'}
                         className="text-sm bg-neutral-50 border border-neutral-200 rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-orange-500 outline-none disabled:opacity-50"
@@ -198,13 +205,13 @@ export default function AdminOrdersPage() {
             <h3 className="text-xl font-bold text-center mb-2">Hủy đơn hàng?</h3>
             <p className="text-neutral-500 text-center mb-6">Bạn có chắc chắn muốn hủy đơn hàng #{orderToCancel.split('-')[0].toUpperCase()} không? Hành động này không thể hoàn tác.</p>
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={() => setOrderToCancel(null)}
                 className="flex-1 px-4 py-2.5 rounded-lg font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition"
               >
                 Không, quay lại
               </button>
-              <button 
+              <button
                 onClick={() => {
                   executeStatusUpdate(orderToCancel, 'CANCELLED');
                   setOrderToCancel(null);
@@ -230,9 +237,9 @@ export default function AdminOrdersPage() {
                 <XCircle size={24} />
               </button>
             </div>
-            
+
             <div className="p-6 overflow-y-auto flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-100">
                   <h4 className="font-bold mb-3 text-neutral-800 flex items-center"><User size={16} className="mr-2" /> Thông tin khách hàng</h4>
                   <div className="space-y-2 text-sm">
@@ -251,6 +258,18 @@ export default function AdminOrdersPage() {
                   </div>
                 </div>
               </div>
+
+              {selectedOrder.orderStatus === 'CANCELLED' && selectedOrder.paymentStatus === 'PAID' && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 shadow-sm">
+                  <XCircle className="text-red-600 shrink-0 mt-0.5" size={20} />
+                  <div>
+                    <h4 className="font-bold text-red-800">Cần hoàn tiền cho khách hàng</h4>
+                    <p className="text-sm text-red-700 mt-1">
+                      Đơn hàng này đã được chuyển khoản thành công nhưng đã bị hủy. Vui lòng liên hệ khách hàng để nhận thông tin STK và chuyển khoản hoàn tiền thủ công.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <h4 className="font-bold mb-4 text-lg">Danh sách sản phẩm</h4>
               <div className="space-y-4">
@@ -294,9 +313,9 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-6 border-t border-neutral-100 bg-neutral-50 flex justify-end">
-              <button 
+              <button
                 onClick={() => setSelectedOrder(null)}
                 className="px-6 py-2.5 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-colors"
               >

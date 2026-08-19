@@ -4,192 +4,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kịch bản trình bày LVTN - Xây dựng Website bán giày thời trang</title>
+    <title>Kịch bản thuyết trình Luận văn</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.8;
+            font-size: 18px;
             color: #333;
-            background-color: #f9fafb;
-            margin: 0;
-            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f9f9f9;
         }
 
         .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
+            background-color: #fff;
             padding: 40px 50px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        h1 {
-            color: #111827;
-            text-align: center;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            font-size: 28px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         h2 {
-            color: #2563eb;
-            margin-top: 35px;
-            margin-bottom: 15px;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 30px;
         }
 
-        h3 {
-            color: #4b5563;
-            margin-top: 25px;
-            font-size: 18px;
-        }
-
-        p {
-            font-size: 16px;
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-
-        ul {
-            padding-left: 20px;
+        ul,
+        ol {
             margin-bottom: 20px;
         }
 
         li {
-            margin-bottom: 10px;
-            font-size: 16px;
+            margin-bottom: 12px;
         }
 
-        .module {
-            background-color: #f0fdf4;
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 5px solid #22c55e;
-            transition: all 0.2s ease;
+        strong {
+            color: #e74c3c;
         }
 
-        .module:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transform: translateX(5px);
-        }
-
-        .module strong {
-            color: #166534;
-            font-size: 17px;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        .intro-text {
-            font-size: 17px;
-            background-color: #eff6ff;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #bfdbfe;
+        .intro {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2980b9;
         }
     </style>
 </head>
 
 <body>
+
     <div class="container">
-        <h1>🎙️ KỊCH BẢN BẢO VỆ LUẬN VĂN</h1>
+        <p class="intro">Em kính chào quý thầy cô trong hội đồng, Em tên là Huy. Sau đây, em xin phép trình bày Luận văn
+            tốt nghiệp của em với đề tài "Xây dựng Website bán giày thời trang", dưới sự hướng dẫn của thầy ThS. Phạm
+            Liệu.</p>
 
-        <div class="intro-text">
-            <p><strong>Dạ, em kính chào quý thầy cô trong hội đồng!</strong></p>
-            <p>Em tên là Huy. Sau đây, em xin phép trình bày Luận văn tốt nghiệp của em với đề tài <strong>"Xây dựng
-                    Website bán giày thời trang"</strong>, dưới sự hướng dẫn của thầy ThS. Phạm Liệu.</p>
-        </div>
+        <p>Mục tiêu của đề tài này là xây dựng website bán giày thời trang nhằm đáp ứng xu hướng mua sắm trực tuyến;
+            Khách hàng có thể truy cập trang web trên nhiều thiết bị khác nhau mọi lúc mọi nơi có kết nối mạng; Trang
+            web có đầy đủ các chức năng cơ bản cần thiết phục vụ cho việc quản lý cho cửa hàng.</p>
 
-        <h2>1. Công nghệ áp dụng</h2>
-        <p>Để xây dựng hệ thống này, em đã áp dụng các công nghệ bao gồm:</p>
+        <p>Để xây dựng hệ thống này, em đã áp dụng các công nghệ bao gồm: Next.js cho phía Frontend, Java Spring Boot
+            cho phía Backend và quản trị cơ sở dữ liệu bằng PostgreSQL.</p>
+
+        <h2>1. Đối tượng và chức năng cốt lõi</h2>
+        <p>Hệ thống của em được thiết kế để phục vụ 4 nhóm đối tượng chính: Khách vãng lai, Khách hàng thành viên,
+            Admin, Nhân viên bán hàng và Nhân viên kho; với các nhóm chức năng cốt lõi sau:</p>
         <ul>
-            <li>Phía giao diện người dùng (Frontend): <strong>Next.js</strong></li>
-            <li>Phía máy chủ và xử lý logic (Backend): <strong>Java Spring Boot</strong></li>
-            <li>Hệ quản trị cơ sở dữ liệu: <strong>PostgreSQL</strong></li>
+            <li><strong>Admin:</strong> Quản lý dữ liệu và theo dõi toàn bộ hệ thống</li>
+            <li><strong>Đối với Khách hàng:</strong> Tìm kiếm và lọc sản phẩm, Quản lý giỏ hàng, Thanh toán (hỗ trợ COD
+                và duyệt tự động qua chuyển khoản QR), Áp dụng mã giảm giá (Voucher), và Theo dõi tiến trình xử lí đơn
+                hàng và thực hiện hủy đơn.</li>
+            <li><strong>Đối với khách vãng lai:</strong> Tìm kiếm và lọc sản phẩm, quản lí giỏ hàng, thanh toán</li>
+            <li><strong>Đối với Nhân viên bán hàng:</strong> Quản lý sản phẩm, Theo dõi và xử lý đơn hàng, Quản lý
+                chương trình khuyến mãi, và Xem thống kê doanh thu.</li>
+            <li><strong>Đối với Nhân viên kho:</strong> Quản lý sản phẩm tồn kho (nhập kho, xuất kho theo đơn, và đánh
+                giá chất lượng sản phẩm trong lô hàng và thực hiện chuyển sang kho thanh lý nếu cần thiết).</li>
         </ul>
 
-        <h2>2. Nhóm đối tượng & Chức năng cốt lõi</h2>
-        <p>Hệ thống của em được thiết kế để phục vụ 4 nhóm đối tượng chính:</p>
-        <ul>
-            <li><strong>Khách hàng thành:</strong> Tìm kiếm và lọc sản phẩm, Quản lý giỏ hàng, Thanh toán (hỗ trợ COD và
-                duyệt tự động qua chuyển khoản QR), Áp dụng mã giảm giá (Voucher), Theo dõi tiến trình xử lí đơn hàng và
-                thực hiện hủy đơn, quản lí thông tin tài khoản cá nhân</li>
-            <li><strong>Khách vãng lai:</strong> Tìm kiếm và lọc sản phẩm, quản lí giỏ hàng, thanh toán.</li>
-            <li><strong>Admin:</strong> Quản lý dữ liệu và theo dõi toàn bộ hệ thống.</li>
-            <li><strong>Nhân viên bán hàng:</strong> Quản lý sản phẩm, Theo dõi và xử lý đơn hàng, Quản lý mã giảm giá,
-                và Xem thống kê doanh thu.</li>
-            <li><strong>Nhân viên kho:</strong> Quản lý sản phẩm tồn kho (nhập kho, xuất kho theo đơn, đánh giá chất
-                lượng sản phẩm trong lô hàng và thực hiện chuyển sang kho thanh lý nếu cần thiết).</li>
-        </ul>
-
-        <h2>3. Luồng hoạt động thực tế</h2>
+        <h2>2. Luồng hoạt động thực tế</h2>
         <p>Về luồng hoạt động thực tế, em xin phép tóm tắt 2 luồng quan trọng nhất của hệ thống:</p>
+        <ol>
+            <li><strong>Luồng mua hàng của khách:</strong> Khách hàng tìm kiếm sản phẩm ➔ Xem chi tiết và chọn Size/Màu
+                ➔ Thêm vào giỏ hoặc thao tác "Mua ngay" ➔ Điền thông tin giao hàng & Áp dụng mã giảm giá ➔ Chọn phương
+                thức thanh toán và Đặt hàng -> Nhận email</li>
+            <li><strong>Luồng xử lý của Admin:</strong>
+                <ul>
+                    <li><strong>Quản lí đơn hàng:</strong> Nhân viên sẽ tiếp nhận đơn hàng mới trên hệ thống ➔ Chuyển
+                        trạng thái sang Đang xử lý/Giao hàng ➔ Và cuối cùng cập nhật trạng thái "Đã giao" để hệ thống tự
+                        động ghi nhận doanh thu và tích lũy hạng cho thành viên.</li>
+                    <li>Bên cạnh module quản lí đơn hàng thì admin có thể sử dụng các module khác như:</li>
+                    <li><strong>Quản lý sản phẩm:</strong> Cho phép thêm mới, chỉnh sửa thông tin (giá cơ bản, mô tả,
+                        hình ảnh) và phân loại theo danh mục, thương hiệu. Hệ thống hỗ trợ quản lý từng biến thể (màu
+                        sắc, kích cỡ) kèm tính năng thiết lập phụ phí linh hoạt cho từng phân loại.</li>
+                    <li><strong>Quản lý kho hàng:</strong> Hỗ trợ các nghiệp vụ: lập phiếu nhập kho, kiểm kê định kỳ
+                        (kiểm tra số lượng thực tế) và chuyển đổi hàng tồn sang trạng thái thanh lý.</li>
+                    <li><strong>Quản lý mã giảm giá:</strong> Thiết lập các chiến dịch khuyến mãi (giảm theo % hoặc số
+                        tiền cố định). Cho phép giới hạn thời gian sử dụng, giá trị đơn tối thiểu và số lượt dùng; hệ
+                        thống sẽ tự động đối chiếu điều kiện khi khách áp dụng.</li>
+                    <li><strong>Quản lý khách hàng:</strong> Lưu trữ tập trung thông tin liên hệ, sổ địa chỉ và lịch sử
+                        giao dịch của người dùng. Hệ thống tự động tính toán tổng chi tiêu để thăng hạng thành viên
+                        (Vàng, Kim Cương, Tinh Anh), tạo tiền đề cho các chính sách hậu mãi.</li>
+                    <li><strong>Quản lý nhân viên:</strong> Quản lí tài khoản nội bộ (tạo mới, khóa/mở khóa). Ứng dụng
+                        cơ chế phân quyền chia thành Admin, NV Bán hàng và NV Kho nhằm giới hạn khu vực truy cập.</li>
+                    <li><strong>Quản lý bài viết:</strong> Đây là công cụ đăng tải tin tức, xu hướng thời trang hoặc
+                        thông báo sự kiện.</li>
+                    <li><strong>Cài đặt nội dung trang web:</strong> Module cấu hình cho phép admin chỉnh sửa nội dung
+                        hiển thị trên giao diện của khách hàng</li>
+                </ul>
+            </li>
+        </ol>
 
-        <h3>📌 Luồng 1: Mua hàng của khách</h3>
-        <p>
-            Khách hàng tìm kiếm sản phẩm ➔ Xem chi tiết và chọn Size/Màu ➔ Thêm vào giỏ hoặc thao tác "Mua ngay" ➔ Điền
-            thông tin giao hàng & Áp dụng mã giảm giá ➔ Chọn phương thức thanh toán và Đặt hàng ➔ Nhận email xác nhận.
-        </p>
+        <h2>3. Luồng quản lý sản phẩm và kho hàng</h2>
+        <ul>
+            <li>Admin tạo mới sản phẩm ở trang quản lý sản phẩm, tạo các biến thể (Sinh mã SKU tự động, tồn kho mặc định
+                = 0)</li>
+            <li>Admin/Nhân viên kho thực hiện tạo phiếu nhập, khi được duyệt sẽ + số lượng tồn kho cho biến thể được
+                nhập</li>
+            <li>Thực hiện kiểm kê số lượng: Dư -> sinh ra lô hàng adjust<br>Thiếu -> trừ tồn kho lô hàng cũ nhất (FIFO)
+            </li>
+            <li>Kho nhập cho phép tách lô lớn ra các lô nhỏ, cập nhật chất lượng cho từng lô nhỏ, có thể chuyển sang kho
+                thanh lý hoặc tiêu hủy nếu cần</li>
+            <li>Kho thanh lý lưu trữ thông tin của các sản phẩm thanh lý</li>
+            <li>Module quản lí sản phẩm có 2 mục: 1 mục quản lí các sản phẩm trong kho nhập (hàng tiêu chuẩn); 1 mục để
+                quản lý các sản phẩm thanh lý (tự động lấy sản phẩm từ kho thanh lý)</li>
+        </ul>
 
-        <h3>📌 Luồng 2: Xử lý của Admin / Nhân viên</h3>
-
-        <div class="module" style="border-left-color: #ef4444; background-color: #fef2f2;">
-            <strong>📦 Quản lý đơn hàng (Luồng chính)</strong><br>
-            Nhân viên sẽ tiếp nhận đơn hàng mới trên hệ thống ➔ Chuyển trạng thái sang <i>Đang xử lý / Giao hàng</i> ➔
-            Và cuối cùng cập nhật trạng thái <i>Đã giao</i> để hệ thống tự động ghi nhận doanh thu và tích lũy hạng cho
-            thành viên.
-        </div>
-
-        <p>Bên cạnh module quản lý đơn hàng, Admin và Nhân viên có thể sử dụng các module vệ tinh khác như:</p>
-
-        <div class="module">
-            <strong>🏷️ Quản lý sản phẩm</strong><br>
-            Cho phép thêm mới, chỉnh sửa thông tin (giá cơ bản, mô tả, hình ảnh) và phân loại theo danh mục, thương
-            hiệu. Hệ thống hỗ trợ quản lý từng biến thể (màu sắc, kích cỡ) kèm tính năng thiết lập phụ phí linh hoạt cho
-            từng phân loại.
-        </div>
-
-        <div class="module">
-            <strong>🏭 Quản lý kho hàng</strong><br>
-            Hỗ trợ các nghiệp vụ: lập phiếu nhập kho, kiểm kê định kỳ (kiểm tra số lượng thực tế) và chuyển đổi hàng tồn
-            sang trạng thái thanh lý.
-        </div>
-
-        <div class="module">
-            <strong>🎫 Quản lý mã giảm giá</strong><br>
-            Thiết lập các chiến dịch khuyến mãi (giảm theo % hoặc số tiền cố định). Cho phép giới hạn thời gian sử dụng,
-            giá trị đơn tối thiểu và số lượt dùng; hệ thống sẽ tự động đối chiếu điều kiện khi khách áp dụng.
-        </div>
-
-        <div class="module">
-            <strong>👥 Quản lý khách hàng</strong><br>
-            Lưu trữ tập trung thông tin liên hệ, sổ địa chỉ và lịch sử giao dịch của người dùng. Hệ thống tự động tính
-            toán tổng chi tiêu để thăng hạng thành viên (Vàng, Kim Cương, Tinh Anh), tạo tiền đề cho các chính sách hậu
-            mãi.
-        </div>
-
-        <div class="module">
-            <strong>👨‍💼 Quản lý nhân viên</strong><br>
-            Quản lý tài khoản nội bộ (tạo mới, khóa/mở khóa). Thực hiện phân quyền chia thành Admin, NV Bán hàng
-            và NV Kho nhằm giới hạn khu vực truy cập.
-        </div>
-
-        <div class="module">
-            <strong>📰 Quản lý bài viết</strong><br>
-            Cung cấp công cụ đăng tải tin tức, xu hướng thời trang hoặc thông báo sự kiện.
-        </div>
-
-        <div class="module">
-            <strong>⚙️ Cài đặt nội dung trang web</strong><br>
-            Module cấu hình cho phép admin chỉnh sửa nội dung hiển thị trên giao diện của khách hàng.
-        </div>
-
+        <h2>4. Xử lý đổi trả hàng</h2>
+        <p>Hiện tại hệ thống chưa tích hợp module đổi trả hàng. Trong thực tế, nếu khách có nhu cầu đổi hoặc trả hàng,
+            khách sẽ liên hệ trực tiếp với shop qua Zalo. Nhân viên sẽ tiếp nhận và kiểm tra yêu cầu, sau đó liên hệ đơn
+            vị vận chuyển để lấy hàng về. Nếu đủ điều kiện trả hàng, shop sẽ thực hiện hoàn tiền cho khách bằng hình
+            thức chuyển khoản</p>
     </div>
+
 </body>
 
 </html>

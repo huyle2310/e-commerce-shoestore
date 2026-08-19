@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1').replace(/\/+$/, '');
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1',
+  baseURL: apiUrl,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -58,10 +60,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     if ((error?.response?.status === 401 || error?.response?.status === 403) && typeof window !== 'undefined' && !originalRequest._retry) {
-      if (originalRequest.url.includes('/auth/login') || originalRequest.url.includes('/auth/refresh')) {
-        useAuthStore.getState().logout();
-        if (!window.location.pathname.startsWith('/login')) {
-          window.location.href = '/login';
+      if (
+        originalRequest.url.includes('/auth/login') || 
+        originalRequest.url.includes('/auth/refresh') ||
+        originalRequest.url.includes('/auth/register') ||
+        originalRequest.url.includes('/auth/verify-registration')
+      ) {
+        if (!originalRequest.url.includes('/auth/register') && !originalRequest.url.includes('/auth/verify-registration')) {
+          useAuthStore.getState().logout();
+          if (!window.location.pathname.startsWith('/login')) {
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }
@@ -81,7 +90,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axios.post((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1') + '/auth/refresh', {}, { withCredentials: true });
+        const res = await axios.post(apiUrl + '/auth/refresh', {}, { withCredentials: true });
         
         if (res.data.token) {
           useAuthStore.getState().updateToken(res.data.token);

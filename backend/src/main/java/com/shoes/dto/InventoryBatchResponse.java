@@ -56,4 +56,6 @@ public class InventoryBatchResponse {
     // --- Thông tin nhập ---
     private LocalDateTime importDate;
     private BigDecimal importPrice;
+
+    private Long version;
 }

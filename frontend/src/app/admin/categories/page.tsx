@@ -136,6 +136,7 @@ export default function AdminCategoriesPage() {
               <th className="p-4 font-medium rounded-tl-xl">ID</th>
               <th className="p-4 font-medium">Tên Tiếng Việt</th>
               <th className="p-4 font-medium">Tên Tiếng Anh</th>
+              {/* <th className="p-4 font-medium">Ngày tạo</th> */}
               <th className="p-4 font-medium">Đường dẫn (Slug)</th>
               <th className="p-4 font-medium text-center rounded-tr-xl">Thao tác</th>
             </tr>
@@ -155,6 +156,8 @@ export default function AdminCategoriesPage() {
                   <td className="p-4 text-neutral-500 font-medium">#{cat.id}</td>
                   <td className="p-4 font-bold text-neutral-900 text-lg">{cat.nameVi}</td>
                   <td className="p-4 text-neutral-600">{cat.nameEn || '--'}</td>
+                  {/* <td className="p-4 text-neutral-600">{new Date(cat.createdAt).toLocaleString('vi-VN')}</td> */}
+
                   <td className="p-4">
                     <span className="px-3 py-1 bg-neutral-100 text-neutral-600 rounded-lg text-sm">{cat.slug}</span>
                   </td>

@@ -116,7 +116,6 @@ export default function AdminBlogsPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-2xl font-bold">Quản lý Bài viết</h2>
-          <p className="text-neutral-500">Thêm và quản lý các bài viết tin tức, bộ sưu tập</p>
         </div>
         <button
           onClick={() => {

@@ -325,8 +325,13 @@ function ClearanceModal({ batch, onClose, onSuccess }: {
             </label>
             <div className="relative">
               <input
-                type="number" value={price} onChange={e => setPrice(e.target.value)}
-                placeholder="VD: 1690000"
+                type="text"
+                value={price ? new Intl.NumberFormat('vi-VN').format(Number(price)) : ''}
+                onChange={e => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  setPrice(val);
+                }}
+                placeholder="VD: 1.690.000"
                 className="w-full border border-neutral-200 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">đ</span>
@@ -486,7 +491,8 @@ export default function InventoryWarehousePage() {
   // Convert map to array and filter by search
   const displayGroups = Array.from(productMap.values()).filter(g =>
     g.productNameVi.toLowerCase().includes(search.toLowerCase()) ||
-    g.batches.some(b => b.sku.toLowerCase().includes(search.toLowerCase()))
+    g.batches.some(b => b.sku.toLowerCase().includes(search.toLowerCase())) ||
+    g.batches.some(b => b.batchCode.toLowerCase().includes(search.toLowerCase()))
   );
 
   displayGroups.forEach(g => {
@@ -544,9 +550,9 @@ export default function InventoryWarehousePage() {
           <div className="relative flex-1 min-w-60">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
             <input
-              type="text" placeholder="Tìm SKU, tên sản phẩm..."
+              type="text" placeholder="Tìm tên sản phẩm, SKU, Mã lô..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full pl-9 pr-4 py-2.5 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -596,6 +602,7 @@ export default function InventoryWarehousePage() {
                   <th className="px-5 py-4 font-semibold text-neutral-600">Tồn kho</th>
                   <th className="px-5 py-4 font-semibold text-neutral-600">Ngày nhập</th>
                   <th className="px-5 py-4 font-semibold text-neutral-600">Giá nhập</th>
+                  {/* <th className="px-5 py-4 font-semibold text-neutral-600">Version</th> */}
                   <th className="px-5 py-4 font-semibold text-neutral-600">Chất lượng</th>
                   <th className="px-5 py-4 font-semibold text-neutral-600">Trạng thái</th>
                   <th className="px-5 py-4 font-semibold text-neutral-600 text-right">Hành động</th>
@@ -644,18 +651,22 @@ export default function InventoryWarehousePage() {
                         <td className="px-5 py-3">
                           <div className="pl-4">
                             <div className="font-semibold text-neutral-800 text-sm">{batch.sku}</div>
+
                             <div className="text-xs text-neutral-500">{batch.colorVi} • Size {batch.size}</div>
+
                             <div className="mt-1 flex items-center gap-1">
                               <Package size={12} className="text-neutral-400" />
                               <code className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
                                 {batch.batchCode}
                               </code>
                             </div>
+
                           </div>
                         </td>
                         <td className="px-5 py-3 font-semibold text-neutral-800 pl-4">{batch.quantity}</td>
                         <td className="px-5 py-3 text-neutral-600">{fmtDate(batch.importDate)}</td>
                         <td className="px-5 py-3 text-neutral-600">{fmt(batch.importPrice)}</td>
+                        {/* <td className="px-5 py-3 text-neutral-600">{batch.version}</td> */}
                         <td className="px-5 py-3">
                           <QualityBadge value={batch.qualityPercentage} />
                         </td>

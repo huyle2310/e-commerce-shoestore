@@ -238,16 +238,16 @@ export default function AdminVouchersPage() {
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Mức giảm *</label>
-                  <input type="number" value={editingVoucher.discountValue} onChange={e => setEditingVoucher({ ...editingVoucher, discountValue: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
+                  <input type="number" min="0" value={editingVoucher.discountValue} onChange={e => setEditingVoucher({ ...editingVoucher, discountValue: Math.max(0, Number(e.target.value)) })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
                 </div>
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Đơn hàng tối thiểu (VNĐ)</label>
-                  <input type="number" value={editingVoucher.minOrderValue} onChange={e => setEditingVoucher({ ...editingVoucher, minOrderValue: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
+                  <input type="number" min="0" value={editingVoucher.minOrderValue} onChange={e => setEditingVoucher({ ...editingVoucher, minOrderValue: Math.max(0, Number(e.target.value)) })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" />
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Giảm tối đa (VNĐ) <span className="font-normal text-neutral-400">- Tùy chọn</span></label>
-                  <input type="number" value={editingVoucher.maxDiscountAmount || ''} onChange={e => setEditingVoucher({ ...editingVoucher, maxDiscountAmount: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
+                  <input type="number" min="0" value={editingVoucher.maxDiscountAmount || ''} onChange={e => setEditingVoucher({ ...editingVoucher, maxDiscountAmount: e.target.value ? Math.max(0, Number(e.target.value)) : '' })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
                 </div>
 
                 <div className="col-span-2 md:col-span-1">
@@ -271,7 +271,7 @@ export default function AdminVouchersPage() {
 
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2">Giới hạn số lượt dùng <span className="font-normal text-neutral-400">- Tùy chọn</span></label>
-                  <input type="number" value={editingVoucher.usageLimit || ''} onChange={e => setEditingVoucher({ ...editingVoucher, usageLimit: e.target.value })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
+                  <input type="number" min="0" value={editingVoucher.usageLimit || ''} onChange={e => setEditingVoucher({ ...editingVoucher, usageLimit: e.target.value ? Math.max(0, Number(e.target.value)) : '' })} className="w-full px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 outline-none" placeholder="Để trống nếu không giới hạn" />
                 </div>
 
                 <div className="col-span-2">

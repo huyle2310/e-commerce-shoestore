@@ -14,6 +14,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
 @CrossOrigin("*")
+@org.springframework.security.access.prepost.PreAuthorize("hasRole('CUSTOMER')")
 public class CartController {
 
     private final CartService cartService;

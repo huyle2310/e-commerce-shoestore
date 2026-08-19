@@ -127,7 +127,6 @@ export default function Navbar() {
   let navLinks: NavLink[] = [
     { nameVi: 'Trang chủ', nameEn: 'Home', path: '/' },
     { nameVi: 'Cửa hàng', nameEn: 'Shop', path: '/shop', hasDropdown: true, dropdownType: 'categories' },
-    { nameVi: 'Xả kho', nameEn: 'Clearance', path: '/shop/clearance' },
     { nameVi: 'Về chúng tôi', nameEn: 'About', path: '/about' },
     { nameVi: 'Liên hệ', nameEn: 'Contact', path: '/contact' },
   ];
@@ -173,7 +172,6 @@ export default function Navbar() {
     }
     if (link.dropdownType === 'categories' && dropdownData.categories.length > 0) {
       return [
-        { type: 'item', nameVi: 'Hàng xả kho', nameEn: 'Clearance', path: '/shop/clearance' },
         ...dropdownData.categories.map((c: any) => ({
           type: 'item',
           nameVi: c.nameVi || c.name || c.nameEn,
@@ -194,7 +192,6 @@ export default function Navbar() {
       const items: any[] = [];
       if (dropdownData.categories.length > 0) {
         items.push({ type: 'section', labelVi: 'Danh mục', labelEn: 'Categories' });
-        items.push({ type: 'item', nameVi: 'Hàng xả kho', nameEn: 'Clearance', path: '/shop/clearance' });
         items.push(...dropdownData.categories.map((c: any) => ({
           type: 'item',
           nameVi: c.nameVi || c.name || c.nameEn,
@@ -439,15 +436,19 @@ export default function Navbar() {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg border border-neutral-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 overflow-hidden">
                   {user?.role && ['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(user.role) && (
                     <Link href="/admin" className="block px-4 py-3 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-orange-500">
-                      Trang quản trị
+                      {t('adminPage')}
                     </Link>
                   )}
-                  <Link href="/profile" className="flex items-center px-4 py-3 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-orange-500">
-                    <User size={16} className="mr-2" /> Hồ sơ cá nhân
-                  </Link>
-                  <Link href="/orders" className="flex items-center px-4 py-3 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-orange-500">
-                    <Package size={16} className="mr-2" /> Đơn hàng của tôi
-                  </Link>
+                  {(!user?.role || !['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(user.role)) && (
+                    <>
+                      <Link href="/profile" className="flex items-center px-4 py-3 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-orange-500">
+                        <User size={16} className="mr-2" /> {t('profile')}
+                      </Link>
+                      <Link href="/orders" className="flex items-center px-4 py-3 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-orange-500">
+                        <Package size={16} className="mr-2" /> {t('myOrders')}
+                      </Link>
+                    </>
+                  )}
                   <button
                     onClick={async () => {
                       try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) { }
@@ -563,18 +564,22 @@ export default function Navbar() {
               <div className="mt-6 pt-6 border-t border-neutral-200">
                 {mounted && isAuthenticated ? (
                   <>
-                    <div className="px-3 mb-4 text-neutral-500 text-base">Xin chào, <span className="text-neutral-900 font-bold">{user?.fullName}</span></div>
+                    <div className="px-3 mb-4 text-neutral-500 text-base">{t('hello')} <span className="text-neutral-900 font-bold">{user?.fullName}</span></div>
                     {user?.role && ['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(user.role) && (
                       <Link href="/admin" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-orange-500 rounded-md transition-colors">
-                        Trang quản trị
+                        {t('adminPage')}
                       </Link>
                     )}
-                    <Link href="/profile" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-orange-500 rounded-md transition-colors">
-                      Hồ sơ cá nhân
-                    </Link>
-                    <Link href="/orders" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-orange-500 rounded-md transition-colors">
-                      Đơn hàng của tôi
-                    </Link>
+                    {(!user?.role || !['ADMIN', 'SALES_STAFF', 'INVENTORY_STAFF'].includes(user.role)) && (
+                      <>
+                        <Link href="/profile" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-orange-500 rounded-md transition-colors">
+                          {t('profile')}
+                        </Link>
+                        <Link href="/orders" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-medium text-neutral-600 hover:bg-neutral-50 hover:text-orange-500 rounded-md transition-colors">
+                          {t('myOrders')}
+                        </Link>
+                      </>
+                    )}
                     <button
                       onClick={async () => {
                         try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) { }

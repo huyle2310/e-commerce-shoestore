@@ -15,6 +15,8 @@ export default function ClearanceProductDetailPage() {
   const [addingBatchId, setAddingBatchId] = useState<string | null>(null);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [sortOrder, setSortOrder] = useState<'oldest' | 'newest'>('oldest');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [hoveredImage, setHoveredImage] = useState<string | null>(null);
   const router = useRouter();
   const fetchCart = useCartStore(state => state.fetchCart);
 
@@ -23,6 +25,9 @@ export default function ClearanceProductDetailPage() {
       try {
         const res = await api.get(`/products/clearance/${slug}`);
         setProduct(res.data);
+        if (res.data.images && res.data.images.length > 0) {
+          setSelectedImage(res.data.images[0].imageUrl);
+        }
       } catch (err) {
         console.error("Failed to fetch clearance product", err);
       } finally {
@@ -113,14 +118,20 @@ export default function ClearanceProductDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Left: Global Product Images */}
         <div className="lg:col-span-5">
-          <div className="aspect-square bg-neutral-100 rounded-2xl overflow-hidden mb-4">
-            <img src={product.images?.[0]?.imageUrl || '/placeholder.png'} alt={product.clearanceNameVi || product.nameVi} className="w-full h-full object-cover" />
+          <div className="aspect-square bg-neutral-100 rounded-2xl overflow-hidden mb-4 relative flex items-center justify-center">
+            <img src={hoveredImage || selectedImage || product.images?.[0]?.imageUrl || '/placeholder.png'} alt={product.clearanceNameVi || product.nameVi} className="w-full h-full object-cover" />
           </div>
           <div className="grid grid-cols-4 gap-2">
-            {product.images?.slice(1, 5).map((img: any, i: number) => (
-              <div key={i} className="aspect-square bg-neutral-100 rounded-lg overflow-hidden">
+            {product.images?.map((img: any, i: number) => (
+              <button 
+                key={i} 
+                onClick={() => setSelectedImage(img.imageUrl)}
+                onMouseEnter={() => setHoveredImage(img.imageUrl)}
+                onMouseLeave={() => setHoveredImage(null)}
+                className={`aspect-square bg-neutral-100 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === img.imageUrl ? 'border-orange-500' : 'border-transparent hover:border-neutral-300'}`}
+              >
                 <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -149,7 +160,11 @@ export default function ClearanceProductDetailPage() {
                     return sortOrder === 'oldest' ? timeA - timeB : timeB - timeA;
                   })
                   .map((batch: any) => (
-                    <div key={batch.id} className="border border-neutral-200 rounded-xl p-4 flex flex-col sm:flex-row gap-4 relative overflow-hidden group hover:border-orange-500 transition-colors bg-white">
+                    <div 
+                      key={batch.id} 
+                      onClick={() => { if (batch.imageUrl) setSelectedImage(batch.imageUrl) }}
+                      className="border border-neutral-200 rounded-xl p-4 flex flex-col sm:flex-row gap-4 relative overflow-hidden group hover:border-orange-500 transition-colors bg-white cursor-pointer"
+                    >
                       {/* Batch Image */}
                       {batch.imageUrl ? (
                         <div className="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-neutral-100">
@@ -181,22 +196,22 @@ export default function ClearanceProductDetailPage() {
                             {/* Quantity Selector */}
                             <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 h-10">
                               <button
-                                onClick={() => handleQuantityChange(batch.id, -1, batch.quantity)}
+                                onClick={(e) => { e.stopPropagation(); handleQuantityChange(batch.id, -1, batch.quantity); }}
                                 className="w-10 h-full flex items-center justify-center hover:bg-neutral-200 transition-colors text-lg"
                                 disabled={batch.quantity <= 0}
                               >-</button>
-                              <div className="w-10 text-center font-bold text-sm">
+                              <div className="w-10 text-center font-bold text-sm flex items-center justify-center">
                                 {batch.quantity > 0 ? (quantities[batch.id] || 1) : 0}
                               </div>
                               <button
-                                onClick={() => handleQuantityChange(batch.id, 1, batch.quantity)}
+                                onClick={(e) => { e.stopPropagation(); handleQuantityChange(batch.id, 1, batch.quantity); }}
                                 className="w-10 h-full flex items-center justify-center hover:bg-neutral-200 transition-colors text-lg"
                                 disabled={batch.quantity <= 0}
                               >+</button>
                             </div>
 
                             <button
-                              onClick={() => handleAddToCart(batch)}
+                              onClick={(e) => { e.stopPropagation(); handleAddToCart(batch); }}
                               disabled={addingBatchId === batch.id || batch.quantity <= 0}
                               className="bg-black hover:bg-neutral-800 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 disabled:bg-neutral-300 disabled:cursor-not-allowed transition-colors h-10"
                             >

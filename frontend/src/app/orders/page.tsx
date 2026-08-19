@@ -153,7 +153,7 @@ export default function OrdersPage() {
                         </div>
                       ))}
                     </div>
-                    {order.orderStatus === 'PENDING' && order.paymentStatus !== 'PAID' && (
+                    {order.orderStatus === 'PENDING' && (
                       <div className="mt-6 pt-6 border-t border-neutral-100 flex justify-end">
                         <button
                           onClick={() => handleCancelOrder(order.id)}

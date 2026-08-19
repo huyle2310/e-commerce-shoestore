@@ -153,9 +153,18 @@ export default function NewImportReceiptPage() {
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
-        const csvText = event.target?.result as string;
-        const rows = csvText.split('\n').map(row => row.split(',').map(col => col.trim()));
+        const buffer = event.target?.result as ArrayBuffer;
+        let csvText = '';
+        try {
+          const decoder = new TextDecoder('utf-8', { fatal: true });
+          csvText = decoder.decode(buffer);
+        } catch (err) {
+          alert("File CSV của bạn đang bị lỗi font (lưu sai định dạng). Vui lòng mở file bằng Excel, chọn File > Save As > tại mục Save as type, chọn 'CSV UTF-8 (Comma delimited)' rồi import lại nhé!");
+          if (fileInputRef.current) fileInputRef.current.value = '';
+          return;
+        }
 
+        const rows = csvText.split('\n').map(row => row.split(',').map(col => col.trim()));
         const dataRows = rows.slice(1).filter(r => r.length >= 4 && r[0]);
 
         if (dataRows.length === 0) {
@@ -174,8 +183,10 @@ export default function NewImportReceiptPage() {
         for (const row of dataRows) {
           const sku = row[0];
           const productNameInCsv = row[1] || 'Không xác định';
-          const quantity = parseInt(row[2]) || 1;
-          const importPrice = parseFloat(row[3]) || 0;
+          const quantityStr = row[2] ? String(row[2]).replace(/\D/g, '') : '';
+          const quantity = parseInt(quantityStr, 10) || 1;
+          const importPriceStr = row[3] ? String(row[3]).replace(/\D/g, '') : '';
+          const importPrice = parseInt(importPriceStr, 10) || 0;
           const itemSupplier = row[4] || '';
 
           const matchedProduct = products.find(p => p.variants?.some((v: any) => v.sku === sku));
@@ -237,7 +248,7 @@ export default function NewImportReceiptPage() {
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   };
 
   const handleSave = async () => {
@@ -309,7 +320,6 @@ export default function NewImportReceiptPage() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">Lập Phiếu Nhập Mới</h1>
-          <p className="text-neutral-500 mt-1">Phiếu sẽ ở trạng thái chờ duyệt trước khi cộng vào tồn kho</p>
         </div>
         <div className="flex items-center space-x-3">
           <input type="file" accept=".csv" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
@@ -503,7 +513,10 @@ export default function NewImportReceiptPage() {
                                 <input
                                   type="number" min="1"
                                   value={item.quantity}
-                                  onChange={e => updateVariantRow(gIdx, iIdx, 'quantity', e.target.value === '' ? '' : parseInt(e.target.value))}
+                                  onChange={e => {
+                                    const val = e.target.value.replace(/\D/g, '');
+                                    updateVariantRow(gIdx, iIdx, 'quantity', val === '' ? '' : parseInt(val, 10));
+                                  }}
                                   disabled={!isValid}
                                   className="w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:bg-white disabled:opacity-50 disabled:bg-neutral-100"
                                 />

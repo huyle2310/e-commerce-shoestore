@@ -56,14 +56,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
-                                "/api/v1/products/**",
-                                "/api/v1/categories/**",
-                                "/api/v1/brands/**",
-                                "/api/v1/banners/**",
-                                "/api/v1/blogs/**",
-                                "/api/v1/settings/**",
-                                "/api/v1/files/**",
-                                "/uploads/**").permitAll()
+                                "/api/v1/products", "/api/v1/products/**",
+                                "/api/v1/categories", "/api/v1/categories/**",
+                                "/api/v1/brands", "/api/v1/brands/**",
+                                "/api/v1/banners", "/api/v1/banners/**",
+                                "/api/v1/blogs", "/api/v1/blogs/**",
+                                "/api/v1/settings", "/api/v1/settings/**",
+                                "/api/v1/files", "/api/v1/files/**",
+                                "/uploads", "/uploads/**").permitAll()
                         .requestMatchers(
                                 "/api/v1/orders/guest",
                                 "/api/v1/vouchers/check",
@@ -81,8 +81,11 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        configuration.setAllowedOrigins(java.util.Arrays.asList("http://localhost:3000")); // Specific origin required
-                                                                                           // for credentials
+        configuration.setAllowedOriginPatterns(java.util.Arrays.asList(
+            "http://localhost:*", 
+            "http://127.0.0.1:*",
+            "http://192.168.*.*:*" // Allow local network access
+        ));
         configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
         configuration.setAllowCredentials(true);

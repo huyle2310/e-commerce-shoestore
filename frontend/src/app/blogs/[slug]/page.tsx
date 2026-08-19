@@ -7,8 +7,12 @@ import { Calendar, User, ArrowLeft, Share2, Link as LinkIcon } from 'lucide-reac
 import Link from 'next/link';
 import api from '@/lib/axios';
 import 'react-quill-new/dist/quill.snow.css'; // Import quill styles for content rendering
+import { useLanguageStore } from '@/store/languageStore';
+import { useTranslation } from '@/lib/translations';
 
 export default function BlogDetailPage() {
+  const { language } = useLanguageStore();
+  const t = useTranslation(language);
   const { slug } = useParams();
   const [blog, setBlog] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -61,7 +65,7 @@ export default function BlogDetailPage() {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <Link href="/blogs" className="inline-flex items-center text-sm font-bold text-neutral-500 hover:text-black mb-10 transition-colors uppercase tracking-wider">
-          <ArrowLeft size={16} className="mr-2" /> VỀ TRANG TIN TỨC
+          <ArrowLeft size={16} className="mr-2" /> {language === 'vi' ? 'VỀ TRANG TIN TỨC' : 'BACK TO NEWS'}
         </Link>
 
         {/* Header */}
@@ -71,16 +75,16 @@ export default function BlogDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-black tracking-tight text-neutral-900 mb-8 leading-tight"
           >
-            {blog.titleVi}
+            {language === 'vi' ? blog.titleVi : (blog.titleEn || blog.titleVi)}
           </motion.h1>
 
-          {blog.shortDescriptionVi && (
+          {(blog.shortDescriptionVi || blog.shortDescriptionEn) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="text-xl  text-neutral-500 mb-8 max-w-none mx-auto prose prose-neutral text-center [&_*]:!whitespace-normal [&_*]:!break-words"
-              dangerouslySetInnerHTML={{ __html: blog.shortDescriptionVi }}
+              className="text-xl text-neutral-500 mb-8 max-w-none mx-auto prose prose-neutral text-center [&_*]:!whitespace-normal"
+              dangerouslySetInnerHTML={{ __html: (language === 'vi' ? blog.shortDescriptionVi : (blog.shortDescriptionEn || blog.shortDescriptionVi))?.replace(/&nbsp;/g, ' ') }}
             />
           )}
 
@@ -90,9 +94,9 @@ export default function BlogDetailPage() {
             transition={{ delay: 0.1 }}
             className="flex items-center justify-center space-x-6 text-sm font-bold text-neutral-500 uppercase tracking-wider"
           >
-            <span className="flex items-center"><User size={16} className="mr-2" /> {blog.authorName}</span>
+            <span className="flex items-center"><User size={16} className="mr-2" /> {blog.authorName || blog.author}</span>
             <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
-            <span className="flex items-center"><Calendar size={16} className="mr-2" /> {new Date(blog.createdAt).toLocaleDateString('vi-VN')}</span>
+            <span className="flex items-center"><Calendar size={16} className="mr-2" /> {new Date(blog.createdAt || blog.publishedAt).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US')}</span>
           </motion.div>
         </header>
 
@@ -104,7 +108,7 @@ export default function BlogDetailPage() {
             transition={{ delay: 0.2 }}
             className="w-full aspect-[21/9] rounded-[0.5rem] overflow-hidden mb-8 shadow-[0.2rem]"
           >
-            <img src={blog.thumbnailUrl} alt={blog.titleVi} className="w-full h-full object-cover" />
+            <img src={blog.thumbnailUrl} alt={language === 'vi' ? blog.titleVi : (blog.titleEn || blog.titleVi)} className="w-full h-full object-cover" />
           </motion.div>
         )}
         <hr className="border-neutral-400 w-full mb-5" />
@@ -115,7 +119,7 @@ export default function BlogDetailPage() {
           transition={{ delay: 0.3 }}
           className="prose prose-lg prose-neutral max-w-none prose-headings:font-black prose-a:text-orange-500 hover:prose-a:text-orange-600 ql-editor"
           style={{ lineHeight: 'calc(1.75rem + 0.2rem)' }}
-          dangerouslySetInnerHTML={{ __html: blog.contentVi }}
+          dangerouslySetInnerHTML={{ __html: language === 'vi' ? blog.contentVi : (blog.contentEn || blog.contentVi) }}
         />
 
         {/* Footer actions */}

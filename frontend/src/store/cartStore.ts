@@ -45,8 +45,13 @@ export const useCartStore = create<CartState>()(
         try {
           const response = await api.get('/cart');
           set({ items: response.data.items || [], totalAmount: response.data.totalAmount || 0 });
-        } catch (error) {
-          console.error('Error fetching cart:', error);
+        } catch (error: any) {
+          if (error.response?.status === 403) {
+            // Admin or Staff doesn't have a cart, gracefully ignore and clear items
+            set({ items: [], totalAmount: 0 });
+          } else {
+            console.error('Error fetching cart:', error.message || error);
+          }
         } finally {
           set({ loading: false });
         }
@@ -62,7 +67,9 @@ export const useCartStore = create<CartState>()(
             const response = await api.post(`/cart/items?variantId=${variantId}&quantity=${quantity}`, {});
             set({ items: response.data.items || [], totalAmount: response.data.totalAmount || 0 });
           } catch (error: any) {
-            console.error('Error adding to cart:', error);
+            if (error.response?.status === 403) {
+              throw new Error('Tài khoản quản trị không thể mua hàng.');
+            }
             throw new Error(error.response?.data?.message || 'Không thể thêm vào giỏ hàng');
           } finally {
             set({ loading: false });
@@ -121,7 +128,7 @@ export const useCartStore = create<CartState>()(
             const response = await api.put(`/cart/items/${itemId}?quantity=${quantity}`, {});
             set({ items: response.data.items || [], totalAmount: response.data.totalAmount || 0 });
           } catch (error: any) {
-            console.error('Error updating quantity:', error);
+            console.error('Error updating quantity:', error.message || error);
             throw new Error(error.response?.data?.message || 'Không thể cập nhật số lượng');
           } finally {
             set({ loading: false });
@@ -157,8 +164,8 @@ export const useCartStore = create<CartState>()(
           try {
             const response = await api.delete(`/cart/items/${itemId}`);
             set({ items: response.data.items || [], totalAmount: response.data.totalAmount || 0 });
-          } catch (error) {
-            console.error('Error removing item:', error);
+          } catch (error: any) {
+            console.error('Error removing item:', error.message || error);
           } finally {
             set({ loading: false });
           }
@@ -177,8 +184,8 @@ export const useCartStore = create<CartState>()(
             for (const item of localItems) {
                try {
                   await api.post(`/cart/items?variantId=${item.variantId}&quantity=${item.quantity}`, {});
-               } catch (e) {
-                  console.error('Failed to sync item:', item);
+               } catch (e: any) {
+                  console.error('Failed to sync item:', item, e.message || e);
                }
             }
             // Fetch fresh cart from server

@@ -18,8 +18,11 @@ export interface ProductProps {
   averageRating?: number;
   variants?: {
     stockQuantity: number;
-    effectivePrice?: number;
+    effectivePrice?: number | string;
     productStatus?: 'ACTIVE' | 'DISPOSED';
+  }[];
+  clearanceBatches?: {
+    clearancePrice: number | string;
   }[];
 }
 
@@ -27,13 +30,28 @@ export default function ProductCard({ product }: { product: ProductProps }) {
   const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2370&auto=format&fit=crop';
   const nonPrimaryImages = product.images?.filter(img => img.imageUrl !== primaryImage) || [];
   const secondaryImage = nonPrimaryImages[0]?.imageUrl;
-  const saleableVariants = product.variants?.filter(variant => variant.productStatus !== 'DISPOSED') || [];
-  const lowestEffectivePrice = saleableVariants
-    .map(variant => variant.effectivePrice)
-    .filter((price): price is number => typeof price === 'number')
-    .reduce<number | undefined>((lowest, price) => lowest === undefined || price < lowest ? price : lowest, undefined);
+  const saleableVariants = product.variants || [];
+  const validVariantPrices = saleableVariants
+    .map(variant => Number(variant.effectivePrice))
+    .filter(price => !isNaN(price) && price > 0);
+    
+  let lowestPrice = validVariantPrices.length > 0 
+    ? Math.min(...validVariantPrices) 
+    : product.basePrice;
+
+  // Nếu có clearance batches, lấy giá xả kho thấp nhất
+  if (product.clearanceBatches && product.clearanceBatches.length > 0) {
+    const clearancePrices = product.clearanceBatches
+      .map((batch: any) => Number(batch.clearancePrice))
+      .filter(price => !isNaN(price) && price > 0);
+      
+    if (clearancePrices.length > 0) {
+      lowestPrice = Math.min(...clearancePrices);
+    }
+  }
+
   const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-    .format(lowestEffectivePrice ?? product.basePrice);
+    .format(lowestPrice);
 
   const totalStock = product.variants
     ? saleableVariants.reduce((sum, variant) => sum + (variant.stockQuantity || 0), 0)

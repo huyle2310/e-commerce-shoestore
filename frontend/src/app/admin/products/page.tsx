@@ -23,6 +23,7 @@ export default function AdminProductsPage() {
   // Quick add variants state
   const [quickColor, setQuickColor] = useState('');
   const [quickSizes, setQuickSizes] = useState<string[]>([]);
+  const [customSizesInput, setCustomSizesInput] = useState('');
   const predefinedSizes = ['36', '37', '38', '39', '40', '41', '42', '43', '44', 'FREESIZE'];
 
   const fetchProducts = async (tab: 'inventory' | 'clearance') => {
@@ -62,6 +63,7 @@ export default function AdminProductsPage() {
     });
     setQuickColor('');
     setQuickSizes([]);
+    setCustomSizesInput('');
   };
 
   const handleEditClick = async (slug: string) => {
@@ -188,8 +190,11 @@ export default function AdminProductsPage() {
   };
 
   const handleQuickAddVariants = () => {
-    if (!quickColor.trim() || quickSizes.length === 0) {
-      toast.error("Vui lòng nhập màu sắc và chọn ít nhất 1 size");
+    const customSizes = customSizesInput.split(',').map(s => s.trim()).filter(Boolean);
+    const allSizes = Array.from(new Set([...quickSizes, ...customSizes]));
+
+    if (!quickColor.trim() || allSizes.length === 0) {
+      toast.error("Vui lòng nhập màu sắc và chọn/nhập ít nhất 1 size");
       return;
     }
 
@@ -201,7 +206,7 @@ export default function AdminProductsPage() {
     const toSkuCode = (str: string) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').trim().replace(/\s+/g, '-').toUpperCase();
     const colorCode = toSkuCode(quickColor);
 
-    const newVariants = quickSizes.map(size => {
+    const newVariants = allSizes.map(size => {
       const sizeCode = toSkuCode(size);
       return {
         sku: `SKU-${prefix}-${colorCode}-${sizeCode}`,
@@ -221,6 +226,7 @@ export default function AdminProductsPage() {
     // Reset quick add form
     setQuickColor('');
     setQuickSizes([]);
+    setCustomSizesInput('');
     toast.success(`Đã thêm ${newVariants.length} phiên bản`);
   };
 
@@ -502,22 +508,31 @@ export default function AdminProductsPage() {
                         <input type="text" value={quickColor} onChange={e => setQuickColor(e.target.value)} className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500" placeholder="Nhập màu..." />
                       </div>
                       <div className="w-full md:w-2/3">
-                        <label className="block text-xs font-bold text-neutral-500 mb-2">Tick chọn các Size:</label>
-                        <div className="flex flex-wrap gap-2">
-                          {predefinedSizes.map(sz => (
-                            <label key={sz} className={`px-3 py-1.5 rounded-lg border text-sm cursor-pointer transition-colors ${quickSizes.includes(sz) ? 'bg-orange-500 border-orange-500 text-white font-bold' : 'bg-white border-neutral-300 hover:border-orange-500 text-neutral-700'}`}>
-                              <input
-                                type="checkbox"
-                                className="hidden"
-                                checked={quickSizes.includes(sz)}
-                                onChange={(e) => {
-                                  if (e.target.checked) setQuickSizes([...quickSizes, sz]);
-                                  else setQuickSizes(quickSizes.filter(s => s !== sz));
-                                }}
-                              />
-                              {sz}
-                            </label>
-                          ))}
+                        <label className="block text-xs font-bold text-neutral-500 mb-2">Tick chọn các Size hoặc gõ thêm (cách nhau bởi dấu phẩy):</label>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex flex-wrap gap-2">
+                            {predefinedSizes.map(sz => (
+                              <label key={sz} className={`px-3 py-1.5 rounded-lg border text-sm cursor-pointer transition-colors ${quickSizes.includes(sz) ? 'bg-orange-500 border-orange-500 text-white font-bold' : 'bg-white border-neutral-300 hover:border-orange-500 text-neutral-700'}`}>
+                                <input
+                                  type="checkbox"
+                                  className="hidden"
+                                  checked={quickSizes.includes(sz)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) setQuickSizes([...quickSizes, sz]);
+                                    else setQuickSizes(quickSizes.filter(s => s !== sz));
+                                  }}
+                                />
+                                {sz}
+                              </label>
+                            ))}
+                          </div>
+                          <input 
+                            type="text" 
+                            value={customSizesInput}
+                            onChange={(e) => setCustomSizesInput(e.target.value)}
+                            placeholder="Nhập size lẻ VD: 36.5, 37.5, US 7..." 
+                            className="w-full p-2 border border-neutral-300 rounded-lg outline-none focus:border-orange-500 text-sm"
+                          />
                         </div>
                       </div>
                       <button onClick={handleQuickAddVariants} className="px-4 py-2 bg-black text-white font-bold rounded-lg hover:bg-neutral-800 transition-colors whitespace-nowrap">
@@ -539,10 +554,17 @@ export default function AdminProductsPage() {
                         </div>
                         <div className="col-span-2">
                           <label className="block text-xs font-bold text-red-500 mb-1">Size *</label>
-                          <select required value={variant.size} onChange={e => handleVariantChange(index, 'size', e.target.value)} className={`w-full p-2 border ${!variant.size ? 'border-red-400 bg-red-50' : 'border-neutral-300'} rounded-lg outline-none focus:border-orange-500 text-sm`}>
-                            <option value="">Chọn</option>
-                            {predefinedSizes.map(sz => <option key={sz} value={sz}>{sz}</option>)}
-                          </select>
+                          <input 
+                            required 
+                            list="predefined-sizes"
+                            value={variant.size} 
+                            onChange={e => handleVariantChange(index, 'size', e.target.value)} 
+                            className={`w-full p-2 border ${!variant.size ? 'border-red-400 bg-red-50' : 'border-neutral-300'} rounded-lg outline-none focus:border-orange-500 text-sm [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:opacity-0`}
+                            placeholder="Chọn hoặc nhập..."
+                          />
+                          <datalist id="predefined-sizes">
+                            {predefinedSizes.map(sz => <option key={sz} value={sz} />)}
+                          </datalist>
                         </div>
                         <div className="col-span-3">
                           <label className="block text-xs font-bold text-neutral-500 mb-1">Giá bán (VNĐ)</label>

@@ -14,4 +14,5 @@ public class CategoryResponse {
     private String nameVi;
     private String nameEn;
     private String slug;
+    private java.time.LocalDateTime createdAt;
 }

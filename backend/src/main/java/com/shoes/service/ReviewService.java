@@ -9,4 +9,5 @@ public interface ReviewService {
     ReviewResponse addReview(UUID productId, UUID userId, ReviewRequest request);
     List<ReviewResponse> getReviewsByProduct(UUID productId);
     boolean canUserReviewProduct(UUID productId, UUID userId);
+    void deleteReview(UUID reviewId);
 }

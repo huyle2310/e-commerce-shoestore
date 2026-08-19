@@ -12,6 +12,9 @@ import com.shoes.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -202,6 +205,11 @@ public class OrderServiceImpl implements OrderService {
     // ================================================================
     @Override
     @Transactional
+    @Retryable(
+        value = ObjectOptimisticLockingFailureException.class, 
+        maxAttempts = 3, 
+        backoff = @Backoff(delay = 500)
+    )
     public OrderResponse placeOrder(UUID userId, OrderRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -273,6 +281,11 @@ public class OrderServiceImpl implements OrderService {
     // ================================================================
     @Override
     @Transactional
+    @Retryable(
+        value = ObjectOptimisticLockingFailureException.class, 
+        maxAttempts = 3, 
+        backoff = @Backoff(delay = 500)
+    )
     public OrderResponse placeGuestOrder(OrderRequest request) {
         if (request.getItems() == null || request.getItems().isEmpty()) {
             throw new RuntimeException("Giỏ hàng trống");
@@ -364,6 +377,11 @@ public class OrderServiceImpl implements OrderService {
             }
         } else if ("CANCELLED".equals(status) && !"CANCELLED".equals(oldStatus)) {
             restoreStockForCancelledOrder(order);
+            String toEmail = order.getEmail();
+            if (toEmail == null && order.getUser() != null) toEmail = order.getUser().getEmail();
+            if (toEmail != null) {
+                emailService.sendOrderCancellationEmail(toEmail, order, "Đơn hàng bị hủy bởi Quản trị viên");
+            }
         }
         return mapToOrderResponse(orderRepository.save(order));
     }
@@ -376,15 +394,19 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized");
         }
-        if ("PAID".equals(order.getPaymentStatus())) {
-            throw new RuntimeException("Không thể hủy đơn hàng đã thanh toán");
-        }
         if (!"PENDING".equals(order.getOrderStatus())) {
             throw new RuntimeException("Không thể hủy đơn hàng đang được xử lý hoặc giao hàng");
         }
 
         order.setOrderStatus("CANCELLED");
         restoreStockForCancelledOrder(order);
+        
+        String toEmail = order.getEmail();
+        if (toEmail == null && order.getUser() != null) toEmail = order.getUser().getEmail();
+        if (toEmail != null) {
+            emailService.sendOrderCancellationEmail(toEmail, order, "Khách hàng tự hủy đơn");
+        }
+        
         return mapToOrderResponse(orderRepository.save(order));
     }
 
@@ -501,6 +523,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentStatus(order.getPaymentStatus())
                 .orderStatus(order.getOrderStatus())
                 .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
                 .items(items)
                 .build();
     }

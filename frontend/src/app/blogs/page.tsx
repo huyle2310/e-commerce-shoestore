@@ -5,8 +5,12 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Calendar, User } from 'lucide-react';
 import api from '@/lib/axios';
+import { useLanguageStore } from '@/store/languageStore';
+import { useTranslation } from '@/lib/translations';
 
 export default function BlogsPage() {
+  const { language } = useLanguageStore();
+  const t = useTranslation(language);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +38,7 @@ export default function BlogsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-black tracking-tighter mb-6 uppercase"
           >
-            TIN TỨC & SỰ KIỆN
+            {t('newsAndEvents')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -42,7 +46,7 @@ export default function BlogsPage() {
             transition={{ delay: 0.1 }}
             className="text-lg text-neutral-500 leading-relaxed"
           >
-            Cập nhật những xu hướng thời trang mới nhất, các bộ sưu tập giới hạn và câu chuyện từ cộng đồng Vanguard.
+            {t('newsSubtitle')}
           </motion.p>
         </div>
 
@@ -50,8 +54,8 @@ export default function BlogsPage() {
           <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div></div>
         ) : blogs.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-neutral-100">
-            <h3 className="text-2xl font-bold text-neutral-900 mb-2">Chưa có bài viết nào</h3>
-            <p className="text-neutral-500">Hãy quay lại sau để cập nhật những tin tức mới nhất.</p>
+            <h3 className="text-2xl font-bold text-neutral-900 mb-2">{t('noBlogsYet')}</h3>
+            <p className="text-neutral-500">{t('checkBackLater')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -61,29 +65,34 @@ export default function BlogsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-[1rem] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-xl transition-all group"
+                className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-neutral-100 hover:shadow-xl transition-all duration-300"
               >
-                <Link href={`/blogs/${blog.slug}`} className="block relative aspect-video overflow-hidden bg-neutral-100">
+                <Link href={`/blogs/${blog.slug}`} className="relative h-64 overflow-hidden bg-neutral-100">
                   {blog.thumbnailUrl ? (
-                    <img src={blog.thumbnailUrl} alt={blog.titleVi} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={blog.thumbnailUrl} alt={language === 'vi' ? blog.titleVi : (blog.titleEn || blog.titleVi)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300 font-black text-2xl uppercase tracking-widest">Vanguard</div>
+                    <div className="w-full h-full flex items-center justify-center text-neutral-400">No Image</div>
                   )}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                </Link>
-                <div className="p-8">
-                  <div className="flex items-center text-xs font-bold text-neutral-400 mb-4 uppercase tracking-wider space-x-4">
-                    <span className="flex items-center"><Calendar size={14} className="mr-1.5" /> {new Date(blog.createdAt).toLocaleDateString('vi-VN')}</span>
-                    <span className="flex items-center"><User size={14} className="mr-1.5" /> {blog.authorName}</span>
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-neutral-900">
+                    {blog.category}
                   </div>
+                </Link>
+
+                <div className="flex flex-col flex-1 p-8">
+                  <div className="flex items-center gap-4 text-sm text-neutral-500 mb-4">
+                    <div className="flex items-center gap-1.5"><Calendar size={16} />{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('vi-VN')}</div>
+                    <div className="flex items-center gap-1.5"><User size={16} />{blog.author}</div>
+                  </div>
+
                   <Link href={`/blogs/${blog.slug}`}>
-                    <h2 className="text-2xl font-black text-neutral-900 mb-4 line-clamp-2 hover:text-orange-500 transition-colors">{blog.titleVi}</h2>
+                    <h2 className="text-2xl font-black text-neutral-900 mb-4 line-clamp-2 hover:text-orange-500 transition-colors">{language === 'vi' ? blog.titleVi : (blog.titleEn || blog.titleVi)}</h2>
                   </Link>
-                  <p className="text-neutral-500 mb-6 line-clamp-3 leading-relaxed">
-                    {(blog.shortDescriptionVi || blog.contentVi).replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
+
+                  <p className="text-neutral-600 mb-8 line-clamp-3 leading-relaxed flex-1">
+                    {language === 'vi' ? blog.summaryVi : (blog.summaryEn || blog.summaryVi)}
                   </p>
                   <Link href={`/blogs/${blog.slug}`} className="inline-flex items-center font-bold text-orange-500 hover:text-orange-600 transition-colors group/link">
-                    ĐỌC TIẾP <ArrowRight size={18} className="ml-2 group-hover/link:translate-x-2 transition-transform" />
+                    {t('readMore')} <ArrowRight size={18} className="ml-2 group-hover/link:translate-x-2 transition-transform" />
                   </Link>
                 </div>
               </motion.article>

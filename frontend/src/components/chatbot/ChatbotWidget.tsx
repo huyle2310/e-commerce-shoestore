@@ -127,18 +127,19 @@ export default function ChatbotWidget() {
                           return <div key={toolInvocation.toolCallId} className="mt-2">Dạ với câu hỏi này anh chị cho em xin thêm một xíu thông tin (tên giày, size...) để em check kho chính xác nhất nhé!</div>;
                         }
                         if (res.startsWith('System:')) return null;
-                        return <div key={toolInvocation.toolCallId} className="italic text-neutral-500 mt-2">{res}</div>;
+                        return <div key={toolInvocation.toolCallId} className="mt-2 text-sm text-neutral-800">{res}</div>;
                       } else if (Array.isArray(res) && res.length > 0) {
                         return (
                           <div key={toolInvocation.toolCallId} className="mt-2">
-                            <p className="mb-2">Dạ em tìm được một số sản phẩm này, anh/chị tham khảo nhé:</p>
                             <div className="grid grid-cols-1 gap-2">
-                              {res.map((product: any) => (
-                              <div key={product.id} className="border border-neutral-100 p-2 rounded-lg bg-neutral-50 flex flex-col cursor-pointer hover:bg-neutral-100" onClick={() => window.location.href = `/shop/${product.slug || product.id}`}>
+                              {res.map((product: any, index: number) => (
+                              <div key={product.id || `product-${index}`} className="border border-neutral-100 p-2 rounded-lg bg-neutral-50 flex flex-col cursor-pointer hover:bg-neutral-100" onClick={() => window.location.href = `${window.location.origin}${product.slug || `/shop/${product.id || ''}`}`}>
                                 <p className="font-semibold text-xs text-neutral-900 truncate">{product.name}</p>
                                 <p className="text-xs text-orange-500 font-bold mt-1">
                                   {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.discountPrice || product.price)}
                                 </p>
+                                <p className="text-[10px] text-neutral-500 mt-1">Màu: {product.colors}</p>
+                                <p className="text-[10px] text-neutral-500">Size: {product.sizes}</p>
                               </div>
                             ))}
                             </div>
@@ -162,7 +163,7 @@ export default function ChatbotWidget() {
             {error && (
               <div className="flex justify-center my-2">
                 <div className="bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs">
-                  {t.chatbot.error}{error.message}
+                  {t.chatbot.error}{error?.message || (typeof error === 'string' ? error : JSON.stringify(error))}
                 </div>
               </div>
             )}

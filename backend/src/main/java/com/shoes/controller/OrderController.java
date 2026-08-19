@@ -21,6 +21,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     public ResponseEntity<OrderResponse> placeOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -33,11 +34,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.placeGuestOrder(request));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getUserOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId()));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -46,6 +49,7 @@ public class OrderController {
     }
 
     // --- USER APIs ---
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/{id}/cancel")
     public ResponseEntity<OrderResponse> cancelOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,

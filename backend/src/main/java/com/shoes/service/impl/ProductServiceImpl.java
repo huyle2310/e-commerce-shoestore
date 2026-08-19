@@ -66,32 +66,91 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductSearchResponse searchProducts(String keyword, boolean exactMatch) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return new ProductSearchResponse(Collections.emptyList(), null);
-        }
-
-        String trimmedKeyword = keyword.trim();
+    public ProductSearchResponse searchProducts(String keyword, boolean exactMatch, BigDecimal minPrice, BigDecimal maxPrice) {
+        List<ProductResponse> responses = new java.util.ArrayList<>();
+        String suggestion = null;
         
-        // Always check for spelling suggestion first
-        Set<String> dictionary = getSearchDictionary();
-        String suggestion = getSuggestion(trimmedKeyword, dictionary);
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        boolean isClearance = hasKeyword && (keyword.toLowerCase().contains("thanh lý") || keyword.toLowerCase().contains("thanh ly"));
 
-        if (suggestion != null && !suggestion.equalsIgnoreCase(trimmedKeyword)) {
-            // Found a better spelling suggestion, query using suggestion
-            List<Product> suggestedProducts = exactMatch ? searchProductsInDb(suggestion) : productRepository.searchByKeyword(suggestion);
-            return new ProductSearchResponse(
-                    suggestedProducts.stream().map(this::mapToProductResponse).collect(Collectors.toList()),
-                    suggestion
-            );
+        if (isClearance) {
+            responses = getClearanceProducts();
+            String searchKeyword = keyword.toLowerCase().replaceAll("thanh l(ý|y)", "").trim();
+            
+            // Lọc các từ khóa chung chung để không bị sai khi so khớp chuỗi
+            String[] genericWords = {"giày", "dép", "mẫu", "đôi", "có", "hàng", "không", "ko", "k", "này", "cho", "hỏi", "mình", "shop", "bán", "mua"};
+            for (String gw : genericWords) {
+                searchKeyword = searchKeyword.replaceAll("\\b" + gw + "\\b", "");
+            }
+            searchKeyword = searchKeyword.trim();
+
+            if (!searchKeyword.isEmpty()) {
+                String[] tokens = searchKeyword.split("\\s+");
+                responses = responses.stream().filter(p -> {
+                    String name = p.getNameVi() != null ? p.getNameVi().toLowerCase() : "";
+                    String brand = (p.getBrand() != null && p.getBrand().getName() != null) ? p.getBrand().getName().toLowerCase() : "";
+                    for (String t : tokens) {
+                        if (t.isEmpty()) continue;
+                        if (!name.contains(t) && !brand.contains(t)) return false;
+                    }
+                    return true;
+                }).collect(Collectors.toList());
+            }
+        } else if (!hasKeyword) {
+            if (minPrice != null || maxPrice != null) {
+                responses = productRepository.findByIsActiveTrue().stream().map(this::mapToProductResponse).collect(Collectors.toList());
+            } else {
+                return new ProductSearchResponse(Collections.emptyList(), null);
+            }
+        } else {
+            String trimmedKeyword = keyword.trim();
+            Set<String> dictionary = getSearchDictionary();
+            suggestion = getSuggestion(trimmedKeyword, dictionary);
+
+            List<Product> exactMatches;
+            if (suggestion != null && !suggestion.equalsIgnoreCase(trimmedKeyword)) {
+                exactMatches = exactMatch ? searchProductsInDb(suggestion) : productRepository.searchByKeyword(suggestion);
+            } else {
+                exactMatches = exactMatch ? searchProductsInDb(trimmedKeyword) : productRepository.searchByKeyword(trimmedKeyword);
+                suggestion = null;
+            }
+            responses = exactMatches.stream().map(this::mapToProductResponse).collect(Collectors.toList());
         }
 
-        // No suggestion needed (exact match or no better suggestion found)
-        List<Product> exactMatches = exactMatch ? searchProductsInDb(trimmedKeyword) : productRepository.searchByKeyword(trimmedKeyword);
-        return new ProductSearchResponse(
-                exactMatches.stream().map(this::mapToProductResponse).collect(Collectors.toList()),
-                null
-        );
+        // Apply Price Filter
+        if (minPrice != null || maxPrice != null) {
+            responses = responses.stream().filter(p -> {
+                BigDecimal checkPrice = p.getBasePrice();
+                if (isClearance && p.getClearanceBatches() != null && !p.getClearanceBatches().isEmpty()) {
+                    checkPrice = p.getClearanceBatches().stream()
+                        .map(b -> b.getClearancePrice())
+                        .min(BigDecimal::compareTo)
+                        .orElse(p.getBasePrice());
+                } else if (p.getVariants() != null && !p.getVariants().isEmpty()) {
+                    checkPrice = p.getVariants().stream()
+                        .map(v -> v.getEffectivePrice())
+                        .min(BigDecimal::compareTo)
+                        .orElse(p.getBasePrice());
+                }
+                
+                if (checkPrice == null) checkPrice = BigDecimal.ZERO;
+                
+                if (minPrice != null && checkPrice.compareTo(minPrice) < 0) return false;
+                if (maxPrice != null && checkPrice.compareTo(maxPrice) > 0) return false;
+                return true;
+            }).collect(Collectors.toList());
+        }
+
+
+        
+        // Sort descending by price
+        responses.sort((a, b) -> {
+            BigDecimal priceA = a.getBasePrice() != null ? a.getBasePrice() : BigDecimal.ZERO;
+            BigDecimal priceB = b.getBasePrice() != null ? b.getBasePrice() : BigDecimal.ZERO;
+            return priceB.compareTo(priceA);
+        });
+
+        return new ProductSearchResponse(responses, suggestion);
     }
 
     private List<Product> searchProductsInDb(String keyword) {
@@ -552,6 +611,7 @@ public class ProductServiceImpl implements ProductService {
                         .imageUrl(b.getImageUrl())
                         .importDate(b.getImportDate())
                         .importPrice(b.getImportPrice())
+                        .version(b.getVersion())
                         .build())
                 .collect(Collectors.toList());
         response.setClearanceBatches(batchResponses);

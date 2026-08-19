@@ -67,7 +67,7 @@ public class User {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (isActive == null) isActive = true;
+        if (isActive == null) isActive = false;
         if (role == null) role = Role.CUSTOMER;
     }
 
