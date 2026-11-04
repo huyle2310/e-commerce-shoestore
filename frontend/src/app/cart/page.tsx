@@ -24,19 +24,24 @@ export default function CartPage() {
   }, [isAuthenticated, fetchCart, setBuyNowItem]);
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-neutral-50">
+    <div className="min-h-screen pt-24 pb-16 bg-[#F8F9FA] text-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-black tracking-tight mb-8">GIỎ HÀNG</h1>
+        <div className="flex items-center gap-2 mb-2 font-mono text-[11px] text-orange-600 uppercase tracking-widest font-bold">
+          <span>[GIỎ HÀNG]</span>
+          <span>•</span>
+          <span>{items.length} SẢN PHẨM</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight mb-8 text-neutral-900">GIỎ HÀNG CỦA BẠN</h1>
 
         {loading && items.length === 0 ? (
-          <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div></div>
+          <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-orange-500"></div></div>
         ) : items.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-neutral-100">
+          <div className="bg-white p-12 text-center border border-neutral-200 rounded-2xl shadow-xs">
             <ShoppingBag size={48} className="mx-auto text-neutral-300 mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Giỏ hàng trống</h2>
-            <p className="text-neutral-500 mb-8">Sẽ đỡ trống trải hơn nếu bạn thêm sản phẩm vào đây.</p>
-            <Link href="/shop" className="inline-block px-8 py-4 bg-orange-500 text-white rounded-full font-bold hover:bg-orange-600 transition-colors">
-              Đến trang mua sắm
+            <h2 className="text-xl font-bold uppercase mb-2 text-neutral-800">Giỏ hàng trống</h2>
+            <p className="text-neutral-500 text-sm mb-8">Chưa có sản phẩm nào được chọn. Thêm giày vào giỏ để tiếp tục.</p>
+            <Link href="/shop" className="inline-block px-8 py-3 bg-orange-500 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-orange-600 transition-colors shadow-xs">
+              Khám phá cửa hàng →
             </Link>
           </div>
         ) : (
@@ -50,25 +55,24 @@ export default function CartPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className={`flex flex-col sm:flex-row bg-white p-6 rounded-3xl border border-neutral-100 gap-6 ${item.stockQuantity === 0 ? 'opacity-60' : ''}`}
+                  className={`flex flex-col sm:flex-row bg-white p-6 border border-neutral-200 rounded-2xl shadow-xs gap-6 ${item.stockQuantity === 0 ? 'opacity-60' : ''}`}
                 >
                   <div className="relative shrink-0">
-                    <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.productName} className="w-24 h-24 object-cover rounded-xl bg-neutral-100" />
+                    <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.productName} className="w-24 h-24 object-cover bg-neutral-100 rounded-xl border border-neutral-100" />
                     {item.stockQuantity === 0 && (
-                      <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center rounded-xl border border-red-500/20">
-                        <span className="bg-neutral-400  text-white text-[12px] font-black tracking-wider px-2 py-1 ">ĐÃ HẾT</span>
+                      <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center border border-red-500">
+                        <span className="bg-red-500 text-white text-[10px] font-mono font-bold tracking-widest px-2 py-0.5 uppercase rounded">HẾT HÀNG</span>
                       </div>
                     )}
                   </div>
-
                   <div className="flex-1 flex flex-col justify-between">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-bold text-neutral-900 mb-1">{item.productName}</h3>
-                        <p className="text-sm text-neutral-500 mb-1">Màu: {item.color} | Size: {item.size}</p>
+                        <h3 className="text-base font-bold text-neutral-900 mb-1 uppercase tracking-tight">{item.productName}</h3>
+                        <p className="text-xs font-mono text-neutral-500 mb-2">MÀU: {item.color} | SIZE: {item.size}</p>
                         <div className="flex items-center gap-3">
-                          <p className="font-bold text-orange-500">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.unitPrice)}</p>
-                          {item.stockQuantity === 0 && <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded text-center">Sản phẩm này tạm hết hàng</span>}
+                          <p className="font-mono font-bold text-orange-600 text-base">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.unitPrice)}</p>
+                          {item.stockQuantity === 0 && <span className="text-[10px] font-mono font-bold text-red-600 border border-red-200 bg-red-50 px-1.5 py-0.5 uppercase rounded">Tạm hết hàng</span>}
                         </div>
                       </div>
                       <button
@@ -80,24 +84,24 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex justify-between items-end mt-4">
-                      <div className="flex items-center border border-neutral-200 rounded-full px-3 py-1 bg-neutral-50">
+                      <div className="flex items-center border border-neutral-200 rounded-lg px-2 py-1 bg-neutral-50">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
-                          className="text-neutral-500 hover:text-black disabled:opacity-50"
+                          className="text-neutral-500 hover:text-neutral-900 disabled:opacity-30 p-1"
                         >
-                          <Minus size={16} />
+                          <Minus size={14} />
                         </button>
-                        <span className="w-10 text-center font-bold text-sm">{item.quantity}</span>
+                        <span className="w-10 text-center font-mono font-bold text-sm text-neutral-900">{item.quantity}</span>
                         <button
                           onClick={() => {
                             const maxQty = item.stockQuantity !== undefined ? item.stockQuantity : Infinity;
-                            updateQuantity(item.id, Math.min(item.quantity + 2, maxQty));
+                            updateQuantity(item.id, Math.min(item.quantity + 1, maxQty));
                           }}
                           disabled={item.stockQuantity !== undefined && item.quantity >= item.stockQuantity}
-                          className="text-neutral-500 hover:text-black disabled:opacity-50"
+                          className="text-neutral-500 hover:text-neutral-900 disabled:opacity-30 p-1"
                         >
-                          <Plus size={16} />
+                          <Plus size={14} />
                         </button>
                       </div>
                       <div className="font-black text-lg">

@@ -101,7 +101,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#FAF9F6] text-neutral-900 font-sans selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen flex bg-white text-neutral-900 font-sans selection:bg-orange-500 selection:text-white">
       {/* Left side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-black overflow-hidden">
         <motion.div
@@ -139,7 +139,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-[#FAF9F6]">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white border-l border-neutral-200">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -147,8 +147,9 @@ export default function LoginPage() {
           className="w-full max-w-md"
         >
           <div className="mb-10">
-            <h1 className="text-4xl font-bold mb-3 tracking-tight">{t.auth.login.title}</h1>
-            <p className="text-neutral-500">{t.auth.login.subtitle}</p>
+            <div className="text-[11px] font-mono tracking-widest text-orange-600 uppercase mb-2 font-bold">[ĐĂNG NHẬP HỆ THỐNG]</div>
+            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-900">{t.auth.login.title}</h1>
+            <p className="text-neutral-500 text-sm mt-1">{t.auth.login.subtitle}</p>
           </div>
 
           {error && (

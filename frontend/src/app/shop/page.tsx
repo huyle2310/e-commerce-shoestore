@@ -190,39 +190,43 @@ function ShopContent() {
   };
 
   return (
-    <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-[#F8F9FA] text-neutral-900 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-neutral-200 pb-8">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-neutral-200 pb-6">
         <div>
-          <h1 className="text-4xl font-black tracking-tight mb-2">
-            {searchQuery ? `KẾT QUẢ TÌM KIẾM: "${searchQuery}"` : 'TẤT CẢ SẢN PHẨM'}
+          <div className="flex items-center gap-2 mb-2 font-mono text-[11px] text-orange-600 uppercase tracking-widest font-bold">
+            <span>[CATALOG]</span>
+            <span>•</span>
+            <span>{products.length} SẢN PHẨM KHẢ DỤNG</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-neutral-900">
+            {searchQuery ? `TÌM KIẾM: "${searchQuery}"` : 'DANH MỤC SẢN PHẨM'}
           </h1>
           {suggestion && (
-            <p className="text-orange-500 font-medium mb-2 text-lg">
-              Có phải bạn muốn tìm: <a href={`/shop?q=${encodeURIComponent(suggestion)}`} className="font-bold underline">&quot;{suggestion}&quot;</a>?
+            <p className="text-orange-500 font-medium text-sm mt-1">
+              Có phải bạn muốn tìm: <a href={`/shop?q=${encodeURIComponent(suggestion)}`} className="underline font-bold">&quot;{suggestion}&quot;</a>?
             </p>
           )}
-          <p className="text-neutral-500">Hiển thị {products.length} kết quả</p>
         </div>
-        <div className="mt-4 md:mt-0 flex items-center space-x-4">
+        <div className="mt-4 md:mt-0 flex items-center space-x-3">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="md:hidden flex items-center bg-neutral-100 px-4 py-2 rounded-full font-medium"
+            className="md:hidden flex items-center bg-white border border-neutral-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase shadow-xs"
           >
-            <Filter size={18} className="mr-2" /> Bộ lọc
+            <Filter size={14} className="mr-1.5 text-orange-500" /> BỘ LỌC
           </button>
           <div className="relative">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-neutral-100 border-none px-4 py-2 pr-10 rounded-full font-medium text-neutral-900 focus:ring-2 focus:ring-orange-500 outline-none"
+              className="appearance-none bg-white border border-neutral-200 px-3.5 py-1.5 pr-8 rounded-lg text-xs font-semibold uppercase text-neutral-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none shadow-xs"
             >
-              <option value="newest">Mới nhất</option>
-              <option value="price-asc">Giá: Thấp đến Cao</option>
-              <option value="price-desc">Giá: Cao đến Thấp</option>
-              <option value="best-selling">Bán chạy</option>
+              <option value="newest">MỚI NHẤT</option>
+              <option value="price-asc">GIÁ: THẤP ĐẾN CAO</option>
+              <option value="price-desc">GIÁ: CAO ĐẾN THẤP</option>
+              <option value="best-selling">BÁN CHẠY NHẤT</option>
             </select>
-            <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-500" />
+            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400" />
           </div>
         </div>
       </div>
@@ -354,17 +358,21 @@ function ShopContent() {
                           <div className="flex items-center space-x-2 mb-3">
                             <input
                               type="number"
+                              min="0"
                               placeholder="Từ"
                               value={pendingPriceRange[0] === 0 ? '' : pendingPriceRange[0]}
-                              onChange={(e) => setPendingPriceRange([e.target.value ? parseInt(e.target.value) : 0, pendingPriceRange[1]])}
+                              onChange={(e) => setPendingPriceRange([e.target.value ? Math.max(0, parseInt(e.target.value)) : 0, pendingPriceRange[1]])}
+                              onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                               className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 text-sm"
                             />
                             <span className="text-neutral-500 flex-shrink-0">-</span>
                             <input
                               type="number"
+                              min="0"
                               placeholder="Đến"
                               value={pendingPriceRange[1] === 50000000 ? '' : pendingPriceRange[1]}
-                              onChange={(e) => setPendingPriceRange([pendingPriceRange[0], e.target.value ? parseInt(e.target.value) : 50000000])}
+                              onChange={(e) => setPendingPriceRange([pendingPriceRange[0], e.target.value ? Math.max(0, parseInt(e.target.value)) : 50000000])}
+                              onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
                               className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg outline-none focus:border-orange-500 text-sm"
                             />
                           </div>

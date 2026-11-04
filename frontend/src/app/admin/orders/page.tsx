@@ -49,6 +49,21 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const handleUpdatePaymentStatus = async (orderId: string, status: string) => {
+    setUpdating(orderId);
+    try {
+      await api.put(`/orders/${orderId}/payment-status?status=${status}`);
+      fetchOrders();
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, paymentStatus: status });
+      }
+    } catch (error) {
+      console.error("Error updating payment status", error);
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PENDING': return <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold flex items-center w-fit"><Clock size={14} className="mr-1" /> Chờ xác nhận</span>;
@@ -227,7 +242,7 @@ export default function AdminOrdersPage() {
 
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-sm shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
             <div className="p-6 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/50">
               <div>
                 <h3 className="text-xl font-bold">Chi tiết đơn hàng #{selectedOrder.id.split('-')[0].toUpperCase()}</h3>
@@ -253,20 +268,52 @@ export default function AdminOrdersPage() {
                   <h4 className="font-bold mb-3 text-neutral-800 flex items-center"><CreditCard size={16} className="mr-2" /> Thông tin thanh toán</h4>
                   <div className="space-y-2 text-sm">
                     <p><span className="text-neutral-500">Phương thức:</span> <span className="font-medium">{selectedOrder.paymentMethod}</span></p>
-                    <p><span className="text-neutral-500">Trạng thái TT:</span> <span className={`font-bold ${selectedOrder.paymentStatus === 'PAID' ? 'text-green-600' : 'text-yellow-600'}`}>{selectedOrder.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</span></p>
+                    <p><span className="text-neutral-500">Trạng thái TT:</span> <span className={`font-bold ${selectedOrder.paymentStatus === 'PAID' && selectedOrder.orderStatus === 'CANCELLED' ? 'text-red-600' :
+                        selectedOrder.paymentStatus === 'PAID' ? 'text-green-600' :
+                          selectedOrder.paymentStatus === 'REFUNDED' ? 'text-blue-600' : 'text-yellow-600'
+                      }`}>
+                      {selectedOrder.paymentStatus === 'PAID' && selectedOrder.orderStatus === 'CANCELLED' ? 'Đã thanh toán (Cần hoàn tiền)' :
+                        selectedOrder.paymentStatus === 'PAID' ? 'Đã thanh toán' :
+                          selectedOrder.paymentStatus === 'REFUNDED' ? 'Đã hoàn tiền' : 'Chưa thanh toán'}
+                    </span></p>
                     <p><span className="text-neutral-500">Trạng thái ĐH:</span> <span className="mt-1 block">{getStatusBadge(selectedOrder.orderStatus)}</span></p>
                   </div>
                 </div>
               </div>
 
-              {selectedOrder.orderStatus === 'CANCELLED' && selectedOrder.paymentStatus === 'PAID' && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 shadow-sm">
-                  <XCircle className="text-red-600 shrink-0 mt-0.5" size={20} />
-                  <div>
-                    <h4 className="font-bold text-red-800">Cần hoàn tiền cho khách hàng</h4>
-                    <p className="text-sm text-red-700 mt-1">
-                      Đơn hàng này đã được chuyển khoản thành công nhưng đã bị hủy. Vui lòng liên hệ khách hàng để nhận thông tin STK và chuyển khoản hoàn tiền thủ công.
-                    </p>
+              {selectedOrder.orderStatus === 'CANCELLED' && (selectedOrder.paymentStatus === 'PAID' || selectedOrder.paymentStatus === 'REFUNDED') && (
+                <div className={`mb-6 p-4 border rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm ${selectedOrder.paymentStatus === 'PAID' ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
+                  <div className="flex items-start gap-3">
+                    {selectedOrder.paymentStatus === 'PAID' ? (
+                      <XCircle className="text-red-600 shrink-0 mt-0.5" size={20} />
+                    ) : (
+                      <CheckCircle2 className="text-green-600 shrink-0 mt-0.5" size={20} />
+                    )}
+                    <div>
+                      <h4 className={`font-bold ${selectedOrder.paymentStatus === 'PAID' ? 'text-red-800' : 'text-green-800'}`}>
+                        {selectedOrder.paymentStatus === 'PAID' ? 'Cần hoàn tiền cho khách hàng' : 'Đã hoàn tiền cho khách hàng'}
+                      </h4>
+                      <p className={`text-sm mt-1 ${selectedOrder.paymentStatus === 'PAID' ? 'text-red-700' : 'text-green-700'}`}>
+                        Đơn hàng này đã được chuyển khoản thành công nhưng đã bị hủy.
+                        {selectedOrder.paymentStatus === 'PAID' && ' Vui lòng liên hệ khách hàng để nhận thông tin STK và chuyển khoản hoàn tiền thủ công.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="shrink-0 w-full sm:w-auto relative">
+                    {updating === selectedOrder.id && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-black"></div>
+                      </div>
+                    )}
+                    <select
+                      value={selectedOrder.paymentStatus}
+                      onChange={(e) => handleUpdatePaymentStatus(selectedOrder.id, e.target.value)}
+                      disabled={updating === selectedOrder.id}
+                      className={`w-full sm:w-auto px-4 py-2 ${selectedOrder.paymentStatus === 'PAID' ? 'border-1 border-neutral-300 bg-neutral-300 hover:bg-neutral-400 text-black' : 'bg-green-600 hover:bg-green-700 text-white'} text-sm font-bold rounded-lg transition-colors disabled:opacity-50 appearance-none cursor-pointer outline-none ${updating === selectedOrder.id ? 'pr-8' : ''}`}
+                    >
+                      <option value="PAID" className="bg-white text-black">Chưa xử lý</option>
+                      <option value="REFUNDED" className="bg-white text-black">Đã hoàn tiền</option>
+                    </select>
                   </div>
                 </div>
               )}

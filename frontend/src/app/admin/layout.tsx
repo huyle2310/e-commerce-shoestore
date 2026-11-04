@@ -12,9 +12,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuthStore();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
+    products: pathname.includes('/admin/products') || pathname.includes('/admin/categories') || pathname.includes('/admin/brands'),
+    inventory: pathname.includes('/admin/inventory') || pathname.includes('/admin/warehouse'),
     content: pathname.includes('/admin/settings/site') || pathname.includes('/admin/blogs')
   });
-
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,10 +23,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    if (mounted && (!isAuthenticated || !['ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF'].includes(user?.role || ''))) {
-      router.push('/login');
+    if (mounted) {
+      if (!isAuthenticated || !['ADMIN', 'INVENTORY_STAFF', 'SALES_STAFF'].includes(user?.role || '')) {
+        router.push('/login');
+        return;
+      }
+
+      // Kiểm tra quyền truy cập các trang đặc quyền chỉ dành cho ADMIN
+      const adminOnlyRoutes = ['/admin/users', '/admin/settings/site'];
+      const isRestrictedAdminRoute = adminOnlyRoutes.some(route => pathname.startsWith(route));
+      if (isRestrictedAdminRoute && user?.role !== 'ADMIN') {
+        router.push('/admin');
+      }
     }
-  }, [mounted, isAuthenticated, user, router]);
+  }, [mounted, isAuthenticated, user, pathname, router]);
 
   if (!mounted) {
     return <div className="min-h-screen bg-[#121111] font-bold flex items-center justify-center text-white">Đang tải...</div>;
@@ -100,12 +111,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       user?.role === 'SALES_STAFF' ? 'Nhân viên Bán hàng' : 'Nhân viên';
 
   return (
-    <div className="flex h-screen bg-neutral-100 font-sans">
+    <div className="flex h-screen bg-[#F8F9FA] text-neutral-900 font-sans">
       {/* Sidebar */}
-      <aside className="w-70 bg-neutral-950 text-white flex flex-col overflow-y-auto">
-        <div className="h-20 flex-shrink-0 flex items-center px-6 border-b border-neutral-800">
-          <Link href="/admin" className="text-2xl font-bold tracking-tighter text-white">
-            VANGUARD<span className="text-orange-500">.</span> Admin
+      <aside className="w-72 bg-white text-neutral-900 flex flex-col border-r border-neutral-200 overflow-y-auto shadow-xs">
+        <div className="h-16 flex-shrink-0 flex items-center px-6 border-b border-neutral-200 justify-between">
+          <Link href="/admin" className="text-xl font-black tracking-tight text-neutral-900 uppercase flex items-center gap-1.5">
+            VANGUARD<span className="text-orange-500">.</span>
+            <span className="font-mono text-[10px] text-neutral-500 font-bold bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200">[ADMIN]</span>
           </Link>
         </div>
 
@@ -118,8 +130,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               return (
                 <div key={item.key} className="space-y-1">
                   <button
+                    type="button"
                     onClick={() => toggleMenu(item.key!)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isChildActive ? 'bg-neutral-900 text-white font-semibold' : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors rounded-lg cursor-pointer ${isChildActive ? 'bg-orange-50 text-orange-600 font-bold' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
                       }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -138,7 +151,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                           <Link
                             key={sub.path}
                             href={sub.path}
-                            className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isSubActive ? 'bg-orange-500 text-white font-semibold' : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+                            className={`block px-3 py-2 text-xs uppercase tracking-wider rounded-lg transition-colors ${isSubActive ? 'bg-orange-500 text-white font-bold shadow-xs' : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
                               }`}
                           >
                             {sub.name}
@@ -153,9 +166,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             return (
               <Link
-                key={item.path}
-                href={item.path}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${pathname === item.path ? 'bg-orange-500 text-white font-semibold shadow-lg shadow-orange-500/20' : 'text-neutral-400 hover:bg-neutral-900 hover:text-white'
+                key={item.path!}
+                href={item.path!}
+                className={`flex items-center space-x-3 px-3 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors ${pathname === item.path ? 'bg-orange-500 text-white font-bold shadow-xs' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
                   }`}
               >
                 {item.icon}
@@ -165,7 +178,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 border-t border-neutral-800">
+        <div className="p-4 border-t border-neutral-200">
           <button
             onClick={async () => {
               try { await api.post('/auth/logout', {}, { withCredentials: true }); } catch (e) { }

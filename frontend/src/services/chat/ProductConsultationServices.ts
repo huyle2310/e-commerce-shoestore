@@ -86,11 +86,18 @@ export class ProductConsultationServices {
                             parsedMax = amount; // Mặc định khách nói "có 50k", "50k" là maxPrice
                         }
                     }
-                }
-
-                if ((q.includes("trên") || q.includes("trở lên") || q.includes("lớn hơn")) && parsedMax !== null && parsedMin === null) {
-                    parsedMin = parsedMax;
-                    parsedMax = null;
+                } else if (parsedMin !== null && parsedMax === null) {
+                    // AI đặt minPrice nhưng câu hỏi không có từ khoá "trên/từ/trở lên" -> Khách thực chất muốn hỏi mức giá tối đa (VD: "tui có 1 triệu")
+                    if (!q.includes("trên") && !q.match(/\btừ\b/) && !q.includes("lớn hơn") && !q.includes("trở lên")) {
+                        parsedMax = parsedMin;
+                        parsedMin = null;
+                    }
+                } else if (parsedMax !== null && parsedMin === null) {
+                    // AI đặt maxPrice nhưng câu hỏi có từ khoá "trên/từ/trở lên"
+                    if (q.includes("trên") || q.match(/\btừ\b/) || q.includes("lớn hơn") || q.includes("trở lên")) {
+                        parsedMin = parsedMax;
+                        parsedMax = null;
+                    }
                 }
             }
 

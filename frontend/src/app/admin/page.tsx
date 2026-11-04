@@ -65,10 +65,10 @@ export default function AdminDashboard() {
   }, [filterType, startDate, endDate, mounted, token]);
 
   const cards = [
-    { title: 'Tổng Doanh Thu', value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(stats.revenue), icon: <DollarSign size={24} />, color: 'bg-green-500', trend: stats.revenueTrend },
-    { title: 'Đơn Hàng', value: stats.totalOrders.toString(), icon: <ShoppingBag size={24} />, color: 'bg-blue-500', trend: stats.ordersTrend },
-    { title: 'Sản Phẩm', value: stats.totalProducts.toString(), icon: <Package size={24} />, color: 'bg-orange-500', trend: stats.productsTrend },
-    { title: 'Khách Hàng', value: stats.customers.toString(), icon: <Users size={24} />, color: 'bg-purple-500', trend: stats.customersTrend },
+    { title: 'DOANH THU TỔNG', value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(stats.revenue), icon: <DollarSign size={20} />, trend: stats.revenueTrend },
+    { title: 'TỔNG ĐƠN HÀNG', value: stats.totalOrders.toString(), icon: <ShoppingBag size={20} />, trend: stats.ordersTrend },
+    { title: 'SKU ĐANG HOẠT ĐỘNG', value: stats.totalProducts.toString(), icon: <Package size={20} />, trend: stats.productsTrend },
+    { title: 'KHÁCH HÀNG ĐĂNG KÝ', value: stats.customers.toString(), icon: <Users size={20} />, trend: stats.customersTrend },
   ];
 
   if (loading && stats.chartData.length === 0) {
@@ -76,10 +76,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 bg-[#F8F9FA] text-neutral-900 p-6 min-h-screen">
       {/* Header and Filter */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <h1 className="text-2xl font-bold text-neutral-900">Tổng quan Hệ thống</h1>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-neutral-200 pb-6">
+        <div>
+          <div className="text-[10px] font-mono text-orange-600 uppercase tracking-widest font-bold">[TỔNG QUAN HỆ THỐNG]</div>
+          <h1 className="text-2xl font-black uppercase tracking-tight text-neutral-900 mt-1">BẢNG ĐIỀU KHIỂN TRUNG TÂM</h1>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           {filterType === 'custom' && (
             <div className="flex items-center gap-2">
@@ -109,18 +112,18 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm"
+            className="bg-white p-5 border border-neutral-200 rounded-2xl shadow-xs"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className={`p-3 rounded-xl text-white ${card.color}`}>
+              <div className="p-2.5 rounded-xl border border-orange-100 bg-orange-50 text-orange-600">
                 {card.icon}
               </div>
-              <span className="flex items-center text-sm font-bold text-green-500 bg-green-50 px-2.5 py-1 rounded-full">
-                <TrendingUp size={14} className="mr-1" /> {card.trend}
+              <span className="flex items-center text-xs font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                <TrendingUp size={12} className="mr-1" /> {card.trend}
               </span>
             </div>
-            <h3 className="text-neutral-500 text-sm font-medium mb-1">{card.title}</h3>
-            <p className="text-2xl font-black text-neutral-900">{card.value}</p>
+            <h3 className="text-neutral-500 font-mono text-[11px] uppercase tracking-wider mb-1 font-semibold">{card.title}</h3>
+            <p className="text-xl font-mono font-black text-neutral-900">{card.value}</p>
           </motion.div>
         ))}
       </div>
@@ -150,7 +153,7 @@ export default function AdminDashboard() {
                 <Tooltip 
                   cursor={{ fill: '#f5f5f5' }} 
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                  formatter={(value: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)}
+                  formatter={(value: unknown) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(typeof value === 'number' ? value : Number(value) || 0)}
                 />
                 <Bar dataKey="sales" name="Doanh thu" fill="#f97316" radius={[4, 4, 0, 0]} barSize={40} />
               </BarChart>

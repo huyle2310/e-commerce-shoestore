@@ -6,6 +6,7 @@ import { ChevronRight, Home, Package, ShieldCheck, Truck, ShoppingCart } from 'l
 import Link from 'next/link';
 import api from '@/lib/axios';
 import { useCartStore } from '@/store/cartStore';
+import { useAuthStore } from '@/store/authStore';
 import { toast } from 'react-hot-toast';
 
 export default function ClearanceProductDetailPage() {
@@ -48,12 +49,11 @@ export default function ClearanceProductDetailPage() {
   };
 
   const handleAddToCart = async (batch: any) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const { token, isAuthenticated } = useAuthStore.getState();
+    if (!isAuthenticated || !token) {
       router.push('/login');
       return;
     }
-
     setAddingBatchId(batch.id);
     try {
       await api.post(`/cart/items`, null, {

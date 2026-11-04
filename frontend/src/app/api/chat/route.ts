@@ -23,7 +23,6 @@ export async function POST(req: Request) {
       messages: processedMessages,
       system: GroundedAIProvider.getSystemPrompt(),
       tools: aiTools,
-      maxSteps: 5,
     });
 
     return (result as any).toDataStreamResponse ? (result as any).toDataStreamResponse({
