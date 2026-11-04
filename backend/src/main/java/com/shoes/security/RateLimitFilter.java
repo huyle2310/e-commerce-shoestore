@@ -1,7 +1,5 @@
 package com.shoes.security;
 
-import io.github.bucket4j.Bucket;
-import io.github.bucket4j.ConsumptionProbe;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +22,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String ip = getClientIP(request);
-        Bucket bucket = rateLimitingService.resolveBucket(ip);
-        ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
+        RateLimitingService.RateLimitResult result = rateLimitingService.tryConsume(ip);
 
-        if (probe.isConsumed()) {
-            response.addHeader("X-Rate-Limit-Remaining", String.valueOf(probe.getRemainingTokens()));
+        if (result.isAllowed()) {
+            response.addHeader("X-Rate-Limit-Remaining", String.valueOf(result.getRemainingTokens()));
             filterChain.doFilter(request, response);
         } else {
-            long waitForRefill = probe.getNanosToWaitForRefill() / 1_000_000_000;
-            response.addHeader("X-Rate-Limit-Retry-After-Seconds", String.valueOf(waitForRefill));
+            response.addHeader("X-Rate-Limit-Retry-After-Seconds", String.valueOf(result.getRetryAfterSeconds()));
             response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(),
                     "You have exhausted your API Request Quota");
         }
@@ -43,6 +39,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         if (xfHeader == null || xfHeader.isEmpty()) {
             return request.getRemoteAddr();
         }
-        return xfHeader.split(",")[0];
+        return xfHeader.split(",")[0].trim();
     }
 }
