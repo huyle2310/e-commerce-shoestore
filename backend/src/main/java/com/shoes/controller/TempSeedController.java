@@ -14,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/temp-seed")
 @RequiredArgsConstructor
+@org.springframework.context.annotation.Profile("dev")
+@org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
 public class TempSeedController {
 
     private final InventoryBatchRepository inventoryBatchRepository;

@@ -8,6 +8,9 @@ import com.shoes.repository.BrandRepository;
 import com.shoes.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,6 +56,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "'slug:' + #slug")
     public ProductResponse getProductBySlug(String slug) {
         // Reuse getClearanceProductBySlug so admin/public fetch includes clearance batches
         return getClearanceProductBySlug(slug);
@@ -274,12 +278,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "best_sellers", key = "'limit:' + #limit")
     public List<ProductResponse> getBestSellingProducts(int limit) {
         return productRepository.findBestSellingProducts(org.springframework.data.domain.PageRequest.of(0, limit))
                 .getContent().stream().map(this::mapToProductResponse).collect(Collectors.toList());
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "best_sellers", allEntries = true)
+    })
     @org.springframework.transaction.annotation.Transactional
     public ProductResponse createProduct(ProductRequest request) {
         Product product = Product.builder()
@@ -339,6 +348,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "best_sellers", allEntries = true)
+    })
     @org.springframework.transaction.annotation.Transactional
     public void deleteProduct(UUID id) {
         Product product = productRepository.findById(id)
@@ -357,6 +370,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "best_sellers", allEntries = true)
+    })
     @org.springframework.transaction.annotation.Transactional
     public ProductResponse updateProduct(UUID id, ProductRequest request) {
         Product product = productRepository.findById(id)

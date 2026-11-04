@@ -7,6 +7,8 @@ import com.shoes.repository.BrandRepository;
 import com.shoes.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,7 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
 
     @Override
+    @Cacheable(value = "brands", key = "'all'")
     public List<BrandResponse> getAllBrands() {
         return brandRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -25,12 +28,14 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Cacheable(value = "brands", key = "#id")
     public BrandResponse getBrandById(Integer id) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Brand not found"));
         return mapToResponse(brand);
     }
 
+    @CacheEvict(value = "brands", allEntries = true)
     @Override
     public BrandResponse createBrand(BrandRequest request) {
         Brand brand = Brand.builder()
@@ -41,6 +46,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @CacheEvict(value = "brands", allEntries = true)
     public BrandResponse updateBrand(Integer id, BrandRequest request) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Brand not found"));
@@ -49,6 +55,7 @@ public class BrandServiceImpl implements BrandService {
         return mapToResponse(brandRepository.save(brand));
     }
 
+    @CacheEvict(value = "brands", allEntries = true)
     @Override
     public void deleteBrand(Integer id) {
         brandRepository.deleteById(id);

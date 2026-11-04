@@ -15,13 +15,4 @@ public class ShoeShopApplication {
         SpringApplication.run(ShoeShopApplication.class, args);
         System.out.println("====== SHOE SHOP BACKEND STARTED SUCCESSFULLY ======");
     }
-
-    @Bean
-    public CommandLineRunner clearSessionsOnStartup(RefreshTokenRepository refreshTokenRepository) {
-        return args -> {
-            System.out.println("====== CLEARING ALL SESSIONS (LOGOUT ALL USERS) ======");
-            refreshTokenRepository.deleteAll();
-            System.out.println("====== SESSIONS CLEARED ======");
-        };
-    }
 }

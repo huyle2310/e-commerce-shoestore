@@ -9,6 +9,8 @@ import com.shoes.repository.UserRepository;
 import com.shoes.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +31,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @Cacheable(value = "blogs", key = "'published'")
     public List<BlogResponse> getPublishedBlogs() {
         return blogRepository.findByIsPublishedTrueOrderByCreatedAtDesc().stream()
                 .map(this::mapToResponse)
@@ -42,12 +45,14 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @Cacheable(value = "blogs", key = "'slug:' + #slug")
     public BlogResponse getBlogBySlug(String slug) {
         Blog blog = blogRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Blog not found"));
         return mapToResponse(blog);
     }
 
     @Override
+    @CacheEvict(value = "blogs", allEntries = true)
     public BlogResponse createBlog(UUID authorId, BlogRequest request) {
         User author = userRepository.findById(authorId).orElseThrow(() -> new RuntimeException("User not found"));
         
@@ -75,6 +80,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @CacheEvict(value = "blogs", allEntries = true)
     public BlogResponse updateBlog(UUID id, BlogRequest request) {
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new RuntimeException("Blog not found"));
         
@@ -99,6 +105,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @CacheEvict(value = "blogs", allEntries = true)
     public void deleteBlog(UUID id) {
         blogRepository.deleteById(id);
     }

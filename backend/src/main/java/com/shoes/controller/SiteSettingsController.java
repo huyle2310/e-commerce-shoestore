@@ -22,6 +22,7 @@ public class SiteSettingsController {
     }
 
     // Admin endpoint to update site settings
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public ResponseEntity<SiteSettingsResponse> updateSettings(@RequestBody SiteSettingsRequest request) {
         return ResponseEntity.ok(siteSettingsService.updateSettings(request));

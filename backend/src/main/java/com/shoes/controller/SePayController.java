@@ -44,8 +44,11 @@ public class SePayController {
             @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody SePayWebhookRequest request) {
 
-        // Validate Token
-        if (authorization == null || !authorization.equals("Apikey " + webhookSecret)) {
+        // Validate Token: webhookSecret must be configured and match Authorization header
+        if (webhookSecret == null || webhookSecret.trim().isEmpty() ||
+                authorization == null || !java.security.MessageDigest.isEqual(
+                        authorization.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                        ("Apikey " + webhookSecret).getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "Invalid Token"));
         }
 

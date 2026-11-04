@@ -7,6 +7,8 @@ import com.shoes.repository.SiteSettingsRepository;
 import com.shoes.service.SiteSettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +17,7 @@ public class SiteSettingsServiceImpl implements SiteSettingsService {
     private final SiteSettingsRepository repository;
 
     @Override
+    @Cacheable(value = "site_settings", key = "'current'")
     public SiteSettingsResponse getSettings() {
         SiteSettings settings = repository.findById(1).orElseGet(() -> {
             SiteSettings defaultSettings = new SiteSettings();
@@ -25,6 +28,7 @@ public class SiteSettingsServiceImpl implements SiteSettingsService {
     }
 
     @Override
+    @CacheEvict(value = "site_settings", allEntries = true)
     public SiteSettingsResponse updateSettings(SiteSettingsRequest request) {
         SiteSettings settings = repository.findById(1).orElseGet(() -> {
             SiteSettings newSettings = new SiteSettings();

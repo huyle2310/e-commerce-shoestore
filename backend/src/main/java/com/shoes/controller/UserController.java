@@ -27,12 +27,14 @@ public class UserController {
     private final UserRepository userRepository;
 
     // Lấy toàn bộ danh sách người dùng (Chỉ dành cho Admin)
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // Đồng bộ thứ hạng người dùng dựa trên lịch sử mua hàng
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/sync-ranks")
     public ResponseEntity<Void> syncUserRanks() {
         userService.syncUserRanks();
@@ -40,12 +42,14 @@ public class UserController {
     }
 
     // Tạo mới người dùng (từ Admin)
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserCreateRequest request) {
         return ResponseEntity.ok(userService.createUser(request));
     }
 
     // Đổi chức vụ cho người dùng
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/{id}/role")
     public ResponseEntity<UserResponse> updateUserRole(
             @PathVariable UUID id,
@@ -54,6 +58,7 @@ public class UserController {
     }
 
     // Kích hoạt/Vô hiệu hóa người dùng
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/{id}/status")
     public ResponseEntity<UserResponse> updateUserStatus(
             @PathVariable UUID id,
@@ -62,6 +67,7 @@ public class UserController {
     }
 
     // Cập nhật toàn bộ thông tin người dùng (từ Admin)
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/{id}")
     public ResponseEntity<UserResponse> updateUserFromAdmin(
             @PathVariable UUID id,

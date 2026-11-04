@@ -35,11 +35,13 @@ public class BlogController {
 
     // --- ADMIN APIs ---
     
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @GetMapping("/admin/all")
     public ResponseEntity<List<BlogResponse>> getAllBlogs() {
         return ResponseEntity.ok(blogService.getAllBlogs());
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @PostMapping
     public ResponseEntity<BlogResponse> createBlog(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -47,6 +49,7 @@ public class BlogController {
         return ResponseEntity.ok(blogService.createBlog(userDetails.getId(), request));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @PutMapping("/{id}")
     public ResponseEntity<BlogResponse> updateBlog(
             @PathVariable UUID id,
@@ -54,6 +57,7 @@ public class BlogController {
         return ResponseEntity.ok(blogService.updateBlog(id, request));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBlog(@PathVariable UUID id) {
         blogService.deleteBlog(id);

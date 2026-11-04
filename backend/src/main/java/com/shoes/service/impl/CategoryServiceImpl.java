@@ -7,6 +7,8 @@ import com.shoes.repository.CategoryRepository;
 import com.shoes.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
+    @Cacheable(value = "categories", key = "'all'")
     public List<CategoryResponse> getAllCategories() {
         return categoryRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -25,12 +28,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(value = "categories", key = "#id")
     public CategoryResponse getCategoryById(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         return mapToResponse(category);
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Override
     public CategoryResponse createCategory(CategoryRequest request) {
         Category category = Category.builder()
@@ -41,6 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
         return mapToResponse(categoryRepository.save(category));
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Override
     public CategoryResponse updateCategory(Integer id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
@@ -51,6 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
         return mapToResponse(categoryRepository.save(category));
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     @Override
     public void deleteCategory(Integer id) {
         categoryRepository.deleteById(id);

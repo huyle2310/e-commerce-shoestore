@@ -20,27 +20,30 @@ public class VoucherController {
     private final VoucherService voucherService;
 
     // --- Admin APIs ---
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<List<VoucherResponse>> getAllVouchers() {
         return ResponseEntity.ok(voucherService.getAllVouchers());
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public ResponseEntity<VoucherResponse> createVoucher(@RequestBody VoucherRequest request) {
         return ResponseEntity.ok(voucherService.createVoucher(request));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/{id}")
     public ResponseEntity<VoucherResponse> updateVoucher(@PathVariable UUID id, @RequestBody VoucherRequest request) {
         return ResponseEntity.ok(voucherService.updateVoucher(id, request));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteVoucher(@PathVariable UUID id) {
         voucherService.deleteVoucher(id);
         return ResponseEntity.ok().build();
     }
-
     // --- Public APIs ---
     @GetMapping("/check")
     public ResponseEntity<VoucherResponse> checkVoucher(

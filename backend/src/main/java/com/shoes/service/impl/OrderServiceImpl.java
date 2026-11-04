@@ -11,6 +11,7 @@ import com.shoes.service.EmailService;
 import com.shoes.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -79,7 +80,8 @@ public class OrderServiceImpl implements OrderService {
     // Áp dụng voucher
     // ================================================================
     private BigDecimal applyVoucher(String voucherCode, UUID userId, BigDecimal totalAmount, Order order) {
-        if (voucherCode == null || voucherCode.isBlank()) return BigDecimal.ZERO;
+        if (voucherCode == null || voucherCode.isBlank())
+            return BigDecimal.ZERO;
 
         Voucher voucher = voucherRepository.findByCode(voucherCode)
                 .orElseThrow(() -> new RuntimeException("Mã giảm giá không tồn tại: " + voucherCode));
@@ -126,39 +128,50 @@ public class OrderServiceImpl implements OrderService {
     // ================================================================
     // Build OrderItem từ variant + qty và DEDUCT STOCK từ Batch
     // ================================================================
-    private List<OrderItem> buildOrderItems(Order order, ProductVariant variant, int requiredQuantity, UUID inventoryBatchId) {
-        // Tìm các lô được ưu tiên xuất kho (Clearance -> Quality ASC -> Import Date ASC)
+    private List<OrderItem> buildOrderItems(Order order, ProductVariant variant, int requiredQuantity,
+            UUID inventoryBatchId) {
+        // Tìm các lô được ưu tiên xuất kho (Clearance -> Quality ASC -> Import Date
+        // ASC)
         List<InventoryBatch> activeBatches;
         if (inventoryBatchId != null) {
             InventoryBatch specificBatch = batchRepository.findById(inventoryBatchId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy lô hàng thanh lý"));
+            // Bảo vệ: Kiểm tra lô hàng có thuộc đúng variant và đang ACTIVE không
+            if (!specificBatch.getVariant().getId().equals(variant.getId())) {
+                throw new RuntimeException("Lô hàng không thuộc về biến thể sản phẩm này");
+            }
+            if (specificBatch.getProductStatus() != ProductStatus.ACTIVE) {
+                throw new RuntimeException("Lô hàng không còn khả dụng để bán");
+            }
             activeBatches = List.of(specificBatch);
         } else {
             activeBatches = batchRepository.findActiveBatchesForDeduction(variant.getId());
         }
         List<OrderItem> resultItems = new ArrayList<>();
-        
+
         int remainingQty = requiredQuantity;
 
         // Trừ tồn kho theo thứ tự ưu tiên
         for (InventoryBatch batch : activeBatches) {
-            if (remainingQty <= 0) break;
-            
+            if (remainingQty <= 0)
+                break;
+
             BigDecimal effectivePrice;
             if (batch.getWarehouseType() == WarehouseType.CLEARANCE && batch.getClearancePrice() != null) {
                 effectivePrice = batch.getClearancePrice();
             } else {
-                BigDecimal base = variant.getProduct().getBasePrice() != null ? variant.getProduct().getBasePrice() : BigDecimal.ZERO;
-                BigDecimal mod  = variant.getPriceModifier() != null ? variant.getPriceModifier() : BigDecimal.ZERO;
+                BigDecimal base = variant.getProduct().getBasePrice() != null ? variant.getProduct().getBasePrice()
+                        : BigDecimal.ZERO;
+                BigDecimal mod = variant.getPriceModifier() != null ? variant.getPriceModifier() : BigDecimal.ZERO;
                 effectivePrice = base.add(mod);
             }
 
             int deductQty = Math.min(batch.getQuantity(), remainingQty);
             batch.setQuantity(batch.getQuantity() - deductQty);
             batchRepository.save(batch);
-            
+
             BigDecimal itemTotal = effectivePrice.multiply(BigDecimal.valueOf(deductQty));
-            
+
             resultItems.add(OrderItem.builder()
                     .order(order)
                     .variant(variant)
@@ -187,12 +200,15 @@ public class OrderServiceImpl implements OrderService {
     // Finalize order amounts
     // ================================================================
     private void finalizeOrder(Order order, BigDecimal itemsTotal,
-                               BigDecimal shippingFee, BigDecimal discountAmount) {
-        if (discountAmount.compareTo(BigDecimal.ZERO) < 0) discountAmount = BigDecimal.ZERO;
-        if (discountAmount.compareTo(itemsTotal) > 0)      discountAmount = itemsTotal;
+            BigDecimal shippingFee, BigDecimal discountAmount) {
+        if (discountAmount.compareTo(BigDecimal.ZERO) < 0)
+            discountAmount = BigDecimal.ZERO;
+        if (discountAmount.compareTo(itemsTotal) > 0)
+            discountAmount = itemsTotal;
 
         BigDecimal finalAmount = itemsTotal.add(shippingFee).subtract(discountAmount);
-        if (finalAmount.compareTo(BigDecimal.ZERO) < 0) finalAmount = BigDecimal.ZERO;
+        if (finalAmount.compareTo(BigDecimal.ZERO) < 0)
+            finalAmount = BigDecimal.ZERO;
 
         order.setTotalAmount(itemsTotal);
         order.setShippingFee(shippingFee);
@@ -204,12 +220,9 @@ public class OrderServiceImpl implements OrderService {
     // Đặt hàng cho user đã đăng nhập
     // ================================================================
     @Override
+    @CacheEvict(value = {"products", "best_sellers"}, allEntries = true)
     @Transactional
-    @Retryable(
-        value = ObjectOptimisticLockingFailureException.class, 
-        maxAttempts = 3, 
-        backoff = @Backoff(delay = 500)
-    )
+    @Retryable(value = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 500))
     public OrderResponse placeOrder(UUID userId, OrderRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -236,7 +249,8 @@ public class OrderServiceImpl implements OrderService {
                 ProductVariant variant = variantRepository.findById(reqItem.getVariantId())
                         .orElseThrow(() -> new RuntimeException("Variant không tồn tại: " + reqItem.getVariantId()));
                 validateVariant(variant, reqItem.getQuantity());
-                List<OrderItem> builtItems = buildOrderItems(order, variant, reqItem.getQuantity(), reqItem.getInventoryBatchId());
+                List<OrderItem> builtItems = buildOrderItems(order, variant, reqItem.getQuantity(),
+                        reqItem.getInventoryBatchId());
                 order.getItems().addAll(builtItems);
                 for (OrderItem item : builtItems) {
                     itemsTotal = itemsTotal.add(item.getTotalPrice());
@@ -251,7 +265,8 @@ public class OrderServiceImpl implements OrderService {
             for (CartItem cartItem : cart.getItems()) {
                 ProductVariant variant = cartItem.getVariant();
                 validateVariant(variant, cartItem.getQuantity());
-                List<OrderItem> builtItems = buildOrderItems(order, variant, cartItem.getQuantity(), cartItem.getInventoryBatchId());
+                List<OrderItem> builtItems = buildOrderItems(order, variant, cartItem.getQuantity(),
+                        cartItem.getInventoryBatchId());
                 order.getItems().addAll(builtItems);
                 for (OrderItem item : builtItems) {
                     itemsTotal = itemsTotal.add(item.getTotalPrice());
@@ -280,12 +295,9 @@ public class OrderServiceImpl implements OrderService {
     // Đặt hàng cho guest
     // ================================================================
     @Override
+    @CacheEvict(value = {"products", "best_sellers"}, allEntries = true)
     @Transactional
-    @Retryable(
-        value = ObjectOptimisticLockingFailureException.class, 
-        maxAttempts = 3, 
-        backoff = @Backoff(delay = 500)
-    )
+    @Retryable(value = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 500))
     public OrderResponse placeGuestOrder(OrderRequest request) {
         if (request.getItems() == null || request.getItems().isEmpty()) {
             throw new RuntimeException("Giỏ hàng trống");
@@ -310,7 +322,8 @@ public class OrderServiceImpl implements OrderService {
             ProductVariant variant = variantRepository.findById(guestItem.getVariantId())
                     .orElseThrow(() -> new RuntimeException("Variant không tồn tại: " + guestItem.getVariantId()));
             validateVariant(variant, guestItem.getQuantity());
-            List<OrderItem> builtItems = buildOrderItems(order, variant, guestItem.getQuantity(), guestItem.getInventoryBatchId());
+            List<OrderItem> builtItems = buildOrderItems(order, variant, guestItem.getQuantity(),
+                    guestItem.getInventoryBatchId());
             order.getItems().addAll(builtItems);
             for (OrderItem item : builtItems) {
                 itemsTotal = itemsTotal.add(item.getTotalPrice());
@@ -334,7 +347,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getOrderById(UUID userId, UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        if (!order.getUser().getId().equals(userId)) {
+        if (order.getUser() == null || !order.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized");
         }
         return mapToOrderResponse(order);
@@ -353,6 +366,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "best_sellers"}, allEntries = true)
     @Transactional
     public OrderResponse updateOrderStatus(UUID orderId, String status) {
         Order order = orderRepository.findById(orderId)
@@ -365,24 +379,39 @@ public class OrderServiceImpl implements OrderService {
 
             if (order.getUser() != null) {
                 User user = order.getUser();
-                if (user.getTotalSpent() == null) user.setTotalSpent(BigDecimal.ZERO);
+                if (user.getTotalSpent() == null)
+                    user.setTotalSpent(BigDecimal.ZERO);
                 user.setTotalSpent(user.getTotalSpent().add(order.getFinalAmount()));
 
                 BigDecimal total = user.getTotalSpent();
-                if (total.compareTo(new BigDecimal("10000000")) >= 0)       user.setRankName("TINH ANH");
-                else if (total.compareTo(new BigDecimal("5000000")) >= 0)   user.setRankName("KIM CƯƠNG");
-                else if (total.compareTo(new BigDecimal("2000000")) >= 0)   user.setRankName("VÀNG");
-                else                                                         user.setRankName("MEMBER");
+                if (total.compareTo(new BigDecimal("10000000")) >= 0)
+                    user.setRankName("TINH ANH");
+                else if (total.compareTo(new BigDecimal("5000000")) >= 0)
+                    user.setRankName("KIM CƯƠNG");
+                else if (total.compareTo(new BigDecimal("2000000")) >= 0)
+                    user.setRankName("VÀNG");
+                else
+                    user.setRankName("MEMBER");
                 userRepository.save(user);
             }
         } else if ("CANCELLED".equals(status) && !"CANCELLED".equals(oldStatus)) {
             restoreStockForCancelledOrder(order);
             String toEmail = order.getEmail();
-            if (toEmail == null && order.getUser() != null) toEmail = order.getUser().getEmail();
+            if (toEmail == null && order.getUser() != null)
+                toEmail = order.getUser().getEmail();
             if (toEmail != null) {
                 emailService.sendOrderCancellationEmail(toEmail, order, "Đơn hàng bị hủy bởi Quản trị viên");
             }
         }
+        return mapToOrderResponse(orderRepository.save(order));
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse updatePaymentStatus(UUID orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setPaymentStatus(status);
         return mapToOrderResponse(orderRepository.save(order));
     }
 
@@ -400,13 +429,14 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus("CANCELLED");
         restoreStockForCancelledOrder(order);
-        
+
         String toEmail = order.getEmail();
-        if (toEmail == null && order.getUser() != null) toEmail = order.getUser().getEmail();
+        if (toEmail == null && order.getUser() != null)
+            toEmail = order.getUser().getEmail();
         if (toEmail != null) {
             emailService.sendOrderCancellationEmail(toEmail, order, "Khách hàng tự hủy đơn");
         }
-        
+
         return mapToOrderResponse(orderRepository.save(order));
     }
 
@@ -421,9 +451,10 @@ public class OrderServiceImpl implements OrderService {
                     });
                 } else {
                     // Lấy lô INVENTORY ACTIVE mới nhất
-                    List<InventoryBatch> invBatches = batchRepository.findByVariantIdAndWarehouseTypeAndProductStatusOrderByImportDateAsc(
-                            variant.getId(), WarehouseType.INVENTORY, ProductStatus.ACTIVE);
-                    
+                    List<InventoryBatch> invBatches = batchRepository
+                            .findByVariantIdAndWarehouseTypeAndProductStatusOrderByImportDateAsc(
+                                    variant.getId(), WarehouseType.INVENTORY, ProductStatus.ACTIVE);
+
                     if (invBatches != null && !invBatches.isEmpty()) {
                         InventoryBatch latestBatch = invBatches.get(invBatches.size() - 1);
                         latestBatch.setQuantity(latestBatch.getQuantity() + item.getQuantity());
@@ -463,7 +494,7 @@ public class OrderServiceImpl implements OrderService {
                 if (item.getVariant() != null) {
                     ProductVariant v = item.getVariant();
                     color = v.getColorVi();
-                    size  = v.getSize();
+                    size = v.getSize();
 
                     if (v.getProduct() != null) {
                         productName = v.getProduct().getNameVi();

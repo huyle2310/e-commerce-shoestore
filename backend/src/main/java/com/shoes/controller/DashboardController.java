@@ -17,6 +17,7 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @GetMapping("/stats")
     public ResponseEntity<DashboardStatsResponse> getDashboardStats(
             @org.springframework.web.bind.annotation.RequestParam(defaultValue = "day") String type,

@@ -58,16 +58,25 @@ public class OrderController {
     }
 
     // --- ADMIN APIs ---
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @GetMapping("/admin/all")
     public ResponseEntity<List<OrderResponse>> getAllOrdersAdmin() {
-        // Tạm thời get all, trong thực tế cần phân trang và check role ADMIN
-        return ResponseEntity.ok(orderService.getUserOrders(null)); // OrderServiceImpl cần được sửa để hỗ trợ get all nếu userId = null
+        return ResponseEntity.ok(orderService.getUserOrders(null));
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
     @PutMapping("/{id}/status")
     public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable UUID id,
             @RequestParam String status) {
         return ResponseEntity.ok(orderService.updateOrderStatus(id, status));
+    }
+
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'SALES_STAFF')")
+    @PutMapping("/{id}/payment-status")
+    public ResponseEntity<OrderResponse> updatePaymentStatus(
+            @PathVariable UUID id,
+            @RequestParam String status) {
+        return ResponseEntity.ok(orderService.updatePaymentStatus(id, status));
     }
 }
