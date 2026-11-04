@@ -2,8 +2,13 @@
 
 @layer base {
   body {
-    background-color: #FAFAFA;
-    color: #0f172a;
+    background-color: #F8F9FA;
+    color: #111827;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  ::selection {
+    background-color: #F97316;
+    color: #FFFFFF;
   }
 }
 
@@ -19,6 +24,37 @@
     backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
+  }
+}
+
+@layer utilities {
+  /* Clean Light Theme Utility Tokens */
+  .telemetry-tag {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .brutalist-border {
+    border: 1px solid #E5E7EB;
+  }
+  .brutalist-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .brutalist-card:hover {
+    border-color: #F97316;
+    box-shadow: 0 4px 20px -2px rgba(249, 115, 22, 0.12);
+  }
+  .brutalist-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.15s ease;
   }
 }
 

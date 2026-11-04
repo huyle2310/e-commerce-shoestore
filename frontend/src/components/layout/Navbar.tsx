@@ -215,17 +215,22 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed w-full z-50 top-0 bg-[#0C0C0C] backdrop-blur-md border-b border-[FAF9F6]-900">
+    <nav className="fixed w-full z-50 top-0 bg-white/90 backdrop-blur-md border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16">
 
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center mt-2">
+          <div className="flex-shrink-0 flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2 group">
               {settings?.logoUrl ? (
-                <img src={settings.logoUrl} alt="Logo" className="h-14 object-contain" />
+                <img src={settings.logoUrl} alt="Logo" className="h-10 object-contain" />
               ) : (
-                <span className="text-3xl font-bold tracking-tighter text-white">VANGUARD<span className="text-white">.</span></span>
+                <span className="text-2xl font-black tracking-tighter text-neutral-900 uppercase flex items-center">
+                  VANGUARD<span className="text-orange-500">.</span>
+                </span>
               )}
+              <span className="hidden sm:inline-block border border-neutral-200 bg-neutral-100 text-[9px] font-mono tracking-widest text-neutral-600 px-1.5 py-0.5 uppercase">
+                EDITION_01
+              </span>
             </Link>
           </div>
 
@@ -264,7 +269,7 @@ export default function Navbar() {
                         window.location.href = link.path;
                       }
                     }}
-                    className={`group relative flex items-center py-1 text-base font-medium transition-colors hover:text-orange-500 ${pathname === link.path || pathname?.startsWith(link.path + '/') && link.path !== '/' ? 'text-orange-500' : 'text-neutral-200'}`}
+                    className={`group relative flex items-center py-1 text-sm font-semibold transition-colors hover:text-orange-500 ${pathname === link.path || pathname?.startsWith(link.path + '/') && link.path !== '/' ? 'text-orange-500' : 'text-neutral-700'}`}
                   >
                     {language === 'vi' ? link.nameVi : link.nameEn}
                     {hasDropdown && dropdownItems.length > 0 && (
@@ -344,14 +349,14 @@ export default function Navbar() {
             {/* Search Bar with Autocomplete */}
             <div ref={searchRef} className="relative flex items-center group">
               <form onSubmit={handleSearch} className="relative flex items-center">
-                <Search size={22} className="absolute left-2.5 text-neutral-100 group-hover:text-neutral-400 group-focus-within:text-neutral-400 group-hover:scale-75 group-focus-within:scale-75 transition-all z-10 pointer-events-none" />
+                <Search size={18} className="absolute left-2.5 text-neutral-400 group-hover:text-neutral-600 transition-all z-10 pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearchInput(e.target.value)}
                   onFocus={() => searchSuggestions.length > 0 && setShowSuggestions(true)}
-                  placeholder={language === 'vi' ? 'Tìm kiếm...' : 'Search...'}
-                  className="bg-transparent group-hover:bg-neutral-100 group-focus-within:bg-white border border-transparent text-neutral-900 placeholder-transparent group-hover:placeholder-neutral-500 group-focus-within:placeholder-neutral-500 text-base rounded-full pl-10 pr-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 w-10 group-hover:w-64 group-focus-within:w-64 transition-all duration-300 cursor-pointer group-hover:cursor-text"
+                  placeholder={language === 'vi' ? 'Tìm kiếm giày, danh mục...' : 'Search shoes, category...'}
+                  className="bg-transparent group-hover:bg-neutral-100 group-focus-within:bg-white border border-transparent group-hover:border-neutral-200 group-focus-within:border-orange-500 text-neutral-900 placeholder-transparent group-hover:placeholder-neutral-400 group-focus-within:placeholder-neutral-400 text-xs font-medium rounded-full pl-9 pr-3 py-1.5 focus:outline-none w-9 group-hover:w-64 group-focus-within:w-64 transition-all duration-200 cursor-pointer group-hover:cursor-text"
                 />
               </form>
 
@@ -363,7 +368,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full right-0 mt-2 w-72 bg-white rounded-xl border border-neutral-200 shadow-xl overflow-hidden z-50"
+                    className="absolute top-full right-0 mt-2 w-80 bg-white border border-neutral-200 shadow-xl overflow-hidden z-50 rounded-xl"
                   >
                     {suggestionLoading ? (
                       <div className="p-4 text-center text-neutral-400 text-sm">
@@ -412,25 +417,25 @@ export default function Navbar() {
 
             <button
               onClick={() => setLanguage(language === 'vi' ? 'en' : 'vi')}
-              className="flex items-center text-base font-medium text-neutral-100 hover:text-orange-500 transition-colors"
+              className="flex items-center text-xs font-mono font-bold text-neutral-700 hover:text-orange-500 transition-colors border border-neutral-200 px-2 py-1 rounded"
             >
-              <Globe size={18} className="mr-1" /> {language.toUpperCase()}
+              <Globe size={14} className="mr-1" /> {language.toUpperCase()}
             </button>
 
-            <Link href="/cart" className="relative text-neutral-100 hover:text-orange-500 transition-colors">
-              <ShoppingCart size={22} />
-              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">{mounted ? cartCount : 0}</span>
+            <Link href="/cart" className="relative text-neutral-700 hover:text-orange-500 transition-colors p-1">
+              <ShoppingCart size={20} />
+              <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[10px] font-mono font-bold w-4 h-4 rounded-full flex items-center justify-center">{mounted ? cartCount : 0}</span>
             </Link>
 
             {mounted && isAuthenticated ? (
               <div className="relative group cursor-pointer">
-                <div className="flex items-center space-x-2 text-neutral-100 hover:text-orange-500 transition-colors">
+                <div className="flex items-center space-x-2 text-neutral-800 hover:text-orange-500 transition-colors">
                   {user?.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover border border-neutral-200" />
+                    <img src={user.avatarUrl} alt="Avatar" className="w-8 h-8 rounded-full object-cover border border-neutral-300" />
                   ) : (
-                    <User size={22} />
+                    <User size={20} />
                   )}
-                  <span className="text-sm font-medium">{user?.fullName?.split(' ').pop()}</span>
+                  <span className="text-xs font-semibold">{user?.fullName?.split(' ').pop()}</span>
                 </div>
 
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg border border-neutral-200 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 overflow-hidden">
