@@ -22,6 +22,7 @@ echo.
 echo [Giao dien] http://localhost:3000
 echo [API]       http://localhost:8080/api/v1
 echo [Database]  localhost:5433
+echo [Redis]     localhost:6379
 echo.
 echo De tat he thong, hay chay file stop.bat
 echo ==============================================

@@ -3,15 +3,16 @@
 # ========================
 
 # Backend - file config chứa password thật (tạo riêng local, không commit)
-backend/src/main/resources/application-dev.yml
-backend/src/main/resources/application-prod.yml
-backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-*.yml
+!backend/src/main/resources/application.example.yml
+!backend/src/main/resources/application.yml
 
 # Frontend - file env chứa key thật
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.production.local
-
+frontend/.env*
+!frontend/.env.example
+*.env
+*.env.*
+*.env.local
 # ========================
 # BUILD OUTPUT
 # ========================
@@ -26,13 +27,19 @@ backend/target/
 backend/uploads/
 
 # ========================
-# HỆ THỐNG
+# IDE & HỆ THỐNG
 # ========================
+.vscode/
 .DS_Store
 Thumbs.db
+desktop.ini
 *.log
+*.swp
+*.swo
+*~
 
 # ========================
 # DOCKER DATA
 # ========================
 postgres_data/
+redis_data/

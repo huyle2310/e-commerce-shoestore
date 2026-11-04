@@ -13,9 +13,25 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       # Mount file SQL init để tự động tạo schema khi db khởi chạy lần đầu
-      - ./database_schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database_full.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: shoesshop-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   backend:
     build:
@@ -29,13 +45,18 @@ services:
       - DB_NAME=shoesshop
       - DB_USER=postgres
       - DB_PASS=${DB_PASS:-password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME:-vanguardshoe.store@gmail.com}
       - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_started
+      redis:
+        condition: service_healthy
     volumes:
       - ./backend/uploads:/app/uploads
     networks:
@@ -63,3 +84,4 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:

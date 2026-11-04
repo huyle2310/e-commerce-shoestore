@@ -3,7 +3,7 @@ echo ==============================================
 echo STARTING LVTN SYSTEM (WITHOUT DOCKER)
 echo ==============================================
 echo.
-echo Note: Please ensure PostgreSQL (port 5433) is running!
+echo Note: Please ensure PostgreSQL (port 5433) and Redis (port 6379) are running!
 echo.
 
 echo Starting Backend (Spring Boot)...
